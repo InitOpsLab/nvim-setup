@@ -17,16 +17,22 @@ This script automatically installs and configures Neovim with:
 🔧 Installation
 1️⃣ Clone the repository
 
+```
 git clone https://github.com/your-username/neovim-setup.git
 cd neovim-setup
+```
 
 2️⃣ Make the script executable
 
+```
 chmod +x setup_nvim.sh
+```
 
 3️⃣ Run the script
 
+```
 ./setup_nvim.sh
+```
 
 The script will automatically detect if you're using macOS or Ubuntu and install all required dependencies.
 
@@ -50,25 +56,33 @@ Pre-configures Neovim with LSP, Treesitter, autocompletion, debugging, and more
 🎯 Post-Installation Steps
 After running the script, open Neovim:
 
+```
 nvim
+```
 
 Then, install the plugins:
 
+```
 :PlugInstall
+```
+```
 :PackerSync
+```
 
 Restart Neovim, and you're ready to go! 🚀
 
 📂 Directory Structure
 
+```
 ~/.config/nvim/
 │── init.lua  # Main Neovim configuration file
 │── ~/.vimrc  # Vim configuration, sourced from init.lua
 │── plugged/  # Plugin directory (for vim-plug)
+```
 
 📜 Configuration Files
-.vimrc (Vim Config)
 
+.vimrc (Vim Config)
 The script automatically sets up your .vimrc with:
 ✔ Line numbers, relative numbers, clipboard integration
 ✔ Indentation settings (spaces instead of tabs)
@@ -85,6 +99,7 @@ init.lua (Neovim Config)
 ⌨️ Key Mappings
 
 Keybinding	Action
+```
 gd	Go to definition
 K	Show hover documentation
 <leader>rn	Rename symbol
@@ -95,6 +110,7 @@ K	Show hover documentation
 <leader>tf	Format Terraform file (terraform fmt)
 <leader>fj	Format JSON with jq
 <leader>m	Convert Markdown to PNG
+```
 
 🎯 Supported Platforms
 
@@ -109,22 +125,33 @@ Windows	❌ No (Use WSL)
 
 Make sure it's installed correctly:
 
+```
 nvim --version
+```
+
 If it’s missing, try reinstalling it using:
 
+```
 brew install neovim  # macOS  
+```
+```
 sudo apt install neovim  # Ubuntu  
+```
 
 🚨 Packer.nvim or Vim-Plug not working?
 Try reinstalling:
 
+```
 rm -rf ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 ./setup_nvim.sh
+```
 
 🚨 LSP servers not detected?
 Ensure Mason is installed and run:
 
+```
 :MasonInstall
+```
 
 📜 License
 This project is licensed under the MIT License. Feel free to use and modify it!

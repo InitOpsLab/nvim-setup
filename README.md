@@ -1,165 +1,146 @@
-🚀 Neovim Auto-Setup Script
-Easily set up Neovim with LSP, Treesitter, Debugging, and more on macOS & Ubuntu!
+# Neovim Setup Script
 
+This script automates the installation and configuration of **Neovim** on **macOS** and **Ubuntu**. It installs dependencies, sets up plugin managers, and configures Neovim using files from the local `configs/` directory.
 
+---
 
-📌 Overview
-This script automatically installs and configures Neovim with:
-✅ LSP (Language Server Protocol) for code intelligence
-✅ Treesitter for advanced syntax highlighting
-✅ Autocompletion with nvim-cmp
-✅ Git integration with vim-fugitive and gitsigns.nvim
-✅ Debugging with nvim-dap
-✅ File Navigation with fzf and NERDTree
-✅ Autoformatting & Linting with null-ls.nvim
-✅ Status bar with lualine.nvim
+## 🚀 Features
 
-🔧 Installation
-1️⃣ Clone the repository
+- **Auto-detects OS** (macOS or Ubuntu)
+- **Installs required dependencies** (Neovim, LSPs, utilities)
+- **Checks if dependencies are already installed** before installing
+- **Copies Neovim configurations** from the `configs/` directory
+- **Installs Vim-Plug & Packer.nvim** for plugin management
 
-```
-git clone https://github.com/your-username/neovim-setup.git
-cd neovim-setup
-```
+---
 
-2️⃣ Make the script executable
+## 📂 Directory Structure
 
 ```
+nvim-setup/
+│── configs/              # Configuration files for Neovim
+│   ├── vimrc             # Neovim main configuration
+│   ├── init.lua          # Additional Neovim settings
+│── setup_nvim.sh         # Installation script
+│── README.md             # Documentation (this file)
+```
+
+---
+
+## 💾 Installation
+
+### 1️⃣ Clone this repository
+
+```sh
+git clone https://github.com/irussak/nvim-setup.git
+cd nvim-setup
+```
+
+### 2️⃣ Run the setup script
+
+```sh
 chmod +x setup_nvim.sh
-```
-
-3️⃣ Run the script
-
-```
 ./setup_nvim.sh
 ```
 
-The script will automatically detect if you're using macOS or Ubuntu and install all required dependencies.
+---
 
-🛠 What the Script Does
+## 🛠️ What the Script Does
 
-✅ OS Detection
-Detects if you’re running macOS or Ubuntu and installs dependencies accordingly.
+- Detects the OS (**macOS** or **Ubuntu**)
+- Installs required packages (Neovim, LSPs, Git, Node.js, Python, etc.)
+- Copies configuration files from `configs/` to `~/.vimrc` and `~/.config/nvim/init.lua`
+- Installs **Vim-Plug** (if not installed)
+- Installs **Packer.nvim** (if not installed)
 
-✅ Installs Neovim and Required Packages
-macOS: Installs Neovim, Python, Node.js, ripgrep, fzf, fd, jq, terraform, and lua-language-server using brew.
-Ubuntu: Installs Neovim, Python, Node.js, ripgrep, fzf, fd-find, jq, terraform, and lua-language-server using apt.
+---
 
-✅ Installs Vim-Plug & Packer.nvim
-Vim-Plug: For managing Vim plugins
-Packer.nvim: For managing Neovim-specific plugins
+## 🔧 Post Installation
 
-✅ Configures Neovim (.vimrc & init.lua)
-Creates ~/.vimrc and ~/.config/nvim/init.lua
-Pre-configures Neovim with LSP, Treesitter, autocompletion, debugging, and more
+After running the script, open Neovim and install plugins:
 
-🎯 Post-Installation Steps
-After running the script, open Neovim:
+1️⃣ Open Neovim:
 
-```
+```sh
 nvim
 ```
 
-Then, install the plugins:
+2️⃣ Run the following commands inside Neovim:
 
-```
+```vim
 :PlugInstall
-```
-```
 :PackerSync
 ```
 
-Restart Neovim, and you're ready to go! 🚀
+---
 
-📂 Directory Structure
+## 📦 Installed Dependencies
 
-```
-~/.config/nvim/
-│── init.lua  # Main Neovim configuration file
-│── ~/.vimrc  # Vim configuration, sourced from init.lua
-│── plugged/  # Plugin directory (for vim-plug)
-```
+### 🔹 macOS (Homebrew)
 
-📜 Configuration Files
-
-.vimrc (Vim Config)
-The script automatically sets up your .vimrc with:
-✔ Line numbers, relative numbers, clipboard integration
-✔ Indentation settings (spaces instead of tabs)
-✔ Git integration (vim-fugitive, gitsigns.nvim)
-✔ File navigation (fzf, NERDTree)
-✔ Debugging (nvim-dap)
-
-init.lua (Neovim Config)
-✔ Loads .vimrc for compatibility
-✔ Ensures Packer.nvim is installed
-✔ Installs LSP, Treesitter, Auto-completion, and Debugging
-✔ Configures LSP keybindings for efficient navigation
-
-⌨️ Key Mappings
-
-Keybinding	Action
-```
-gd	Go to definition
-K	Show hover documentation
-<leader>rn	Rename symbol
-<leader>ca	Code actions
-<C-n>	Select next completion
-<C-p>	Select previous completion
-<C-y>	Confirm completion
-<leader>tf	Format Terraform file (terraform fmt)
-<leader>fj	Format JSON with jq
-<leader>m	Convert Markdown to PNG
+```sh
+neovim
+git
+python
+node
+ripgrep
+fzf
+fd
+jq
+terraform
+lua-language-server
 ```
 
-🎯 Supported Platforms
+### 🔹 Ubuntu (APT)
 
-OS	Supported
-macOS	✅ Yes
-Ubuntu	✅ Yes
-Windows	❌ No (Use WSL)
-
-🛠 Troubleshooting
-
-🚨 Neovim not found?
-
-Make sure it's installed correctly:
-
-```
-nvim --version
-```
-
-If it’s missing, try reinstalling it using:
-
-```
-brew install neovim  # macOS  
-```
-```
-sudo apt install neovim  # Ubuntu  
+```sh
+neovim
+git
+python3
+nodejs
+npm
+ripgrep
+fzf
+fd-find
+jq
+terraform
+lua-language-server
 ```
 
-🚨 Packer.nvim or Vim-Plug not working?
-Try reinstalling:
+---
 
-```
-rm -rf ~/.local/share/nvim/site/pack/packer/start/packer.nvim
-./setup_nvim.sh
-```
+## 📜 Troubleshooting
 
-🚨 LSP servers not detected?
-Ensure Mason is installed and run:
+### 🔹 Permission Issues
 
-```
-:MasonInstall
+If you encounter permission errors, run:
+
+```sh
+chmod +x setup_nvim.sh
+sudo ./setup_nvim.sh
 ```
 
-📜 License
-This project is licensed under the MIT License. Feel free to use and modify it!
+### 🔹 Neovim Not Found
 
-💡 Contributing
-Want to improve this script? Fork the repository and submit a pull request! 🚀
+If Neovim doesn’t launch after installation, restart your terminal or run:
 
-🤝 Credits
-Special thanks to the Neovim community and plugin authors for their amazing work.
+```sh
+export PATH="$HOME/.local/bin:$PATH"
+```
 
-🔥 Enjoy your fully configured Neovim setup! 🎯 🚀
+---
+
+## 📌 Contributing
+
+Feel free to open an **issue** or **pull request** if you have improvements or bug fixes.
+
+---
+
+## 📜 License
+
+This script is open-source and available under the **MIT License**.
+
+---
+
+🎯 **Now your Neovim is fully configured and ready to use! 🚀**
+

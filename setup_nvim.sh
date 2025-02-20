@@ -9,8 +9,7 @@ YELLOW="\033[1;33m"
 RED="\033[1;31m"
 RESET="\033[0m"
 
-GIT_REPO="https://github.com/irussak/nvim-setup.git"
-GIT_CLONE_DIR="$HOME/.nvim-setup"
+CONFIGS_DIR="$(pwd)/configs"
 
 log_info() { echo -e "${GREEN}[INFO]${RESET} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${RESET} $1"; }
@@ -79,19 +78,15 @@ install_packer() {
 }
 
 setup_nvim_config() {
-    log_info "Cloning Neovim configuration repository..."
-    if [[ -d "$GIT_CLONE_DIR" ]]; then
-        log_info "Repository already exists. Pulling latest changes..."
-        git -C "$GIT_CLONE_DIR" pull
-    else
-        git clone "$GIT_REPO" "$GIT_CLONE_DIR"
+    if [[ ! -d "$CONFIGS_DIR" ]]; then
+        log_error "Configs directory ($CONFIGS_DIR) not found. Please run this script from the correct location."
     fi
 
     log_info "Setting up Neovim configuration..."
     mkdir -p ~/.config/nvim
 
-    cp "$GIT_CLONE_DIR/configs/vimrc" ~/.vimrc
-    cp "$GIT_CLONE_DIR/configs/init.lua" ~/.config/nvim/init.lua
+    cp "$CONFIGS_DIR/vimrc" ~/.vimrc
+    cp "$CONFIGS_DIR/init.lua" ~/.config/nvim/init.lua
 }
 
 log_info "Starting Neovim setup..."

@@ -89,6 +89,19 @@ Plug 'tpope/vim-commentary'
 Plug 'jiangmiao/auto-pairs'
 Plug 'dense-analysis/ale'
 
-call plug#end()
+" Additional requested plugins
+Plug 'stevearc/conform.nvim'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'catppuccin/nvim'
+Plug 'akinsho/bufferline.nvim'
+Plug 'rebelot/heirline.nvim'
+Plug 'RRethy/vim-illuminate'
+Plug 'echasnovski/mini.indentscope'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'christoomey/vim-sort-motion'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'bkad/CamelCaseMotion'
+Plug 'wellle/targets.vim'
 
+call plug#end()
 

@@ -14,7 +14,8 @@ vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 
 -- Ensure Packer is installed
-local ensure_packer = function()local fn = vim.fn
+local ensure_packer = function()
+  local fn = vim.fn
   local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
   if fn.empty(fn.glob(install_path)) > 0 then
     fn.system({
@@ -49,6 +50,9 @@ packer.startup(function(use)
   use "neovim/nvim-lspconfig"
   use "hrsh7th/nvim-cmp"
   use "hrsh7th/cmp-nvim-lsp"
+  use "hrsh7th/cmp-buffer"
+  use "hrsh7th/cmp-path"
+  use "hrsh7th/cmp-cmdline"
   use "L3MON4D3/LuaSnip"
   use "jose-elias-alvarez/null-ls.nvim"
   use "mfussenegger/nvim-dap"
@@ -56,45 +60,75 @@ packer.startup(function(use)
   use "nvim-tree/nvim-web-devicons"
   use "nvim-lua/plenary.nvim"
 
+  -- Additional requested plugins
+  use "stevearc/conform.nvim"
+  use "nvim-treesitter/nvim-treesitter-textobjects"
+  use "catppuccin/nvim"
+  use "akinsho/bufferline.nvim"
+  use "rebelot/heirline.nvim"
+  use "RRethy/vim-illuminate"
+  use "echasnovski/mini.indentscope"
+  use "nvim-telescope/telescope.nvim"
+  use "christoomey/vim-sort-motion"
+  use "michaeljsmith/vim-indent-object"
+  use "bkad/CamelCaseMotion"
+  use "wellle/targets.vim"
+
   if packer_bootstrap then
     require("packer").sync()
   end
 end)
 
 -- Treesitter Configuration
-require'nvim-treesitter.configs'.setup {
-    ensure_installed = {"python", "terraform", "bash", "yaml", "json", "lua", "rego"},
-    highlight = { enable = true },
-    indent = { enable = true }
-}
-
--- Mason setup for installing LSPs
-require("mason").setup()
-require("mason-lspconfig").setup({
-    ensure_installed = { "pyright", "terraformls", "bashls", "yamlls", "jsonls", "lua_ls" }
+require("nvim-treesitter.configs").setup({
+  ensure_installed = {
+    "vim", "lua", "html", "css", "javascript", "typescript", "tsx",
+    "c", "python", "markdown", "markdown_inline"
+  },
+  highlight = { enable = true },
+  indent = { enable = true },
+  textobjects = {
+    swap = {
+      enable = true,
+      swap_next = {
+        ["ma"] = "@parameter.inner",
+        ["mc"] = "@class.outer",
+        ["mi"] = "@conditional.inner",
+        ["md"] = "@function.outer",
+        ["ms"] = "@block.outer",
+      },
+      swap_previous = {
+        ["Ma"] = "@parameter.inner",
+        ["Mc"] = "@class.outer",
+        ["Mi"] = "@conditional.inner",
+        ["Md"] = "@function.outer",
+        ["Ms"] = "@block.outer",
+      },
+    },
+    select = {
+      enable = true,
+      lookahead = true,
+      keymaps = {
+        ["aa"] = "@parameter.outer",
+        ["ia"] = "@parameter.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
+        ["ad"] = "@function.outer",
+        ["id"] = "@function.inner",
+        ["as"] = "@block.outer",
+        ["is"] = "@block.inner",
+      },
+    },
+    move = {
+      enable = true,
+      set_jumps = true,
+      goto_next_start = { ["]a"] = "@parameter.outer", ["]c"] = "@class.outer", ["]d"] = "@function.outer", ["]s"] = "@block.outer" },
+      goto_previous_start = { ["[a"] = "@parameter.outer", ["[c"] = "@class.outer", ["[d"] = "@function.outer", ["[s"] = "@block.outer" },
+    },
+  },
 })
 
--- Debugging with nvim-dap
-local dap = require("dap")
-dap.adapters.python = {
-  type = "executable",
-  command = "python",
-  args = { "-m", "debugpy.adapter" },
-}
-dap.configurations.python = {
-  {
-    type = "python",
-    request = "launch",
-    name = "Launch file",
-    program = "${file}",
-    pythonPath = function()return "python"
-    end,
-  },
-}
-
--- Lualine Setup
-require('lualine').setup {
-  options = { theme = 'gruvbox' }
-}
-
+-- Mason setup for LSPs
+require("mason").setup()
+require("mason-lspconfig").setup({ ensure_installed = { "pyright", "lua_ls" } })
 

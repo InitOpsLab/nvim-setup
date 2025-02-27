@@ -1,170 +1,118 @@
-# Neovim Setup Script
+# Neovim Configuration
 
-This script automates the installation and configuration of **Neovim** on **macOS** and **Ubuntu**. It installs dependencies, sets up plugin managers, and configures Neovim with an enhanced **Lua-based setup**, including LSPs, auto-completion, Treesitter, Git integration, and UI improvements.
+This repository contains a Neovim configuration optimized for modern development, featuring:
+
+- **Language Server Protocol (LSP) support** via `mason.nvim`
+- **Autocomplete** with `nvim-cmp`
+- **Syntax highlighting** with `nvim-treesitter`
+- **Markdown & Mermaid preview**
+- **Support for various languages and tools**, including YAML, Python, Bash, Terraform, Terragrunt, Docker, AWS CLI, and Kubernetes
 
 ---
 
 ## 🚀 Features
 
-- **Auto-detects OS** (macOS or Ubuntu)
-- **Installs required dependencies** (Neovim, LSPs, utilities, and more)
-- **Copies Neovim configurations** (`vimrc` and `init.lua`)
-- **Installs and sets up Packer.nvim** for plugin management
-- **Enables Treesitter** for syntax highlighting and code navigation
-- **Configures LSP, auto-completion (nvim-cmp), and snippet support (LuaSnip)**
-- **Improves UI** with bufferline.nvim, heirline.nvim, and catppuccin/nvim
-- **Integrates Git functionality** with vim-fugitive and gitsigns.nvim
-- **Adds utilities** for indentation, text objects, formatting, and more
+- **Plugin management** with `packer.nvim`
+- **Tree-sitter** for syntax highlighting (supports YAML, Python, Bash, Terraform, Docker, and more)
+- **LSP support** via `mason.nvim` and `nvim-lspconfig`
+- **Code formatting** using `null-ls.nvim` and `conform.nvim`
+- **Keybindings for productivity** (e.g., Markdown preview and file formatting)
 
 ---
 
-## 📂 Directory Structure
+## 🛠 Installation
 
-```
-nvim-setup/
-│── configs/              # Configuration files for Neovim
-│   ├── vimrc             # Neovim legacy Vim configuration
-│   ├── init.lua          # Main Neovim Lua configuration
-│── setup_nvim.sh         # Installation script
-│── README.md             # Documentation (this file)
-```
+### 1️⃣ Install Neovim
+Ensure you have **Neovim (0.5+)** installed.
 
----
-
-## 💾 Installation
-
-### 1️⃣ Clone this repository
-
+### 2️⃣ Install Packer (Plugin Manager)
 ```sh
-git clone https://github.com/irussak/nvim-setup.git
-cd nvim-setup
+git clone --depth 1 https://github.com/wbthomason/packer.nvim \  
+  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
 ```
 
-### 2️⃣ Run the setup script
-
+### 3️⃣ Clone this configuration
 ```sh
-chmod +x setup_nvim.sh
-./setup_nvim.sh
+git clone <this-repo-url> ~/.config/nvim
+```
+
+### 4️⃣ Start Neovim and Install Plugins
+```sh
+nvim +PackerSync
 ```
 
 ---
 
-## 🛠️ What the Script Does
+## 📦 Plugins Included
 
-- Detects the OS (**macOS** or **Ubuntu**)
-- Installs required packages (Neovim, LSPs, Git, Node.js, Python, etc.)
-- Copies configuration files from `configs/` to `~/.vimrc` and `~/.config/nvim/init.lua`
-- Installs **Packer.nvim** (if not installed)
-- Installs Neovim plugins and configures them for optimal performance
-
----
-
-## 🔧 Post Installation Steps
-
-Once the setup is complete:
-
-1️⃣ Open Neovim:
-
-```sh
-nvim
-```
-
-2️⃣ Install plugins:
-
-```vim
-:PackerSync
-```
-
-3️⃣ Install Treesitter parsers inside Neovim:
-
-```vim
-:TSUpdate
-```
+| Plugin | Description |
+|--------|-------------|
+| `packer.nvim` | Plugin manager |
+| `nvim-treesitter` | Syntax highlighting |
+| `mason.nvim` | LSP manager |
+| `mason-lspconfig.nvim` | Easy LSP setup |
+| `nvim-lspconfig` | LSP configurations |
+| `null-ls.nvim` | Linting & formatting |
+| `nvim-cmp` | Auto-completion |
+| `LuaSnip` | Snippet support |
+| `nvim-lualine` | Status line |
+| `bufferline.nvim` | Buffer management |
+| `telescope.nvim` | Fuzzy finding |
+| `markdown-preview.nvim` | Live Markdown preview |
+| `vim-illuminate` | Highlight word under cursor |
+| `targets.vim` | Additional text objects |
 
 ---
 
-## 📦 Installed Dependencies
+## 🌍 Supported Languages & Tools
 
-### 🔹 macOS (Homebrew)
-
-```sh
-brew install neovim git python node ripgrep fzf fd jq terraform lua-language-server
-```
-
-### 🔹 Ubuntu (APT)
-
-```sh
-sudo apt install neovim git python3 nodejs npm ripgrep fzf fd-find jq terraform lua-language-server
-```
+- **YAML, Python, Bash, Terraform, Terragrunt, Docker, AWS CLI, Kubernetes**
+- **Tree-sitter** ensures syntax support
+- **LSP** provides linting & autocomplete
 
 ---
 
-## 📜 Included Plugins & Features
+## ⚙️ Keybindings
 
-### 🌿 Syntax & Code Navigation
-- **Treesitter** (nvim-treesitter) - Syntax highlighting and better code navigation
-- **Text Objects** (nvim-treesitter-textobjects) - Enhanced text object selection
-
-### ⚡ LSP & Completion
-- **LSP Support** (nvim-lspconfig, mason.nvim) - Language server integration
-- **Auto-completion** (nvim-cmp, cmp-nvim-lsp, cmp-buffer, cmp-path, cmp-cmdline)
-- **Snippets** (LuaSnip) - Expandable snippets
-
-### 📌 Git Integration
-- **Git support** (vim-fugitive, gitsigns.nvim) - View diffs, commits, and more
-
-### 🎨 UI Enhancements
-- **Status line** (heirline.nvim)
-- **Tabline / Buffers** (bufferline.nvim)
-- **Theme** (catppuccin/nvim) - Beautiful color scheme
-
-### 🔍 Fuzzy Finder
-- **Telescope.nvim** - Fast fuzzy finding for files, symbols, and more
-
-### 📝 Formatting & Indentation
-- **Conform.nvim** - Auto-format files on save
-- **Mini Indentscope** - Shows indentation levels visually
-
-### 📌 Extra Utilities
-- **vim-illuminate** - Highlights word under cursor
-- **vim-sort-motion** - Sorts selected text
-- **CamelCaseMotion** - Navigate within camel-case words
-- **targets.vim** - Additional text objects for editing
+| Keybinding | Action |
+|------------|--------|
+| `<leader>mp` | Start Markdown preview |
+| `<leader>f` | Format the current file |
+| `]a / [a` | Move between function parameters |
+| `]c / [c` | Move between classes |
+| `]d / [d` | Move between functions |
 
 ---
 
-## 📜 Troubleshooting
+## 🎨 UI Enhancements
 
-### 🔹 Permission Issues
-
-If you encounter permission errors, run:
-
-```sh
-chmod +x setup_nvim.sh
-sudo ./setup_nvim.sh
-```
-
-### 🔹 Neovim Not Found
-
-If Neovim doesn’t launch after installation, restart your terminal or run:
-
-```sh
-export PATH="$HOME/.local/bin:$PATH"
-```
+- **Color scheme:** `catppuccin.nvim`
+- **Icons & Status Bar:** `lualine.nvim` and `nvim-web-devicons`
+- **Indent Guides:** `mini.indentscope`
 
 ---
 
-## 📌 Contributing
+## 🛠 Troubleshooting
 
-Feel free to open an **issue** or **pull request** if you have improvements or bug fixes.
+Run the following command inside Neovim to check for errors:
+```sh
+:checkhealth
+```
+
+If plugins don’t load properly, try manually installing them:
+```sh
+nvim +PackerSync
+```
 
 ---
 
 ## 📜 License
 
-This script is open-source and available under the **MIT License**.
+MIT License.
 
 ---
 
-🎯 **Your Neovim is now fully configured and ready to use! 🚀**
+## 🤝 Contributing
+
+Feel free to submit **issues** or **PRs** to improve this configuration! 🚀
 

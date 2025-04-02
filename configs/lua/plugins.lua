@@ -80,13 +80,7 @@ return {
   "christoomey/vim-sort-motion",
 
   -- === Productivity Boosters ===
-  { "folke/which-key.nvim", opts = {} },
-  {
-    "Pocco81/auto-save.nvim",
-    config = function()
-      require("auto-save").setup()
-    end
-  },
+  { "folke/which-key.nvim", opts = {} }, 
   {
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },

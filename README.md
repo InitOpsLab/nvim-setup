@@ -1,4 +1,4 @@
-# \# ⚡ Neovim Configuration (DevSecOps Ready)
+)
 
 This repository contains a **modern, fast, and productive Neovim
 configuration** tailored for development and DevSecOps workflows.

@@ -1,118 +1,170 @@
-# Neovim Configuration
+# ⚡ Neovim Configuration (DevSecOps Ready)
 
-This repository contains a Neovim configuration optimized for modern development, featuring:
+A **modern, fast, and productive Neovim setup** tailored for development and DevSecOps workflows.
 
-- **Language Server Protocol (LSP) support** via `mason.nvim`
-- **Autocomplete** with `nvim-cmp`
-- **Syntax highlighting** with `nvim-treesitter`
-- **Markdown & Mermaid preview**
-- **Support for various languages and tools**, including YAML, Python, Bash, Terraform, Terragrunt, Docker, AWS CLI, and Kubernetes
+---
+
+## ✨ Highlights
+
+- 🌐 **LSP** support via `mason.nvim`
+- 🧠 Autocompletion with `nvim-cmp`
+- 🌈 Syntax highlighting powered by Tree-sitter
+- 📄 Markdown & Mermaid live preview
+- 🛠 Supports YAML, Python, Bash, Terraform, Docker, Kubernetes, SQL, JSON, HCL, and more
+- 🚀 Lazy-loaded plugins with `lazy.nvim` for speed and performance
 
 ---
 
 ## 🚀 Features
 
-- **Plugin management** with `packer.nvim`
-- **Tree-sitter** for syntax highlighting (supports YAML, Python, Bash, Terraform, Docker, and more)
-- **LSP support** via `mason.nvim` and `nvim-lspconfig`
-- **Code formatting** using `null-ls.nvim` and `conform.nvim`
-- **Keybindings for productivity** (e.g., Markdown preview and file formatting)
+- 📦 Plugin management using `lazy.nvim`
+- 🌍 LSP integration via `mason.nvim` and `nvim-lspconfig`
+- 🧱 Code formatting with `conform.nvim` and `null-ls.nvim`
+- 🔎 Fuzzy finding powered by `telescope.nvim`
+- 🗂 File explorer, terminal toggler, Harpoon bookmarks
+- 🎯 Productivity tools: TODOs, smart motions, UI polish
 
 ---
 
 ## 🛠 Installation
 
-### 1️⃣ Install Neovim
-Ensure you have **Neovim (0.5+)** installed.
+### 1️⃣ Prerequisites
 
-### 2️⃣ Install Packer (Plugin Manager)
-```sh
-git clone --depth 1 https://github.com/wbthomason/packer.nvim \  
-  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+#### macOS
+
+```bash
+brew install neovim git python node ripgrep fzf fd jq terraform lua-language-server
 ```
 
-### 3️⃣ Clone this configuration
-```sh
-git clone <this-repo-url> ~/.config/nvim
+#### Ubuntu
+
+```bash
+sudo apt update
+sudo apt install neovim git python3 python3-pip nodejs npm ripgrep fzf fd-find jq terraform lua-language-server
 ```
 
-### 4️⃣ Start Neovim and Install Plugins
-```sh
-nvim +PackerSync
+### 2️⃣ Clone This Configuration
+
+```bash
+git clone <this-repo-url> ~/nvim-setup
+cd ~/nvim-setup
+./setup.sh
+```
+
+This script:
+- Installs `lazy.nvim`
+- Sets up config in `~/.config/nvim/`
+- Ensures all required tools are installed
+
+### 3️⃣ Launch Neovim & Install Plugins
+
+```bash
+nvim
+```
+
+Then inside Neovim, run:
+
+```vim
+:Lazy sync
 ```
 
 ---
 
-## 📦 Plugins Included
+## 📦 Plugin Overview
 
-| Plugin | Description |
-|--------|-------------|
-| `packer.nvim` | Plugin manager |
+| Plugin | Purpose |
+|--------|---------|
+| `lazy.nvim` | Plugin manager |
 | `nvim-treesitter` | Syntax highlighting |
-| `mason.nvim` | LSP manager |
-| `mason-lspconfig.nvim` | Easy LSP setup |
-| `nvim-lspconfig` | LSP configurations |
-| `null-ls.nvim` | Linting & formatting |
-| `nvim-cmp` | Auto-completion |
-| `LuaSnip` | Snippet support |
-| `nvim-lualine` | Status line |
-| `bufferline.nvim` | Buffer management |
-| `telescope.nvim` | Fuzzy finding |
-| `markdown-preview.nvim` | Live Markdown preview |
-| `vim-illuminate` | Highlight word under cursor |
-| `targets.vim` | Additional text objects |
+| `mason.nvim` + `lspconfig` | LSP setup |
+| `nvim-cmp` + `LuaSnip` | Autocompletion & snippets |
+| `null-ls.nvim` + `conform.nvim` | Formatters & linters |
+| `nvim-tree.lua` | File explorer |
+| `toggleterm.nvim` | Integrated terminal |
+| `harpoon` | Quick file navigation/bookmarking |
+| `telescope.nvim` | Fuzzy finder |
+| `markdown-preview.nvim` | Markdown + Mermaid live preview |
+| `todo-comments.nvim` | Highlight TODO/FIXME/etc |
+| `indent-blankline.nvim` | Indentation guides |
+| `spectre.nvim` | Project-wide search & replace |
+| `noice.nvim`, `notify.nvim` | Enhanced UI for messages |
+| `which-key.nvim` | Keybinding hints |
+| `lualine.nvim`, `bufferline.nvim` | Statusline & buffer line |
 
 ---
 
-## 🌍 Supported Languages & Tools
+## 🧠 Supported Languages
 
-- **YAML, Python, Bash, Terraform, Terragrunt, Docker, AWS CLI, Kubernetes**
-- **Tree-sitter** ensures syntax support
-- **LSP** provides linting & autocomplete
+| Language | LSP | Formatter |
+|---------|-----|-----------|
+| Python | `pyright` | `black` |
+| JSON | `jsonls` | `prettier` |
+| YAML | `yamlls` | `prettier` |
+| Bash | `bashls` | `shfmt` |
+| Terraform/HCL | `terraformls` | `terraform_fmt` |
+| SQL | `sqlls` | `sqlfmt`, `sqlparse` |
+| Lua | `lua_ls` | Built-in |
+| Docker | `dockerls` | — |
+| Markdown | — | Preview only |
 
 ---
 
-## ⚙️ Keybindings
+## 🎯 Keybindings
 
 | Keybinding | Action |
 |------------|--------|
-| `<leader>mp` | Start Markdown preview |
-| `<leader>f` | Format the current file |
-| `]a / [a` | Move between function parameters |
-| `]c / [c` | Move between classes |
-| `]d / [d` | Move between functions |
+| `<leader>f` | Format current buffer |
+| `<leader>e` | Toggle file explorer |
+| `<leader>t` | Toggle terminal |
+| `<leader>mp` | Markdown preview |
+| `<leader>ff` | Find file (Telescope) |
+| `<leader>fg` | Live grep (Telescope) |
+| `<leader>td` | List TODOs |
+| `<leader>ha` | Add Harpoon bookmark |
+| `<leader>hh` | Show Harpoon UI |
+| `<leader>hn` | Harpoon next file |
+| `<leader>hp` | Harpoon previous file |
+| `<leader>S` | Open Spectre |
+| `<leader>nl` | Show message log (Noice) |
 
 ---
 
-## 🎨 UI Enhancements
+## 🎨 UI & Theme
 
-- **Color scheme:** `catppuccin.nvim`
-- **Icons & Status Bar:** `lualine.nvim` and `nvim-web-devicons`
-- **Indent Guides:** `mini.indentscope`
+- 🌈 **Colorscheme**: `catppuccin`
+- 📊 **Status Line**: `lualine`
+- 📂 **Icons**: `nvim-web-devicons`
+- ⌨️ **Key help**: `which-key`
+- 🔔 **Notifications**: `notify`, `noice`
 
 ---
 
-## 🛠 Troubleshooting
+## ✅ Troubleshooting
 
-Run the following command inside Neovim to check for errors:
-```sh
+Run diagnostics inside Neovim:
+
+```vim
 :checkhealth
 ```
 
-If plugins don’t load properly, try manually installing them:
-```sh
-nvim +PackerSync
+To reinstall or sync plugins:
+
+```vim
+:Lazy sync
 ```
 
 ---
 
 ## 📜 License
 
-MIT License.
+MIT License
 
 ---
 
 ## 🤝 Contributing
 
-Feel free to submit **issues** or **PRs** to improve this configuration! 🚀
+Contributions, bug reports, and PRs are welcome. Feel free to fork, tweak, and share improvements 🚀
 
+**Happy hacking! 💻⚡**  
+_Made with ❤️ using Neovim_
+ownloadable starter repo!

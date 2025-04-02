@@ -1,118 +1,116 @@
-# Neovim Configuration
+# \# ⚡ Neovim Configuration (DevSecOps Ready)
 
-This repository contains a Neovim configuration optimized for modern development, featuring:
+This repository contains a **modern, fast, and productive Neovim
+configuration** tailored for development and DevSecOps workflows.
 
-- **Language Server Protocol (LSP) support** via `mason.nvim`
-- **Autocomplete** with `nvim-cmp`
-- **Syntax highlighting** with `nvim-treesitter`
-- **Markdown & Mermaid preview**
-- **Support for various languages and tools**, including YAML, Python, Bash, Terraform, Terragrunt, Docker, AWS CLI, and Kubernetes
+### ✨ Highlights
 
----
+-   🌐 Language Server Protocol (LSP) support via `mason.nvim`
+-   🧠 Autocompletion with `nvim-cmp`
+-   🌈 Tree-sitter syntax highlighting
+-   📄 Markdown & Mermaid preview
+-   🛠 Supports YAML, Python, Bash, Terraform, Docker, Kubernetes, SQL,
+    JSON, HCL, and more
+-   🚀 Powered by `lazy.nvim` for lazy-loading and performance
+
+------------------------------------------------------------------------
 
 ## 🚀 Features
 
-- **Plugin management** with `packer.nvim`
-- **Tree-sitter** for syntax highlighting (supports YAML, Python, Bash, Terraform, Docker, and more)
-- **LSP support** via `mason.nvim` and `nvim-lspconfig`
-- **Code formatting** using `null-ls.nvim` and `conform.nvim`
-- **Keybindings for productivity** (e.g., Markdown preview and file formatting)
+-   📦 Plugin management with `lazy.nvim`
+-   🌍 LSP configuration via `mason.nvim` and `nvim-lspconfig`
+-   🧱 Code formatting with `conform.nvim` and `null-ls.nvim`
+-   🔎 Fuzzy finding with `telescope.nvim`
+-   🗂 File explorer, terminal toggler, Harpoon bookmarks
+-   🎯 Focused productivity with TODOs, smart motions, UI polish
 
----
+------------------------------------------------------------------------
 
 ## 🛠 Installation
 
-### 1️⃣ Install Neovim
-Ensure you have **Neovim (0.5+)** installed.
+### 1️⃣ Install Prerequisites
 
-### 2️⃣ Install Packer (Plugin Manager)
-```sh
-git clone --depth 1 https://github.com/wbthomason/packer.nvim \  
-  ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+#### On **macOS**:
+
+``` bash
+brew install neovim git python node ripgrep fzf fd jq terraform lua-language-server
 ```
 
-### 3️⃣ Clone this configuration
-```sh
-git clone <this-repo-url> ~/.config/nvim
-```
+On Ubuntu:
 
-### 4️⃣ Start Neovim and Install Plugins
-```sh
-nvim +PackerSync
-```
+    sudo apt update
+    sudo apt install neovim git python3 python3-pip nodejs npm ripgrep fzf fd-find jq terraform lua-language-server
 
----
+2️⃣ Clone This Configuration
 
-## 📦 Plugins Included
+    git clone <this-repo-url> ~/nvim-setup
+    cd ~/nvim-setup
+    ./setup.sh
 
-| Plugin | Description |
-|--------|-------------|
-| `packer.nvim` | Plugin manager |
-| `nvim-treesitter` | Syntax highlighting |
-| `mason.nvim` | LSP manager |
-| `mason-lspconfig.nvim` | Easy LSP setup |
-| `nvim-lspconfig` | LSP configurations |
-| `null-ls.nvim` | Linting & formatting |
-| `nvim-cmp` | Auto-completion |
-| `LuaSnip` | Snippet support |
-| `nvim-lualine` | Status line |
-| `bufferline.nvim` | Buffer management |
-| `telescope.nvim` | Fuzzy finding |
-| `markdown-preview.nvim` | Live Markdown preview |
-| `vim-illuminate` | Highlight word under cursor |
-| `targets.vim` | Additional text objects |
+This script:
 
----
+Installs lazy.nvim Sets up config in \~/.config/nvim/ Ensures all
+required tools are installed
 
-## 🌍 Supported Languages & Tools
+3️⃣ Open Neovim & Install Plugins
 
-- **YAML, Python, Bash, Terraform, Terragrunt, Docker, AWS CLI, Kubernetes**
-- **Tree-sitter** ensures syntax support
-- **LSP** provides linting & autocomplete
+    nvim
 
----
+Then run inside Neovim:
 
-## ⚙️ Keybindings
+    :Lazy sync
 
-| Keybinding | Action |
-|------------|--------|
-| `<leader>mp` | Start Markdown preview |
-| `<leader>f` | Format the current file |
-| `]a / [a` | Move between function parameters |
-| `]c / [c` | Move between classes |
-| `]d / [d` | Move between functions |
+📦 Plugin Overview Plugin Purpose lazy.nvim Plugin manager
+nvim-treesitter Syntax highlighting mason.nvim + lspconfig LSP
+installation & setup nvim-cmp + LuaSnip Autocomplete + snippets
+null-ls.nvim + conform.nvim Formatters & linters nvim-tree.lua File
+explorer toggleterm.nvim Terminal inside Neovim harpoon Quick file
+nav/bookmarking telescope.nvim File/search fuzzy finder
+markdown-preview.nvim Markdown + Mermaid live preview todo-comments.nvim
+Highlight TODO/FIXME/etc indent-blankline.nvim Indentation guides
+spectre.nvim Project-wide search & replace noice.nvim + notify.nvim
+Better UI for messages which-key.nvim Popup keybinding hints
+lualine.nvim, bufferline Status and buffer line
 
----
+🧠 Supported Languages Language LSP Formatter Python pyright black JSON
+jsonls prettier YAML yamlls prettier Bash bashls shfmt Terraform/HCL
+terraformls terraform_fmt SQL sqlls sqlfmt / sqlparse Lua lua_ls
+Built-in Docker dockerls --- Markdown --- Preview only
 
-## 🎨 UI Enhancements
+🎯 Keybindings Keybinding Action `<leader>`{=html}f Format current
+buffer `<leader>`{=html}e Toggle file explorer `<leader>`{=html}t Toggle
+terminal `<leader>`{=html}mp Markdown preview `<leader>`{=html}ff Find
+file (Telescope) `<leader>`{=html}fg Live grep (Telescope)
+`<leader>`{=html}td List TODO comments `<leader>`{=html}ha Add Harpoon
+bookmark `<leader>`{=html}hh Show Harpoon UI `<leader>`{=html}hn Harpoon
+next file `<leader>`{=html}hp Harpoon previous file `<leader>`{=html}S
+Open Spectre (search/replace) `<leader>`{=html}nl Open message log
+(Noice)
 
-- **Color scheme:** `catppuccin.nvim`
-- **Icons & Status Bar:** `lualine.nvim` and `nvim-web-devicons`
-- **Indent Guides:** `mini.indentscope`
+🎨 UI & Theme 🌈 Colorscheme: catppuccin
 
----
+📊 Status Line: lualine
 
-## 🛠 Troubleshooting
+📂 Icons: nvim-web-devicons
 
-Run the following command inside Neovim to check for errors:
-```sh
-:checkhealth
-```
+⌨️ Key help: which-key
 
-If plugins don’t load properly, try manually installing them:
-```sh
-nvim +PackerSync
-```
+🔔 Notifications: notify, noice
 
----
+✅ Troubleshooting Run diagnostics inside Neovim:
 
-## 📜 License
+    :checkhealth
 
-MIT License.
+To reinstall or fix plugin issues:
 
----
+    :Lazy sync
 
-## 🤝 Contributing
+📜 License MIT License
 
-Feel free to submit **issues** or **PRs** to improve this configuration! 🚀
+🤝 Contributing Contributions, bug reports, and pull requests are
+welcome! Feel free to fork, tweak, and share improvements 🚀
 
+Happy hacking! 💻⚡ --- Made with ❤️ using Neovim
+
+Let me know if you want this saved to a file or included as a
+downloadable starter repo!

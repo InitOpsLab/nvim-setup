@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -e
-set -u
-set -o pipefail
+set -euo pipefail
 
 GREEN="\033[1;32m"
 YELLOW="\033[1;33m"
@@ -57,23 +55,13 @@ install_ubuntu() {
     ln -sf "$(which fdfind)" ~/.local/bin/fd
 }
 
-install_vim_plug() {
-    if [[ -f ~/.vim/autoload/plug.vim ]]; then
-        log_info "Vim-Plug is already installed."
+install_lazy_nvim() {
+    local lazy_path="$HOME/.local/share/nvim/lazy/lazy.nvim"
+    if [[ -d "$lazy_path" ]]; then
+        log_info "lazy.nvim is already installed."
     else
-        log_info "Installing Vim-Plug..."
-        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || log_error "Failed to install Vim-Plug."
-    fi
-}
-
-install_packer() {
-    if [[ -d ~/.local/share/nvim/site/pack/packer/start/packer.nvim ]]; then
-        log_info "Packer.nvim is already installed."
-    else
-        log_info "Installing Packer.nvim..."
-        git clone --depth 1 https://github.com/wbthomason/packer.nvim \
-            ~/.local/share/nvim/site/pack/packer/start/packer.nvim || log_error "Failed to install Packer.nvim."
+        log_info "Installing lazy.nvim..."
+        git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$lazy_path" || log_error "Failed to install lazy.nvim."
     fi
 }
 
@@ -83,12 +71,13 @@ setup_nvim_config() {
     fi
 
     log_info "Setting up Neovim configuration..."
-    mkdir -p ~/.config/nvim
 
-    cp "$CONFIGS_DIR/vimrc" ~/.vimrc
+    mkdir -p ~/.config/nvim/lua
     cp "$CONFIGS_DIR/init.lua" ~/.config/nvim/init.lua
+    cp -r "$CONFIGS_DIR/lua" ~/.config/nvim/
 }
 
+# === Run Setup ===
 log_info "Starting Neovim setup..."
 detect_os
 
@@ -98,10 +87,9 @@ elif [[ "$OS" == "Ubuntu" ]]; then
     install_ubuntu
 fi
 
-install_vim_plug
-install_packer
+install_lazy_nvim
 setup_nvim_config
 
-log_info "Neovim setup complete."
-log_info "Open Neovim and run :PlugInstall and :PackerSync"
+log_info "Neovim setup complete ✅"
+log_info "Launch Neovim and run :Lazy sync"
 

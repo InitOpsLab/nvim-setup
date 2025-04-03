@@ -14,13 +14,15 @@ Includes:
 
 ## ✅ Requirements
 
+Includes YAML LSP support via [`yaml-language-server`](https://github.com/redhat-developer/yaml-language-server).
+
 | Tool       | macOS Command              | Ubuntu Command                  |
 |------------|----------------------------|----------------------------------|
 | Neovim     | `brew install neovim`      | `sudo apt install neovim`       |
 | Git        | `brew install git`         | `sudo apt install git`          |
 | Node.js    | `brew install node`        | `sudo apt install nodejs npm`   |
 | Python     | `brew install python`      | `sudo apt install python3 python3-pip` |
-| CLI Tools  | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server` |
+| CLI Tools  | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server`, `yaml-language-server` |
 | Markdown   | `npm install -g @mermaid-js/mermaid-cli` (for Mermaid diagrams) |
 
 ---
@@ -167,6 +169,12 @@ configs/
 | `:Gblame` | Blame current line |
 
 ### 📌 LSP & Code Actions
+
+| Language | Server |
+|----------|--------|
+| YAML     | `yaml-language-server` |
+| JSON     | `jsonls` (with schemastore) |
+| Terraform | `terraform-ls` or formatting-only |
 
 | Key / Command | Action |
 | --- | --- |

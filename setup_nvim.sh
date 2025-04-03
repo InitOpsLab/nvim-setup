@@ -34,7 +34,7 @@ install_mac() {
     brew update
 
     local packages=(neovim git python node ripgrep fzf fd jq terraform \
-        lua-language-server gh bat yq exa)
+        lua-language-server gh bat yq eza)
 
     for pkg in "${packages[@]}"; do
         if is_installed "$pkg"; then
@@ -66,7 +66,7 @@ install_ubuntu() {
     sudo apt update && sudo apt upgrade -y
 
     local packages=(neovim git python3 python3-pip nodejs npm ripgrep \
-        fzf fd-find jq terraform lua-language-server gh bat yq exa)
+        fzf fd-find jq terraform lua-language-server gh bat yq eza)
 
     for pkg in "${packages[@]}"; do
         if is_installed "$pkg"; then

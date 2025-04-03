@@ -1,156 +1,260 @@
-# ⚡ Neovim Configuration (DevSecOps Ready)
+# 🛠️ Terminal Dev Environment (Neovim + Lazy + Zsh)
 
-A **modern, fast, and productive Neovim setup** tailored for development and DevSecOps workflows.
+A fast, modular, and productive terminal environment optimized for developers and DevSecOps engineers.
 
----
+Includes:
 
-## ✨ Highlights
-
-- 🌐 **LSP** support via `mason.nvim`
-- 🧠 Autocompletion with `nvim-cmp`
-- 🌈 Syntax highlighting powered by Tree-sitter
-- 📄 Markdown & Mermaid live preview
-- 🛠 Supports YAML, Python, Bash, Terraform, Docker, Kubernetes, SQL, JSON, HCL, and more
-- 🚀 Lazy-loaded plugins with `lazy.nvim` for speed and performance
+- Neovim + Lazy.nvim plugin manager
+- Treesitter, LSP, Completion, Formatting
+- Zsh with aliases/functions
+- Markdown + Mermaid live preview
+- Tooling for JSON, YAML, HCL, Python, Docker, K8s
 
 ---
 
-## 🚀 Features
+## ✅ Requirements
 
-- 📦 Plugin management using `lazy.nvim`
-- 🌍 LSP integration via `mason.nvim` and `nvim-lspconfig`
-- 🧱 Code formatting with `conform.nvim` and `null-ls.nvim`
-- 🔎 Fuzzy finding powered by `telescope.nvim`
-- 🗂 File explorer, terminal toggler, Harpoon bookmarks
-- 🎯 Productivity tools: TODOs, smart motions, UI polish
+| Tool       | macOS Command              | Ubuntu Command                  |
+|------------|----------------------------|----------------------------------|
+| Neovim     | `brew install neovim`      | `sudo apt install neovim`       |
+| Git        | `brew install git`         | `sudo apt install git`          |
+| Node.js    | `brew install node`        | `sudo apt install nodejs npm`   |
+| Python     | `brew install python`      | `sudo apt install python3 python3-pip` |
+| CLI Tools  | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server` |
+| Markdown   | `npm install -g @mermaid-js/mermaid-cli` (for Mermaid diagrams) |
 
 ---
 
-## 🛠 Installation
-
-### 1️⃣ Prerequisites
-
-#### macOS
+## 🚀 Quick Start
 
 ```bash
-brew install neovim git python node ripgrep fzf fd jq terraform lua-language-server
-```
-
-#### Ubuntu
-
-```bash
-sudo apt update
-sudo apt install neovim git python3 python3-pip nodejs npm ripgrep fzf fd-find jq terraform lua-language-server
-```
-
-### 2️⃣ Clone This Configuration
-
-```bash
-git clone <this-repo-url> ~/nvim-setup
-cd ~/nvim-setup
+git clone https://github.com/your-user/neovim-lazy-devsetup.git
+cd neovim-lazy-devsetup
+chmod +x setup.sh
 ./setup.sh
 ```
 
-This script:
-- Installs `lazy.nvim`
-- Sets up config in `~/.config/nvim/`
-- Ensures all required tools are installed
+---
 
-### 3️⃣ Launch Neovim & Install Plugins
+## 📁 Folder Structure
+
+```
+configs/
+├── init.lua
+└── lua/
+    ├── options.lua
+    ├── config/
+    │   ├── harpoon.lua
+    │   ├── toggleterm.lua
+    │   ├── schemastore.lua
+    │   └── markdown.lua
+    └── lazy-plugins/
+        ├── init.lua
+        └── plugins/
+            ├── lsp.lua
+            ├── ui.lua
+            ├── tools.lua
+            ├── dev.lua
+```
+
+---
+
+## 🔌 Plugin Features
+
+- LSP support for Python, YAML, JSON, Bash, Terraform, etc.
+- Treesitter-powered syntax + folding
+- Completion via `nvim-cmp`, snippets via `LuaSnip`
+- Markdown live preview + Mermaid diagram rendering
+- File tree, terminal toggling, fuzzy finder
+- Git integration with status, blame, and diff
+- Harpoon for fast file navigation
+- Autopairs, commenting, and code actions
+
+---
+
+## 🧠 Neovim Cheat Sheet (Modern DevSecOps Setup)
+
+### 📌 Basic Navigation
+
+| Key | Action |
+| --- | --- |
+| `h/j/k/l` | Move left/down/up/right |
+| `gg` / `G` | Go to start / end of file |
+| `0` / `^` / `$` | Start / first non-blank / end of line |
+| `H` / `M` / `L` | Top / middle / bottom of screen |
+| `Ctrl+u / Ctrl+d` | Half-page up/down |
+| `Ctrl+b / Ctrl+f` | Full-page up/down |
+| `{` / `}` | Prev / next paragraph |
+| `w/W`, `e/E`, `b/B`, `ge/gE` | Word motions |
+
+### 📌 Buffer & Tab Management
+
+| Command | Action |
+| --- | --- |
+| `:e file` | Open file |
+| `:bn / :bp` | Next / previous buffer |
+| `:bd` | Close buffer |
+| `:ls` | List open buffers |
+| `:tabnew file` | New tab |
+| `gt / gT` | Next / previous tab |
+| `:tabclose / :tabonly` | Close current / other tabs |
+
+### 📌 Window Splits
+
+| Command | Action |
+| --- | --- |
+| `:split / :vsplit` | Horizontal / vertical split |
+| `Ctrl+w h/j/k/l` | Move between splits |
+| `Ctrl+w =` | Equalize splits |
+| `Ctrl+w _` | Maximize current split |
+| `Ctrl+w q` | Close split |
+
+### 📌 File Explorer (`nvim-tree`)
+
+| Command | Action |
+| --- | --- |
+| `:NvimTreeToggle` | Toggle file explorer |
+| `:NvimTreeFindFile` | Reveal file in tree |
+| `<leader>e` | Toggle via shortcut |
+
+### 📌 Markdown & Mermaid Preview
+
+| Command | Action |
+| --- | --- |
+| `:MarkdownPreview` | Start preview |
+| `:MarkdownPreviewToggle` | Toggle preview |
+| `<leader>mp` | Shortcut to start preview |
+| `mmdc -i input.mmd -o output.png` | Generate diagram via CLI |
+
+### 📌 Editing & Text
+
+| Command | Action |
+| --- | --- |
+| `i / I` | Insert (cursor / start of line) |
+| `a / A` | Append (after / end of line) |
+| `o / O` | Open new line (below / above) |
+| `x / X` | Delete character (under / before) |
+| `dd / yy` | Delete / yank line |
+| `p / P` | Paste after / before cursor |
+| `u / Ctrl+r` | Undo / redo |
+| `.` | Repeat last action |
+
+### 📌 Search & Replace
+
+| Command | Action |
+| --- | --- |
+| `/pattern` | Search pattern |
+| `n / N` | Next / previous match |
+| `:%s/old/new/g` | Replace all |
+| `:%s/old/new/gc` | Confirm each replacement |
+| `* / #` | Search word under cursor (fwd/bwd) |
+
+### 📌 Save & Quit
+
+| Command | Action |
+| --- | --- |
+| `:w` | Save |
+| `:q / :q!` | Quit / force quit |
+| `:wq / ZZ` | Save and quit |
+
+### 📌 Git Integration
+
+| Command | Action |
+| --- | --- |
+| `:G` | Git status |
+| `:Gcommit` / `:Gpush` / `:Gpull` | Commit / push / pull |
+| `:Gdiffsplit` | View diff |
+| `:Gblame` | Blame current line |
+
+### 📌 LSP & Code Actions
+
+| Key / Command | Action |
+| --- | --- |
+| `:LspInfo` | View LSP status |
+| `K` | Hover docs |
+| `gd / gi / gr` | Go to definition / implementation / references |
+| `<leader>rn` | Rename symbol |
+| `<leader>ca` | Code actions |
+
+### 📌 Completion & Snippets
+
+| Plugin | Functionality |
+| --- | --- |
+| `nvim-cmp` | Autocompletion |
+| `LuaSnip` | Snippet engine |
+| `<Tab>` / `<S-Tab>` | Navigate suggestions |
+| `Copilot` (if enabled) | AI suggestions |
+
+### 📌 Formatting (`conform.nvim`)
+
+| Key | Action |
+| --- | --- |
+| `<leader>f` | Format current file |
+| Terraform | `terraform_fmt` |
+| Python | `black` |
+| JSON / YAML | `prettier` |
+| Bash | `shfmt` |
+
+### 📌 Telescope
+
+| Command | Action |
+| --- | --- |
+| `<leader>ff` | Find files |
+| `<leader>fg` | Live grep |
+| `<leader>fb` | Buffers |
+| `<leader>fh` | Help tags |
+
+### 📌 Terminal Management (`toggleterm`)
+
+| Key | Action |
+| --- | --- |
+| `<leader>t` | Toggle terminal |
+| `Ctrl+\\` then `Ctrl+n` | Exit terminal mode |
+| `:ToggleTerm` | Manually toggle terminal |
+
+### 📌 Commenting (`vim-commentary`)
+
+| Command | Action |
+| --- | --- |
+| `gcc` | Toggle line comment |
+| `gc` (Visual) | Toggle selection comment |
+
+### 📌 Code Folding
+
+| Command | Action |
+| --- | --- |
+| `za / zA` | Toggle fold |
+| `zo / zO` | Open fold |
+| `zc / zC` | Close fold |
+| `zr / zm` | Open / close all folds |
+
+### 📌 UI & Visuals
+
+| Plugin | Feature |
+| --- | --- |
+| `catppuccin` | Theme |
+| `lualine` / `heirline` | Status line |
+| `bufferline.nvim` | Tabline |
+| `which-key` | Keybinding helper |
+| `vim-illuminate` | Word highlighting |
+| `todo-comments` | Highlight TODO / FIXME |
+| `spectre.nvim` | Search and replace project-wide |
+
+### 📌 Utilities
+
+| Command | Action |
+| --- | --- |
+| `:checkhealth` | Validate setup |
+| `:Lazy sync` | Sync plugins |
+| `:Telescope keymaps` | Browse key mappings |
+| `:Noice` | View message history |
+
+---
+
+## 🧼 Cleanup
 
 ```bash
-nvim
-```
-
-Then inside Neovim, run:
-
-```vim
-:Lazy sync
-```
-
----
-
-## 📦 Plugin Overview
-
-| Plugin | Purpose |
-|--------|---------|
-| `lazy.nvim` | Plugin manager |
-| `nvim-treesitter` | Syntax highlighting |
-| `mason.nvim` + `lspconfig` | LSP setup |
-| `nvim-cmp` + `LuaSnip` | Autocompletion & snippets |
-| `null-ls.nvim` + `conform.nvim` | Formatters & linters |
-| `nvim-tree.lua` | File explorer |
-| `toggleterm.nvim` | Integrated terminal |
-| `harpoon` | Quick file navigation/bookmarking |
-| `telescope.nvim` | Fuzzy finder |
-| `markdown-preview.nvim` | Markdown + Mermaid live preview |
-| `todo-comments.nvim` | Highlight TODO/FIXME/etc |
-| `indent-blankline.nvim` | Indentation guides |
-| `spectre.nvim` | Project-wide search & replace |
-| `noice.nvim`, `notify.nvim` | Enhanced UI for messages |
-| `which-key.nvim` | Keybinding hints |
-| `lualine.nvim`, `bufferline.nvim` | Statusline & buffer line |
-
----
-
-## 🧠 Supported Languages
-
-| Language | LSP | Formatter |
-|---------|-----|-----------|
-| Python | `pyright` | `black` |
-| JSON | `jsonls` | `prettier` |
-| YAML | `yamlls` | `prettier` |
-| Bash | `bashls` | `shfmt` |
-| Terraform/HCL | `terraformls` | `terraform_fmt` |
-| SQL | `sqlls` | `sqlfmt`, `sqlparse` |
-| Lua | `lua_ls` | Built-in |
-| Docker | `dockerls` | — |
-| Markdown | — | Preview only |
-
----
-
-## 🎯 Keybindings
-
-| Keybinding | Action |
-|------------|--------|
-| `<leader>f` | Format current buffer |
-| `<leader>e` | Toggle file explorer |
-| `<leader>t` | Toggle terminal |
-| `<leader>mp` | Markdown preview |
-| `<leader>ff` | Find file (Telescope) |
-| `<leader>fg` | Live grep (Telescope) |
-| `<leader>td` | List TODOs |
-| `<leader>ha` | Add Harpoon bookmark |
-| `<leader>hh` | Show Harpoon UI |
-| `<leader>hn` | Harpoon next file |
-| `<leader>hp` | Harpoon previous file |
-| `<leader>S` | Open Spectre |
-| `<leader>nl` | Show message log (Noice) |
-
----
-
-## 🎨 UI & Theme
-
-- 🌈 **Colorscheme**: `catppuccin`
-- 📊 **Status Line**: `lualine`
-- 📂 **Icons**: `nvim-web-devicons`
-- ⌨️ **Key help**: `which-key`
-- 🔔 **Notifications**: `notify`, `noice`
-
----
-
-## ✅ Troubleshooting
-
-Run diagnostics inside Neovim:
-
-```vim
-:checkhealth
-```
-
-To reinstall or sync plugins:
-
-```vim
-:Lazy sync
+rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
 ```
 
 ---
@@ -159,12 +263,3 @@ To reinstall or sync plugins:
 
 MIT License
 
----
-
-## 🤝 Contributing
-
-Contributions, bug reports, and PRs are welcome. Feel free to fork, tweak, and share improvements 🚀
-
-**Happy hacking! 💻⚡**  
-_Made with ❤️ using Neovim_
-ownloadable starter repo!

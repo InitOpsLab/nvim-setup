@@ -32,27 +32,51 @@ is_installed() {
 install_mac() {
     log_info "Installing dependencies for macOS..."
     brew update
-    for pkg in neovim git python node ripgrep fzf fd jq terraform lua-language-server; do
+
+    local packages=(neovim git python node ripgrep fzf fd jq terraform \
+        lua-language-server gh bat yq exa)
+
+    for pkg in "${packages[@]}"; do
         if is_installed "$pkg"; then
             log_info "$pkg is already installed."
         else
             brew install "$pkg"
         fi
     done
+
+    # Install Mermaid CLI for Markdown preview
+    if ! is_installed mmdc; then
+        log_info "Installing Mermaid CLI (mmdc)..."
+        npm install -g @mermaid-js/mermaid-cli
+    else
+        log_info "Mermaid CLI already installed."
+    fi
 }
 
 install_ubuntu() {
     log_info "Installing dependencies for Ubuntu..."
     sudo apt update && sudo apt upgrade -y
-    for pkg in neovim git python3 python3-pip nodejs npm ripgrep fzf fd-find jq terraform lua-language-server; do
+
+    local packages=(neovim git python3 python3-pip nodejs npm ripgrep \
+        fzf fd-find jq terraform lua-language-server gh bat yq exa)
+
+    for pkg in "${packages[@]}"; do
         if is_installed "$pkg"; then
             log_info "$pkg is already installed."
         else
             sudo apt install -y "$pkg"
         fi
     done
+
     mkdir -p ~/.local/bin
     ln -sf "$(which fdfind)" ~/.local/bin/fd
+
+    if ! is_installed mmdc; then
+        log_info "Installing Mermaid CLI (mmdc)..."
+        npm install -g @mermaid-js/mermaid-cli
+    else
+        log_info "Mermaid CLI already installed."
+    fi
 }
 
 install_lazy_nvim() {
@@ -71,8 +95,7 @@ setup_nvim_config() {
     fi
 
     log_info "Setting up Neovim configuration..."
-
-    mkdir -p ~/.config/nvim/lua
+    mkdir -p ~/.config/nvim
     cp "$CONFIGS_DIR/init.lua" ~/.config/nvim/init.lua
     cp -r "$CONFIGS_DIR/lua" ~/.config/nvim/
 }

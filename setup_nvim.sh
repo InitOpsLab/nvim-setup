@@ -43,6 +43,14 @@ install_mac() {
             brew install "$pkg"
         fi
     done
+
+    # Install Mermaid CLI for Markdown preview
+    if ! is_installed mmdc; then
+        log_info "Installing Mermaid CLI (mmdc)..."
+        npm install -g @mermaid-js/mermaid-cli
+    else
+        log_info "Mermaid CLI already installed."
+    fi
 }
 
 install_ubuntu() {
@@ -62,6 +70,13 @@ install_ubuntu() {
 
     mkdir -p ~/.local/bin
     ln -sf "$(which fdfind)" ~/.local/bin/fd
+
+    if ! is_installed mmdc; then
+        log_info "Installing Mermaid CLI (mmdc)..."
+        npm install -g @mermaid-js/mermaid-cli
+    else
+        log_info "Mermaid CLI already installed."
+    fi
 }
 
 install_lazy_nvim() {

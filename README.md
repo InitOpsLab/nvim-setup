@@ -22,7 +22,7 @@ Includes YAML LSP support via [`yaml-language-server`](https://github.com/redhat
 | Git        | `brew install git`         | `sudo apt install git`          |
 | Node.js    | `brew install node`        | `sudo apt install nodejs npm`   |
 | Python     | `brew install python`      | `sudo apt install python3 python3-pip` |
-| CLI Tools  | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server`, `yaml-language-server` |
+| CLI Tools  | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `eza`, `terraform`, `lua-language-server`, `yaml-language-server` |
 | Markdown   | `npm install -g @mermaid-js/mermaid-cli` (for Mermaid diagrams) |
 
 ---

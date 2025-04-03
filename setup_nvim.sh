@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-GREEN="\033[1;32m"
-YELLOW="\033[1;33m"
-RED="\033[1;31m"
-RESET="\033[0m"
+GREEN="\\033[1;32m"
+YELLOW="\\033[1;33m"
+RED="\\033[1;31m"
+RESET="\\033[0m"
 
 CONFIGS_DIR="$(pwd)/configs"
 
@@ -51,6 +51,14 @@ install_mac() {
     else
         log_info "Mermaid CLI already installed."
     fi
+
+    # Install YAML language server
+    if ! is_installed yaml-language-server; then
+        log_info "Installing yaml-language-server..."
+        npm install -g yaml-language-server
+    else
+        log_info "yaml-language-server already installed."
+    fi
 }
 
 install_ubuntu() {
@@ -71,11 +79,20 @@ install_ubuntu() {
     mkdir -p ~/.local/bin
     ln -sf "$(which fdfind)" ~/.local/bin/fd
 
+    # Install Mermaid CLI for Markdown preview
     if ! is_installed mmdc; then
         log_info "Installing Mermaid CLI (mmdc)..."
         npm install -g @mermaid-js/mermaid-cli
     else
         log_info "Mermaid CLI already installed."
+    fi
+
+    # Install YAML language server
+    if ! is_installed yaml-language-server; then
+        log_info "Installing yaml-language-server..."
+        npm install -g yaml-language-server
+    else
+        log_info "yaml-language-server already installed."
     fi
 }
 
@@ -115,4 +132,3 @@ setup_nvim_config
 
 log_info "Neovim setup complete ✅"
 log_info "Launch Neovim and run :Lazy sync"
-

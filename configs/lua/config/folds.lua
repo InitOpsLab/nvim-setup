@@ -16,11 +16,29 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Fallback: use indent-based folding for helm/html/tmpl
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "gotmpl", "helm", "html" },
+  callback = function()
+    vim.opt_local.foldmethod = "indent"
+    vim.opt_local.foldexpr = ""
+  end,
+})
+
 -- Auto-close all folds when opening a file
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function()
     -- Use silent to avoid flicker
     vim.cmd("silent! normal! zM")
+  end,
+})
+
+-- YAML: Use indent-based folding for better structure
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "yaml",
+  callback = function()
+    vim.opt_local.foldmethod = "indent"
+    vim.opt_local.foldexpr = ""
   end,
 })
 

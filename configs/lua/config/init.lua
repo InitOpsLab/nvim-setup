@@ -7,4 +7,5 @@ require("config.schemastore")
 require("config.markdown")
 require("config.treesitter")
 require("config.folds")
+require("config.filetypes")
 

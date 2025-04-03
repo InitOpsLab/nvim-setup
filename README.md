@@ -1,170 +1,129 @@
-# ⚡ Neovim Configuration (DevSecOps Ready)
+# Terminal Dev Environment Setup (Neovim + Lazy + Zsh)
 
-A **modern, fast, and productive Neovim setup** tailored for development and DevSecOps workflows.
+A modular, fast, and productive development environment powered by:
 
----
-
-## ✨ Highlights
-
-- 🌐 **LSP** support via `mason.nvim`
-- 🧠 Autocompletion with `nvim-cmp`
-- 🌈 Syntax highlighting powered by Tree-sitter
-- 📄 Markdown & Mermaid live preview
-- 🛠 Supports YAML, Python, Bash, Terraform, Docker, Kubernetes, SQL, JSON, HCL, and more
-- 🚀 Lazy-loaded plugins with `lazy.nvim` for speed and performance
+- Neovim + Lazy.nvim
+- Zsh (with zinit or Oh-My-Zsh)
+- LSP, Treesitter, Autocompletion
+- DevSecOps tooling: YAML, HCL, JSON, Docker, K8s, Python, etc.
 
 ---
 
-## 🚀 Features
+## Requirements
 
-- 📦 Plugin management using `lazy.nvim`
-- 🌍 LSP integration via `mason.nvim` and `nvim-lspconfig`
-- 🧱 Code formatting with `conform.nvim` and `null-ls.nvim`
-- 🔎 Fuzzy finding powered by `telescope.nvim`
-- 🗂 File explorer, terminal toggler, Harpoon bookmarks
-- 🎯 Productivity tools: TODOs, smart motions, UI polish
+| Tool       | macOS                     | Ubuntu                        |
+|------------|---------------------------|-------------------------------|
+| Neovim     | `brew install neovim`     | `sudo apt install neovim`     |
+| Git        | `brew install git`        | `sudo apt install git`        |
+| Node.js    | `brew install node`       | `sudo apt install nodejs npm` |
+| Python     | `brew install python`     | `sudo apt install python3 python3-pip` |
+| Extras     | `jq`, `yq`, `ripgrep`, `fzf`, `fd`, `terraform`, `lua-language-server`, `bat`, `exa`, `gh`
 
 ---
 
-## 🛠 Installation
-
-### 1️⃣ Prerequisites
-
-#### macOS
+## Quick Start
 
 ```bash
-brew install neovim git python node ripgrep fzf fd jq terraform lua-language-server
-```
-
-#### Ubuntu
-
-```bash
-sudo apt update
-sudo apt install neovim git python3 python3-pip nodejs npm ripgrep fzf fd-find jq terraform lua-language-server
-```
-
-### 2️⃣ Clone This Configuration
-
-```bash
-git clone <this-repo-url> ~/nvim-setup
-cd ~/nvim-setup
+git clone https://github.com/your-user/neovim-lazy-devsetup.git
+cd neovim-lazy-devsetup
+chmod +x setup.sh
 ./setup.sh
 ```
 
-This script:
-- Installs `lazy.nvim`
-- Sets up config in `~/.config/nvim/`
-- Ensures all required tools are installed
+This will:
+- Detect your OS
+- Install missing dependencies
+- Clone and configure Lazy.nvim
+- Copy over your custom Neovim configuration
 
-### 3️⃣ Launch Neovim & Install Plugins
+---
+
+## Project Structure
+
+```
+configs/
+├── init.lua              # Main Neovim entry
+└── lua/
+    ├── options.lua       # Editor settings
+    ├── config/           # Plugin configurations
+    │   ├── harpoon.lua
+    │   ├── toggleterm.lua
+    │   └── schemastore.lua
+    └── lazy-plugins/     # Lazy plugin definitions
+        ├── init.lua
+        └── plugins/
+            ├── lsp.lua
+            ├── ui.lua
+            ├── tools.lua
+            ├── dev.lua
+```
+
+---
+
+## Lazy Plugin Manager
+
+To manage plugins inside Neovim:
+
+- `:Lazy` – open plugin UI
+- `:Lazy sync` – sync changes
+- `:Lazy clean` – remove unused
+- `:Lazy profile` – view startup time
+
+---
+
+## Features
+
+- LSP support via mason.nvim
+- Treesitter-powered syntax highlighting & folding
+- Formatter with conform.nvim
+- File explorer: nvim-tree
+- Harpoon file nav
+- Toggle terminal with toggleterm
+- Schema autocomplete for JSON/YAML
+- Fuzzy file search: telescope
+- Git integration: gitsigns.nvim
+
+---
+
+## Key Mappings
+
+| Keybinding    | Action                  |
+|---------------|-------------------------|
+| `<leader>a`   | Add file to Harpoon     |
+| `<C-e>`       | Toggle Harpoon menu     |
+| `<leader>1`   | Jump to Harpoon file 1  |
+| `<C-\>`       | Toggle terminal         |
+
+---
+
+## Health Check
 
 ```bash
-nvim
+nvim --version | grep clipboard
 ```
 
-Then inside Neovim, run:
+Output should show: `+clipboard`
 
-```vim
-:Lazy sync
-```
+Run `:checkhealth` inside Neovim to verify LSP, Treesitter, etc.
 
 ---
 
-## 📦 Plugin Overview
+## Uninstall
 
-| Plugin | Purpose |
-|--------|---------|
-| `lazy.nvim` | Plugin manager |
-| `nvim-treesitter` | Syntax highlighting |
-| `mason.nvim` + `lspconfig` | LSP setup |
-| `nvim-cmp` + `LuaSnip` | Autocompletion & snippets |
-| `null-ls.nvim` + `conform.nvim` | Formatters & linters |
-| `nvim-tree.lua` | File explorer |
-| `toggleterm.nvim` | Integrated terminal |
-| `harpoon` | Quick file navigation/bookmarking |
-| `telescope.nvim` | Fuzzy finder |
-| `markdown-preview.nvim` | Markdown + Mermaid live preview |
-| `todo-comments.nvim` | Highlight TODO/FIXME/etc |
-| `indent-blankline.nvim` | Indentation guides |
-| `spectre.nvim` | Project-wide search & replace |
-| `noice.nvim`, `notify.nvim` | Enhanced UI for messages |
-| `which-key.nvim` | Keybinding hints |
-| `lualine.nvim`, `bufferline.nvim` | Statusline & buffer line |
-
----
-
-## 🧠 Supported Languages
-
-| Language | LSP | Formatter |
-|---------|-----|-----------|
-| Python | `pyright` | `black` |
-| JSON | `jsonls` | `prettier` |
-| YAML | `yamlls` | `prettier` |
-| Bash | `bashls` | `shfmt` |
-| Terraform/HCL | `terraformls` | `terraform_fmt` |
-| SQL | `sqlls` | `sqlfmt`, `sqlparse` |
-| Lua | `lua_ls` | Built-in |
-| Docker | `dockerls` | — |
-| Markdown | — | Preview only |
-
----
-
-## 🎯 Keybindings
-
-| Keybinding | Action |
-|------------|--------|
-| `<leader>f` | Format current buffer |
-| `<leader>e` | Toggle file explorer |
-| `<leader>t` | Toggle terminal |
-| `<leader>mp` | Markdown preview |
-| `<leader>ff` | Find file (Telescope) |
-| `<leader>fg` | Live grep (Telescope) |
-| `<leader>td` | List TODOs |
-| `<leader>ha` | Add Harpoon bookmark |
-| `<leader>hh` | Show Harpoon UI |
-| `<leader>hn` | Harpoon next file |
-| `<leader>hp` | Harpoon previous file |
-| `<leader>S` | Open Spectre |
-| `<leader>nl` | Show message log (Noice) |
-
----
-
-## 🎨 UI & Theme
-
-- 🌈 **Colorscheme**: `catppuccin`
-- 📊 **Status Line**: `lualine`
-- 📂 **Icons**: `nvim-web-devicons`
-- ⌨️ **Key help**: `which-key`
-- 🔔 **Notifications**: `notify`, `noice`
-
----
-
-## ✅ Troubleshooting
-
-Run diagnostics inside Neovim:
-
-```vim
-:checkhealth
-```
-
-To reinstall or sync plugins:
-
-```vim
-:Lazy sync
+```bash
+rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
 ```
 
 ---
 
-## 📜 License
+## Terminal Recommendation
+
+- iTerm2 with "Natural Text Editing" preset
+- Kitty or Alacritty with Nerd Fonts installed
+
+---
+
+## License
 
 MIT License
 
----
-
-## 🤝 Contributing
-
-Contributions, bug reports, and PRs are welcome. Feel free to fork, tweak, and share improvements 🚀
-
-**Happy hacking! 💻⚡**  
-_Made with ❤️ using Neovim_
-ownloadable starter repo!

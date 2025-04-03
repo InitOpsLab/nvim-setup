@@ -3,6 +3,11 @@ return {
   { "hrsh7th/cmp-nvim-lsp" },
   { "L3MON4D3/LuaSnip" },
   { "stevearc/conform.nvim" },
-  { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+  { "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+    require("config.treesitter")
+    end,
+  },
 }
 

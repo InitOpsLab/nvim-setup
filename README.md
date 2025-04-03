@@ -1,27 +1,31 @@
-# Terminal Dev Environment Setup (Neovim + Lazy + Zsh)
+# 🛠️ Terminal Dev Environment (Neovim + Lazy + Zsh)
 
-A modular, fast, and productive development environment powered by:
+A fast, modular, and productive terminal environment optimized for developers and DevSecOps engineers.
 
-- Neovim + Lazy.nvim
-- Zsh (with zinit or Oh-My-Zsh)
-- LSP, Treesitter, Autocompletion
-- DevSecOps tooling: YAML, HCL, JSON, Docker, K8s, Python, etc.
+Includes:
 
----
-
-## Requirements
-
-| Tool       | macOS                     | Ubuntu                        |
-|------------|---------------------------|-------------------------------|
-| Neovim     | `brew install neovim`     | `sudo apt install neovim`     |
-| Git        | `brew install git`        | `sudo apt install git`        |
-| Node.js    | `brew install node`       | `sudo apt install nodejs npm` |
-| Python     | `brew install python`     | `sudo apt install python3 python3-pip` |
-| Extras     | `jq`, `yq`, `ripgrep`, `fzf`, `fd`, `terraform`, `lua-language-server`, `bat`, `exa`, `gh`
+- Neovim + Lazy.nvim plugin manager
+- Treesitter, LSP, Completion, Formatting
+- Zsh with aliases/functions
+- Markdown + Mermaid live preview
+- Tooling for JSON, YAML, HCL, Python, Docker, K8s
 
 ---
 
-## Quick Start
+## ✅ Requirements
+
+| Tool       | macOS Command              | Ubuntu Command                  |
+|------------|----------------------------|----------------------------------|
+| Neovim     | `brew install neovim`      | `sudo apt install neovim`       |
+| Git        | `brew install git`         | `sudo apt install git`          |
+| Node.js    | `brew install node`        | `sudo apt install nodejs npm`   |
+| Python     | `brew install python`      | `sudo apt install python3 python3-pip` |
+| CLI Tools  | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server` |
+| Markdown   | `npm install -g @mermaid-js/mermaid-cli` (for Mermaid diagrams) |
+
+---
+
+## 🚀 Quick Start
 
 ```bash
 git clone https://github.com/your-user/neovim-lazy-devsetup.git
@@ -30,26 +34,21 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-This will:
-- Detect your OS
-- Install missing dependencies
-- Clone and configure Lazy.nvim
-- Copy over your custom Neovim configuration
-
 ---
 
-## Project Structure
+## 📁 Folder Structure
 
 ```
 configs/
-├── init.lua              # Main Neovim entry
+├── init.lua
 └── lua/
-    ├── options.lua       # Editor settings
-    ├── config/           # Plugin configurations
+    ├── options.lua
+    ├── config/
     │   ├── harpoon.lua
     │   ├── toggleterm.lua
-    │   └── schemastore.lua
-    └── lazy-plugins/     # Lazy plugin definitions
+    │   ├── schemastore.lua
+    │   └── markdown.lua
+    └── lazy-plugins/
         ├── init.lua
         └── plugins/
             ├── lsp.lua
@@ -60,55 +59,68 @@ configs/
 
 ---
 
-## Lazy Plugin Manager
+## 🔌 Key Features
 
-To manage plugins inside Neovim:
-
-- `:Lazy` – open plugin UI
-- `:Lazy sync` – sync changes
-- `:Lazy clean` – remove unused
-- `:Lazy profile` – view startup time
-
----
-
-## Features
-
-- LSP support via mason.nvim
-- Treesitter-powered syntax highlighting & folding
-- Formatter with conform.nvim
-- File explorer: nvim-tree
-- Harpoon file nav
-- Toggle terminal with toggleterm
-- Schema autocomplete for JSON/YAML
-- Fuzzy file search: telescope
-- Git integration: gitsigns.nvim
+- LSP support for Python, YAML, JSON, Bash, Terraform, etc.
+- Autocompletion and formatting
+- File tree (nvim-tree), terminal (toggleterm), fuzzy finder (telescope)
+- Git integration via gitsigns
+- Harpoon quick navigation
+- Markdown live preview with Mermaid diagram support
+- Comment toggling and autopairing
 
 ---
 
-## Key Mappings
+## 🧠 Lazy.nvim Plugin Commands
 
-| Keybinding    | Action                  |
-|---------------|-------------------------|
-| `<leader>a`   | Add file to Harpoon     |
-| `<C-e>`       | Toggle Harpoon menu     |
-| `<leader>1`   | Jump to Harpoon file 1  |
-| `<C-\>`       | Toggle terminal         |
+- `:Lazy` – Open Lazy UI
+- `:Lazy sync` – Install/update plugins
+- `:Lazy profile` – Show startup performance
+- `:Lazy clean` – Remove unused plugins
 
 ---
 
-## Health Check
+## ⌨️ Keybindings
 
-```bash
-nvim --version | grep clipboard
+| Binding       | Action                     |
+|---------------|----------------------------|
+| `<leader>a`   | Add file to Harpoon        |
+| `<C-e>`       | Toggle Harpoon menu        |
+| `<leader>1-4` | Jump to Harpoon file       |
+| `<C-\>`       | Toggle terminal            |
+| `:MarkdownPreview` | Open markdown preview |
+| `<leader>f`   | Format current file (LSP)  |
+
+---
+
+## 📝 Markdown & Mermaid Preview
+
+To preview `.md` files:
+
+1. Open a Markdown file in Neovim
+2. Run `:MarkdownPreview`
+3. A browser window opens with live preview
+
+For Mermaid diagram rendering:
+
+- Install Mermaid CLI:  
+  `npm install -g @mermaid-js/mermaid-cli`
+
+Preview is enabled with:
+
+```lua
+vim.g.mkdp_preview_options = {
+  mermaid = {
+    enable = true,
+    executable = 'mmdc',
+    options = '--theme dark'
+  }
+}
 ```
 
-Output should show: `+clipboard`
-
-Run `:checkhealth` inside Neovim to verify LSP, Treesitter, etc.
-
 ---
 
-## Uninstall
+## 🧼 Cleanup (Uninstall)
 
 ```bash
 rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
@@ -116,14 +128,14 @@ rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
 
 ---
 
-## Terminal Recommendation
+## 🖥 Terminal Recommendation
 
-- iTerm2 with "Natural Text Editing" preset
-- Kitty or Alacritty with Nerd Fonts installed
+- iTerm2 (macOS) with “Natural Text Editing” preset
+- Kitty / Alacritty with Nerd Fonts
 
 ---
 
-## License
+## 📜 License
 
 MIT License
 

@@ -1,25 +1,98 @@
-# 🔐 Neovim DevSecOps Environment (Lazy.nvim + Zsh + SOPS)
+# 🧠 Neovim DevSecOps Configuration (Lazy.nvim + SOPS + LSP)
 
-A modern, secure, and productive terminal environment built around Neovim, Lazy.nvim, and Zsh — fully equipped for developers, DevOps, and DevSecOps engineers.
+This is a fully featured, modern Neovim configuration optimized for **DevOps and DevSecOps workflows**.
 
----
+Built on top of [`Lazy.nvim`](https://github.com/folke/lazy.nvim) and structured for clarity and maintainability, it includes rich support for:
 
-## ✅ Features
-
-- **Neovim** with `Lazy.nvim` plugin manager
-- **LSP**, **completion**, **formatting**, and **Treesitter**
-- **Zsh** terminal config with Git, AWS, and SSH shortcuts
-- **Markdown live preview** with Mermaid support
-- **SOPS integration**: edit encrypted YAML/JSON with auto re-encryption
-- **Clipboard support**: yank and paste decrypted content
-- **Tab and split navigation**, file trees, fuzzy finder, terminals
-- Tools for Terraform, HCL, Docker, K8s, Python, YAML, and more
+- Encrypted file editing with [SOPS](https://github.com/mozilla/sops)
+- YAML, JSON, Terraform, HCL, Markdown
+- Language Server Protocol (LSP), completion, and formatting
+- Live previewing Markdown and Mermaid diagrams
+- Modular UI, productivity tools, Git integration, and more
 
 ---
 
-## 🚀 Setup Instructions
+## 📁 Project Structure
 
-### 1. Clone and Run Setup
+The configuration is split into modular components under `~/.config/nvim`.
+
+```
+~/.config/nvim/
+├── init.lua                         # Entry point
+├── lua/
+│   ├── options.lua                  # Core editor settings
+│   ├── config/                      # Plugin configs
+│   │   ├── toggleterm.lua
+│   │   ├── harpoon.lua
+│   │   ├── markdown.lua
+│   │   ├── schemastore.lua
+│   │   └── sops.lua                 # Custom: decrypt/edit/encrypt via SOPS
+│   └── lazy-plugins/                # Lazy plugin definitions
+│       ├── init.lua
+│       ├── lsp.lua
+│       ├── dev.lua
+│       ├── tools.lua
+│       └── ui.lua
+setup.sh                             # Tooling setup (macOS & Ubuntu)
+```
+
+Each plugin has its own isolated config. The system is designed for **ease of extension**.
+
+---
+
+## 🛠 Features
+
+### 🔐 SOPS Integration
+- Securely edit encrypted `.yaml`, `.json`, or `.env` files using `:SopsEdit` and `:SopsVsplit`
+- Temp files are uniquely named per buffer
+- Re-encryption happens automatically on save
+- Clipboard-friendly editing using `+` register
+
+### 💡 LSP + Dev Tools
+- Managed via `mason.nvim` and `nvim-lspconfig`
+- Built-in support for:
+  - YAML, JSON, Bash, Terraform, Python, Lua
+  - Auto-formatters: `black`, `prettier`, `shfmt`, `terraform_fmt`
+  - Completion with `nvim-cmp` + `LuaSnip`
+
+### 📊 UI + UX
+- Theme: `catppuccin`
+- Statusline: `lualine`
+- Popups & notifications: `noice.nvim`, `nvim-notify`
+- Keybindings: `which-key`
+- Tabline, bufferline, TODO highlighter, color previews
+
+### 🔍 Navigation & Git
+- `telescope.nvim` for fuzzy file search, live grep
+- `nvim-tree.lua` file explorer
+- `harpoon` for fast buffer jumping
+- Git: `vim-fugitive`, `gitsigns.nvim`
+
+### 📄 Markdown + Mermaid
+- Live Markdown preview with Mermaid diagram support via `markdown-preview.nvim` and `@mermaid-js/mermaid-cli`
+- Auto-installs Mermaid CLI via `npm`
+
+---
+
+## 🧩 Plugin Management with Lazy.nvim
+
+Lazy.nvim is used as the core plugin manager. Plugins are grouped logically:
+
+| File                   | Responsibility                  |
+|------------------------|----------------------------------|
+| `lsp.lua`              | LSP, mason, mason-lspconfig      |
+| `dev.lua`              | Treesitter, cmp, snippets        |
+| `tools.lua`            | Markdown, autopairs, toggleterm  |
+| `ui.lua`               | Theme, UI plugins, notifications |
+| `init.lua` (loader)    | Registers plugin sets            |
+
+Run `:Lazy` to explore and manage plugins in Neovim.
+
+---
+
+## 🚀 Installation
+
+### 1. Clone the Repo
 
 ```bash
 git clone https://github.com/your-user/neovim-devsecops.git
@@ -28,59 +101,92 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-> This auto-installs tools via Homebrew or apt and sets up configs under `~/.config/nvim`.
+This sets up everything under `~/.config/nvim` and installs required tools:
 
-### 2. Launch Neovim and Sync Plugins
+- Neovim, Git, Node, Python
+- `ripgrep`, `jq`, `fd`, `terraform`, `lua-language-server`
+- `sops`, `age`, `mmdc` (mermaid CLI)
+
+> Compatible with macOS (Homebrew) and Ubuntu (APT)
+
+### 2. Launch Neovim
 
 ```vim
 :Lazy sync
 :checkhealth
 ```
 
----
-
-## 🧠 Key Shortcuts & Commands
-
-### 🔐 SOPS Encrypted Files
-
-| Key / Command     | Description                                   |
-|-------------------|-----------------------------------------------|
-| `:SopsEdit <file>`| Decrypt + edit file                           |
-| `:SopsVsplit <file>` | Decrypt + open in vertical split           |
-| `<leader>se`      | Prompt to SOPS-edit a file                    |
-| `<leader>sv`      | Prompt to open a SOPS file in vertical split  |
-| `<leader>sy`      | Copy full decrypted buffer to clipboard       |
-| `<leader>sp`      | Paste from clipboard into buffer              |
-
-> All changes are **auto re-encrypted** on save using SOPS.
+This installs and checks plugin health.
 
 ---
 
-### 🗂️ Navigation
+## 🔐 Encrypted File Editing (SOPS)
 
-| Key / Command        | Action                                 |
-|----------------------|----------------------------------------|
-| `:NvimTreeToggle`    | Toggle file tree                       |
-| `<leader>ff`         | Find files via Telescope               |
-| `:split` / `:vsplit` | Horizontal / vertical split            |
-| `Ctrl + w + h/j/k/l` | Move between splits                    |
-| `gt` / `gT`          | Next / previous tab                    |
-| `:tabnew`            | Open new tab                           |
-| `:tabclose`          | Close current tab                      |
+### SOPS Commands
+
+| Command             | Description                                 |
+|---------------------|---------------------------------------------|
+| `:SopsEdit <file>`  | Decrypt and edit a SOPS file                |
+| `:SopsVsplit <file>`| Decrypt and open in a vertical split        |
+
+> Decrypted buffers are saved to `/tmp/sops-<hash>-<filename>` and auto re-encrypted on save.
+
+### SOPS Shortcuts
+
+| Shortcut       | Description                                  |
+|----------------|----------------------------------------------|
+| `<leader>se`   | Prompt: decrypt & open                       |
+| `<leader>sv`   | Prompt: vertical-split a decrypted file      |
+| `<leader>sy`   | Copy full buffer to system clipboard         |
+| `<leader>sp`   | Paste clipboard into buffer                  |
 
 ---
 
-### 🧰 Utilities
+## 🧠 Usage Cheatsheet
 
-| Command       | Description                     |
-|---------------|---------------------------------|
-| `:checkhealth`| Check Neovim health             |
-| `:Lazy sync`  | Sync and install all plugins    |
-| `:Telescope keymaps` | Browse all keybindings   |
+### Tabs & Splits
+
+| Command       | Description             |
+|---------------|--------------------------|
+| `:tabnew`     | Open new tab            |
+| `gt` / `gT`   | Next / previous tab     |
+| `:vsplit`     | Vertical split          |
+| `Ctrl+w h/j/k/l` | Move between splits |
+
+### Telescope
+
+| Shortcut      | Description              |
+|---------------|--------------------------|
+| `<leader>ff`  | Fuzzy find file          |
+| `<leader>fg`  | Live grep                |
+| `<leader>fb`  | Buffer search            |
+| `<leader>fh`  | Help tag search          |
+
+### Markdown
+
+| Command              | Description                        |
+|----------------------|------------------------------------|
+| `:MarkdownPreview`   | Start live preview in browser      |
+| `:MarkdownPreviewStop` | Stop preview                    |
+| `mmdc -i foo.mmd -o out.svg` | Render Mermaid via CLI     |
+
+---
+
+## ⚙️ Customization
+
+You can extend or override anything by:
+
+- Adding new plugin configs to `lua/config/`
+- Adding new plugin groups in `lazy-plugins/`
+- Creating new commands or mappings in `init.lua`
+
+Each component is isolated, discoverable, and minimal.
 
 ---
 
 ## 🧼 Cleanup
+
+To reset or remove all config + plugins:
 
 ```bash
 rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
@@ -90,5 +196,13 @@ rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
 
 ## 📜 License
 
-MIT License
+MIT License.  
+Use freely, adapt for your team or company use.
+
+---
+
+## 🤝 Contributions
+
+If you'd like to contribute additional plugins, language support, or SOPS features, feel free to open an issue or PR.
+
 

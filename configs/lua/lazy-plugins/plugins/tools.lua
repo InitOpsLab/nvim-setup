@@ -34,7 +34,7 @@ return {
   },
   {
   "iamcco/markdown-preview.nvim",
-  build = "cd app && npm install",
+  build = "cd app && npm ci",
   ft = { "markdown" },
   config = function()
     require("config.markdown")

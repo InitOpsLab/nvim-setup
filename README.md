@@ -144,31 +144,8 @@ This installs and checks plugin health.
 
 ## 🧠 Usage Cheatsheet
 
-### Tabs & Splits
-
-| Command       | Description             |
-|---------------|--------------------------|
-| `:tabnew`     | Open new tab            |
-| `gt` / `gT`   | Next / previous tab     |
-| `:vsplit`     | Vertical split          |
-| `Ctrl+w h/j/k/l` | Move between splits |
-
-### Telescope
-
-| Shortcut      | Description              |
-|---------------|--------------------------|
-| `<leader>ff`  | Fuzzy find file          |
-| `<leader>fg`  | Live grep                |
-| `<leader>fb`  | Buffer search            |
-| `<leader>fh`  | Help tag search          |
-
-### Markdown
-
-| Command              | Description                        |
-|----------------------|------------------------------------|
-| `:MarkdownPreview`   | Start live preview in browser      |
-| `:MarkdownPreviewStop` | Stop preview                    |
-| `mmdc -i foo.mmd -o out.svg` | Render Mermaid via CLI     |
+You can view the full cheat sheet here:  
+👉 [Neovim DevSecOps Cheat Sheet (Notion)](https://tangible-hoverfly-cc7.notion.site/Neovim-DevSecOps-Cheat-Sheet-nvim-setup-Edition-282ceb3e31954399bd6f01679841a807?pvs=74)
 
 ---
 
@@ -204,5 +181,3 @@ Use freely, adapt for your team or company use.
 ## 🤝 Contributions
 
 If you'd like to contribute additional plugins, language support, or SOPS features, feel free to open an issue or PR.
-
-

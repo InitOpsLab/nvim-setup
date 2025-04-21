@@ -30,21 +30,6 @@ return {
     end
   },
 
-  -- === Treesitter ===
-  {
-    "nvim-treesitter/nvim-treesitter",
-    run = ":TSUpdate",
-    config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "json", "yaml", "python", "bash", "sql", "hcl", "terraform", "lua",
-        },
-        highlight = { enable = true },
-        indent = { enable = true },
-      })
-    end
-  },
-
   -- === UI Enhancements ===
   "nvim-lualine/lualine.nvim",
   "nvim-lua/plenary.nvim",

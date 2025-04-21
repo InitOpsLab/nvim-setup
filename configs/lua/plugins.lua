@@ -1,3 +1,7 @@
+-- ~/.config/nvim/lua/plugins.lua
+
+-- ~/.config/nvim/lua/plugins.lua
+
 return {
   -- === LSP + Dev ===
   "neovim/nvim-lspconfig",
@@ -12,36 +16,12 @@ return {
   "L3MON4D3/LuaSnip",
   "saadparwaiz1/cmp_luasnip",
 
-  -- === Formatting ===
-  {
-    "stevearc/conform.nvim",
-    config = function()
-      require("conform").setup({
-        formatters_by_ft = {
-          python = { "black" },
-          json = { "prettier" },
-          yaml = { "prettier" },
-          bash = { "shfmt" },
-          sql = { "sqlfmt" },
-          terraform = { "terraform_fmt" },
-          hcl = { "terraform_fmt" },
-        },
-      })
-    end
-  },
-
   -- === Treesitter ===
   {
     "nvim-treesitter/nvim-treesitter",
     run = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "json", "yaml", "python", "bash", "sql", "hcl", "terraform", "lua",
-        },
-        highlight = { enable = true },
-        indent = { enable = true },
-      })
+      require("config.treesitter")  -- Import treesitter config
     end
   },
 
@@ -70,84 +50,7 @@ return {
       }
     end
   },
-
-  -- === Motion & Editing ===
-  "tpope/vim-commentary",
-  "jiangmiao/auto-pairs",
-  "michaeljsmith/vim-indent-object",
-  "wellle/targets.vim",
-  "bkad/CamelCaseMotion",
-  "christoomey/vim-sort-motion",
-
-  -- === Productivity Boosters ===
-  { "folke/which-key.nvim", opts = {} }, 
-  {
-    "nvim-tree/nvim-tree.lua",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
-      require("nvim-tree").setup()
-    end
-  },
-  {
-    "akinsho/toggleterm.nvim",
-    config = function()
-      require("toggleterm").setup()
-    end
-  },
-  { "ThePrimeagen/harpoon" },
-
-  -- === Comfort Plugins ===
-  {
-    "lukas-reineke/indent-blankline.nvim",
-    main = "ibl",
-    config = function()
-     require("ibl").setup({
-       scope = {
-         enabled = true,
-         show_start = false,
-         show_end = false,
-       },
-       indent = {
-         char = "│",
-       }
-     })
-   end,
-  },
-  {
-    "folke/todo-comments.nvim",
-    dependencies = "nvim-lua/plenary.nvim",
-    config = function()
-      require("todo-comments").setup()
-    end
-  },
-  {
-    "norcalli/nvim-colorizer.lua",
-    config = function()
-      require("colorizer").setup()
-    end
-  },
-  {
-    "nvim-pack/nvim-spectre",
-    config = function()
-      require("spectre").setup()
-    end
-  },
-
-  -- Optional UX polish
-  "lewis6991/impatient.nvim",
-  {
-    "stevearc/dressing.nvim",
-    opts = {},
-  },
-  {
-    "folke/noice.nvim",
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "rcarriga/nvim-notify"
-    },
-    config = function()
-      require("noice").setup({})
-    end
-  },
+  
+  -- other plugins...
 }
 

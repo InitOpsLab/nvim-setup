@@ -1,3 +1,5 @@
+-- ~/.config/nvim/lua/lazy-plugins/plugins/tools.lua
+
 return {
   {
     "akinsho/toggleterm.nvim",
@@ -33,12 +35,21 @@ return {
     end,
   },
   {
-  "iamcco/markdown-preview.nvim",
-  build = "cd app && npm ci",
-  ft = { "markdown" },
-  config = function()
-    require("config.markdown")
-  end,
-},
+    "iamcco/markdown-preview.nvim",
+    build = function()
+      vim.fn["mkdp#util#install"]()
+    end,
+    ft = { "markdown" },
+    config = function()
+      require("config.markdown")
+    end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    run = ":TSUpdate",
+    config = function()
+      require("config.treesitter")
+    end,
+  },
 }
 

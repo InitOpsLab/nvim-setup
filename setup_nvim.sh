@@ -59,6 +59,14 @@ install_mac() {
     else
         log_info "yaml-language-server already installed."
     fi
+
+    # Install JSON language server
+    if ! is_installed vscode-json-language-server; then
+        log_info "Installing vscode-json-language-server..."
+        npm install -g vscode-langservers-extracted
+    else
+        log_info "vscode-json-language-server already installed."
+    fi
 }
 
 install_ubuntu() {
@@ -93,6 +101,14 @@ install_ubuntu() {
         npm install -g yaml-language-server
     else
         log_info "yaml-language-server already installed."
+    fi
+
+    # Install JSON language server
+    if ! is_installed vscode-json-language-server; then
+        log_info "Installing vscode-json-language-server..."
+        npm install -g vscode-langservers-extracted
+    else
+        log_info "vscode-json-language-server already installed."
     fi
 }
 
@@ -132,3 +148,4 @@ setup_nvim_config
 
 log_info "Neovim setup complete ✅"
 log_info "Launch Neovim and run :Lazy sync"
+

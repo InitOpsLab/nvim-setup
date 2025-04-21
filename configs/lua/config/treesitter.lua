@@ -2,16 +2,35 @@
 
 require("nvim-treesitter.configs").setup({
   ensure_installed = {
-    "json", "yaml", "python", "bash", "sql", "hcl", "terraform", "lua"
+    "bash",
+    "json",
+    "yaml",
+    "lua",
+    "python",
+    "hcl",
+    "terraform",
+    "sql",
+    "vim",
+    "vimdoc",
+    "markdown",
+    "markdown_inline"
   },
-  highlight = { enable = true },
-  indent = { enable = true },
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+  indent = {
+    enable = true,
+    disable = { "json" }, -- can add "yaml", "hcl" if needed
+  },
+  autotag = {
+    enable = true,
+  },
+  matchup = {
+    enable = true,
+  },
+  playground = {
+    enable = false,
+  },
 })
-
--- Treesitter-based folding
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt.foldenable = false
-vim.opt.foldlevel = 99
-vim.opt.foldlevelstart = 99
 

@@ -1,169 +1,271 @@
-# 🧠 Neovim DevSecOps Configuration (Lazy.nvim + SOPS + LSP)
+# 🛠️ Terminal Dev Environment (Neovim + Lazy + Zsh)
 
-This is a fully featured, modern Neovim configuration optimized for **DevOps and DevSecOps workflows**.
+A fast, modular, and productive terminal environment optimized for developers and DevSecOps engineers.
 
-Built on top of [`Lazy.nvim`](https://github.com/folke/lazy.nvim) and structured for clarity and maintainability, it includes rich support for:
+Includes:
 
-- Encrypted file editing with [SOPS](https://github.com/mozilla/sops)
-- YAML, JSON, Terraform, HCL, Markdown
-- Language Server Protocol (LSP), completion, and formatting
-- Live previewing Markdown and Mermaid diagrams
-- Modular UI, productivity tools, Git integration, and more
-
----
-
-## 📁 Project Structure
-
-The configuration is split into modular components under `~/.config/nvim`.
-
-```
-~/.config/nvim/
-├── init.lua                         # Entry point
-├── lua/
-│   ├── options.lua                  # Core editor settings
-│   ├── config/                      # Plugin configs
-│   │   ├── toggleterm.lua
-│   │   ├── harpoon.lua
-│   │   ├── markdown.lua
-│   │   ├── schemastore.lua
-│   │   └── sops.lua                 # Custom: decrypt/edit/encrypt via SOPS
-│   └── lazy-plugins/                # Lazy plugin definitions
-│       ├── init.lua
-│       ├── lsp.lua
-│       ├── dev.lua
-│       ├── tools.lua
-│       └── ui.lua
-setup.sh                             # Tooling setup (macOS & Ubuntu)
-```
-
-Each plugin has its own isolated config. The system is designed for **ease of extension**.
+- Neovim + Lazy.nvim plugin manager
+- Treesitter, LSP, Completion, Formatting
+- GitHub Copilot AI Assistance
+- Zsh with aliases/functions
+- Markdown + Mermaid live preview
+- Tooling for JSON, YAML, HCL, Python, Docker, K8s
 
 ---
 
-## 🛠 Features
+## ✅ Requirements
 
-### 🔐 SOPS Integration
-- Securely edit encrypted `.yaml`, `.json`, or `.env` files using `:SopsEdit` and `:SopsVsplit`
-- Temp files are uniquely named per buffer
-- Re-encryption happens automatically on save
-- Clipboard-friendly editing using `+` register
-
-### 💡 LSP + Dev Tools
-- Managed via `mason.nvim` and `nvim-lspconfig`
-- Built-in support for:
-  - YAML, JSON, Bash, Terraform, Python, Lua
-  - Auto-formatters: `black`, `prettier`, `shfmt`, `terraform_fmt`
-  - Completion with `nvim-cmp` + `LuaSnip`
-
-### 📊 UI + UX
-- Theme: `catppuccin`
-- Statusline: `lualine`
-- Popups & notifications: `noice.nvim`, `nvim-notify`
-- Keybindings: `which-key`
-- Tabline, bufferline, TODO highlighter, color previews
-
-### 🔍 Navigation & Git
-- `telescope.nvim` for fuzzy file search, live grep
-- `nvim-tree.lua` file explorer
-- `harpoon` for fast buffer jumping
-- Git: `vim-fugitive`, `gitsigns.nvim`
-
-### 📄 Markdown + Mermaid
-- Live Markdown preview with Mermaid diagram support via `markdown-preview.nvim` and `@mermaid-js/mermaid-cli`
-- Auto-installs Mermaid CLI via `npm`
+| Tool       | macOS Command              | Ubuntu Command                  |
+|------------|----------------------------|----------------------------------|
+| Neovim     | `brew install neovim`      | `sudo apt install neovim`       |
+| Git        | `brew install git`         | `sudo apt install git`          |
+| Node.js    | `brew install node`        | `sudo apt install nodejs npm`   |
+| Python     | `brew install python`      | `sudo apt install python3 python3-pip` |
+| CLI Tools  | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server` |
+| Markdown   | `npm install -g @mermaid-js/mermaid-cli` (for Mermaid diagrams) |
 
 ---
 
-## 🧩 Plugin Management with Lazy.nvim
-
-Lazy.nvim is used as the core plugin manager. Plugins are grouped logically:
-
-| File                   | Responsibility                  |
-|------------------------|----------------------------------|
-| `lsp.lua`              | LSP, mason, mason-lspconfig      |
-| `dev.lua`              | Treesitter, cmp, snippets        |
-| `tools.lua`            | Markdown, autopairs, toggleterm  |
-| `ui.lua`               | Theme, UI plugins, notifications |
-| `init.lua` (loader)    | Registers plugin sets            |
-
-Run `:Lazy` to explore and manage plugins in Neovim.
-
----
-
-## 🚀 Installation
-
-### 1. Clone the Repo
+## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/your-user/neovim-devsecops.git
-cd neovim-devsecops
+git clone https://github.com/your-user/neovim-lazy-devsetup.git
+cd neovim-lazy-devsetup
 chmod +x setup.sh
 ./setup.sh
 ```
 
-This sets up everything under `~/.config/nvim` and installs required tools:
+---
 
-- Neovim, Git, Node, Python
-- `ripgrep`, `jq`, `fd`, `terraform`, `lua-language-server`
-- `sops`, `age`, `mmdc` (mermaid CLI)
+## 📁 Folder Structure
 
-> Compatible with macOS (Homebrew) and Ubuntu (APT)
-
-### 2. Launch Neovim
-
-```vim
-:Lazy sync
-:checkhealth
+```
+configs/
+├── init.lua
+└── lua/
+    ├── options.lua
+    ├── config/
+    │   ├── harpoon.lua
+    │   ├── toggleterm.lua
+    │   ├── schemastore.lua
+    │   ├── markdown.lua
+    │   └── copilot.lua
+    └── lazy-plugins/
+        ├── init.lua
+        └── plugins/
+            ├── lsp.lua
+            ├── ui.lua
+            ├── tools.lua
+            ├── dev.lua
 ```
 
-This installs and checks plugin health.
+---
+
+## 🐌 Plugin Features
+
+- LSP support for Python, YAML, JSON, Bash, Terraform, etc.
+- Treesitter-powered syntax + folding
+- Completion via `nvim-cmp`, snippets via `LuaSnip`
+- GitHub Copilot AI assistance
+- Markdown live preview + Mermaid diagram rendering
+- File tree, terminal toggling, fuzzy finder
+- Git integration with status, blame, and diff
+- Harpoon for fast file navigation
+- Autopairs, commenting, and code actions
 
 ---
 
-## 🔐 Encrypted File Editing (SOPS)
+## 🧠 Neovim Cheat Sheet (Modern DevSecOps Setup)
 
-### SOPS Commands
+### 📌 Basic Navigation
 
-| Command             | Description                                 |
-|---------------------|---------------------------------------------|
-| `:SopsEdit <file>`  | Decrypt and edit a SOPS file                |
-| `:SopsVsplit <file>`| Decrypt and open in a vertical split        |
+| Key | Action |
+| --- | --- |
+| `h/j/k/l` | Move left/down/up/right |
+| `gg` / `G` | Go to start / end of file |
+| `0` / `^` / `$` | Start / first non-blank / end of line |
+| `H` / `M` / `L` | Top / middle / bottom of screen |
+| `Ctrl+u / Ctrl+d` | Half-page up/down |
+| `Ctrl+b / Ctrl+f` | Full-page up/down |
+| `{` / `}` | Prev / next paragraph |
+| `w/W`, `e/E`, `b/B`, `ge/gE` | Word motions |
 
-> Decrypted buffers are saved to `/tmp/sops-<hash>-<filename>` and auto re-encrypted on save.
+### 📌 Buffer & Tab Management
 
-### SOPS Shortcuts
+| Command | Action |
+| --- | --- |
+| `:e file` | Open file |
+| `:bn / :bp` | Next / previous buffer |
+| `:bd` | Close buffer |
+| `:ls` | List open buffers |
+| `:tabnew file` | New tab |
+| `gt / gT` | Next / previous tab |
+| `:tabclose / :tabonly` | Close current / other tabs |
 
-| Shortcut       | Description                                  |
-|----------------|----------------------------------------------|
-| `<leader>se`   | Prompt: decrypt & open                       |
-| `<leader>sv`   | Prompt: vertical-split a decrypted file      |
-| `<leader>sy`   | Copy full buffer to system clipboard         |
-| `<leader>sp`   | Paste clipboard into buffer                  |
+### 📌 Window Splits
+
+| Command | Action |
+| --- | --- |
+| `:split / :vsplit` | Horizontal / vertical split |
+| `Ctrl+w h/j/k/l` | Move between splits |
+| `Ctrl+w =` | Equalize splits |
+| `Ctrl+w _` | Maximize current split |
+| `Ctrl+w q` | Close split |
+
+### 📌 File Explorer (`nvim-tree`)
+
+| Command | Action |
+| --- | --- |
+| `:NvimTreeToggle` | Toggle file explorer |
+| `:NvimTreeFindFile` | Reveal file in tree |
+| `<leader>e` | Toggle via shortcut |
+
+### 📌 Markdown & Mermaid Preview
+
+| Command | Action |
+| --- | --- |
+| `:MarkdownPreview` | Start preview |
+| `:MarkdownPreviewToggle` | Toggle preview |
+| `<leader>mp` | Shortcut to start preview |
+| `mmdc -i input.mmd -o output.png` | Generate diagram via CLI |
+
+### 📌 AI Assistance (GitHub Copilot)
+
+| Key | Action |
+| --- | --- |
+| `Ctrl+l` | Accept Copilot suggestion |
+| `Ctrl+n` | Next suggestion |
+| `Ctrl+p` | Previous suggestion |
+| `Ctrl+]` | Dismiss suggestion |
+
+Make sure you're logged in to GitHub when first using Copilot!
+
+### 📌 Editing & Text
+
+| Command | Action |
+| --- | --- |
+| `i / I` | Insert (cursor / start of line) |
+| `a / A` | Append (after / end of line) |
+| `o / O` | Open new line (below / above) |
+| `x / X` | Delete character (under / before) |
+| `dd / yy` | Delete / yank line |
+| `p / P` | Paste after / before cursor |
+| `u / Ctrl+r` | Undo / redo |
+| `.` | Repeat last action |
+
+### 📌 Search & Replace
+
+| Command | Action |
+| --- | --- |
+| `/pattern` | Search pattern |
+| `n / N` | Next / previous match |
+| `:%s/old/new/g` | Replace all |
+| `:%s/old/new/gc` | Confirm each replacement |
+| `* / #` | Search word under cursor (fwd/bwd) |
+
+### 📌 Save & Quit
+
+| Command | Action |
+| --- | --- |
+| `:w` | Save |
+| `:q / :q!` | Quit / force quit |
+| `:wq / ZZ` | Save and quit |
+
+### 📌 Git Integration
+
+| Command | Action |
+| --- | --- |
+| `:G` | Git status |
+| `:Gcommit` / `:Gpush` / `:Gpull` | Commit / push / pull |
+| `:Gdiffsplit` | View diff |
+| `:Gblame` | Blame current line |
+
+### 📌 LSP & Code Actions
+
+| Key / Command | Action |
+| --- | --- |
+| `:LspInfo` | View LSP status |
+| `K` | Hover docs |
+| `gd / gi / gr` | Go to definition / implementation / references |
+| `<leader>rn` | Rename symbol |
+| `<leader>ca` | Code actions |
+
+### 📌 Completion & Snippets
+
+| Plugin | Functionality |
+| --- | --- |
+| `nvim-cmp` | Autocompletion |
+| `LuaSnip` | Snippet engine |
+| `<Tab>` / `<S-Tab>` | Navigate suggestions |
+| `Copilot` | AI suggestions |
+
+### 📌 Formatting (`conform.nvim`)
+
+| Key | Action |
+| --- | --- |
+| `<leader>f` | Format current file |
+| Terraform | `terraform_fmt` |
+| Python | `black` |
+| JSON / YAML | `prettier` |
+| Bash | `shfmt` |
+
+### 📌 Telescope
+
+| Command | Action |
+| --- | --- |
+| `<leader>ff` | Find files |
+| `<leader>fg` | Live grep |
+| `<leader>fb` | Buffers |
+| `<leader>fh` | Help tags |
+
+### 📌 Terminal Management (`toggleterm`)
+
+| Key | Action |
+| --- | --- |
+| `<leader>t` | Toggle terminal |
+| `Ctrl+\` then `Ctrl+n` | Exit terminal mode |
+| `:ToggleTerm` | Manually toggle terminal |
+
+### 📌 Commenting (`vim-commentary`)
+
+| Command | Action |
+| --- | --- |
+| `gcc` | Toggle line comment |
+| `gc` (Visual) | Toggle selection comment |
+
+### 📌 Code Folding
+
+| Command | Action |
+| --- | --- |
+| `za / zA` | Toggle fold |
+| `zo / zO` | Open fold |
+| `zc / zC` | Close fold |
+| `zr / zm` | Open / close all folds |
+
+### 📌 UI & Visuals
+
+| Plugin | Feature |
+| --- | --- |
+| `catppuccin` | Theme |
+| `lualine` / `heirline` | Status line |
+| `bufferline.nvim` | Tabline |
+| `which-key` | Keybinding helper |
+| `vim-illuminate` | Word highlighting |
+| `todo-comments` | Highlight TODO / FIXME |
+| `spectre.nvim` | Search and replace project-wide |
+
+### 📌 Utilities
+
+| Command | Action |
+| --- | --- |
+| `:checkhealth` | Validate setup |
+| `:Lazy sync` | Sync plugins |
+| `:Telescope keymaps` | Browse key mappings |
+| `:Noice` | View message history |
 
 ---
 
-## 🧠 Usage Cheatsheet
-
-You can view the full cheat sheet here:  
-👉 [Neovim DevSecOps Cheat Sheet (Notion)](https://tangible-hoverfly-cc7.notion.site/Neovim-DevSecOps-Cheat-Sheet-nvim-setup-Edition-282ceb3e31954399bd6f01679841a807?pvs=74)
-
----
-
-## ⚙️ Customization
-
-You can extend or override anything by:
-
-- Adding new plugin configs to `lua/config/`
-- Adding new plugin groups in `lazy-plugins/`
-- Creating new commands or mappings in `init.lua`
-
-Each component is isolated, discoverable, and minimal.
-
----
-
-## 🧼 Cleanup
-
-To reset or remove all config + plugins:
+## 🚼 Cleanup
 
 ```bash
 rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
@@ -173,11 +275,5 @@ rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
 
 ## 📜 License
 
-MIT License.  
-Use freely, adapt for your team or company use.
+MIT License
 
----
-
-## 🤝 Contributions
-
-If you'd like to contribute additional plugins, language support, or SOPS features, feel free to open an issue or PR.

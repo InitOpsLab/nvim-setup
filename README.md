@@ -6,7 +6,6 @@ Includes:
 
 - Neovim + Lazy.nvim plugin manager
 - Treesitter, LSP, Completion, Formatting
-- GitHub Copilot AI Assistance
 - Zsh with aliases/functions
 - Markdown + Mermaid live preview
 - Tooling for JSON, YAML, HCL, Python, Docker, K8s
@@ -48,8 +47,7 @@ configs/
     │   ├── harpoon.lua
     │   ├── toggleterm.lua
     │   ├── schemastore.lua
-    │   ├── markdown.lua
-    │   └── copilot.lua
+    │   └── markdown.lua
     └── lazy-plugins/
         ├── init.lua
         └── plugins/
@@ -61,12 +59,23 @@ configs/
 
 ---
 
-## 🐌 Plugin Features
+## 🔌 Plugin Features (Updated)
 
 - LSP support for Python, YAML, JSON, Bash, Terraform, etc.
 - Treesitter-powered syntax + folding
 - Completion via `nvim-cmp`, snippets via `LuaSnip`
-- GitHub Copilot AI assistance
+- **GitHub Copilot with inline AI suggestions**
+- **Visual code refactoring with `refactoring.nvim`**
+- **Symbol outline view with `aerial.nvim`**
+- Markdown live preview + Mermaid diagram rendering
+- File tree, terminal toggling, fuzzy finder
+- Git integration with status, blame, and diff
+- Harpoon for fast file navigation
+- Autopairs, commenting, and code actions
+
+- LSP support for Python, YAML, JSON, Bash, Terraform, etc.
+- Treesitter-powered syntax + folding
+- Completion via `nvim-cmp`, snippets via `LuaSnip`
 - Markdown live preview + Mermaid diagram rendering
 - File tree, terminal toggling, fuzzy finder
 - Git integration with status, blame, and diff
@@ -129,17 +138,6 @@ configs/
 | `<leader>mp` | Shortcut to start preview |
 | `mmdc -i input.mmd -o output.png` | Generate diagram via CLI |
 
-### 📌 AI Assistance (GitHub Copilot)
-
-| Key | Action |
-| --- | --- |
-| `Ctrl+l` | Accept Copilot suggestion |
-| `Ctrl+n` | Next suggestion |
-| `Ctrl+p` | Previous suggestion |
-| `Ctrl+]` | Dismiss suggestion |
-
-Make sure you're logged in to GitHub when first using Copilot!
-
 ### 📌 Editing & Text
 
 | Command | Action |
@@ -197,7 +195,7 @@ Make sure you're logged in to GitHub when first using Copilot!
 | `nvim-cmp` | Autocompletion |
 | `LuaSnip` | Snippet engine |
 | `<Tab>` / `<S-Tab>` | Navigate suggestions |
-| `Copilot` | AI suggestions |
+| `Copilot` (if enabled) | AI suggestions |
 
 ### 📌 Formatting (`conform.nvim`)
 
@@ -223,7 +221,7 @@ Make sure you're logged in to GitHub when first using Copilot!
 | Key | Action |
 | --- | --- |
 | `<leader>t` | Toggle terminal |
-| `Ctrl+\` then `Ctrl+n` | Exit terminal mode |
+| `Ctrl+\\` then `Ctrl+n` | Exit terminal mode |
 | `:ToggleTerm` | Manually toggle terminal |
 
 ### 📌 Commenting (`vim-commentary`)
@@ -265,7 +263,19 @@ Make sure you're logged in to GitHub when first using Copilot!
 
 ---
 
-## 🚼 Cleanup
+### 📌 Refactoring (via `refactoring.nvim`)
+
+| Mode | Key | Action |
+|------|-----|--------|
+| Visual | `<leader>rr` | Show refactor menu |
+
+### 📌 Symbol Outline (via `aerial.nvim`)
+
+| Mode | Key | Action |
+|------|-----|--------|
+| Normal | `<leader>o` | Toggle symbol outline |
+
+## 🧼 Cleanup
 
 ```bash
 rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim

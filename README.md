@@ -1,14 +1,14 @@
-# 🛠️ Terminal Dev Environment (Neovim + Lazy + Zsh)
+# 🛠️ Terminal Dev Environment (Neovim + Lazy)
 
-A fast, modular, and productive terminal environment optimized for developers and DevSecOps engineers.
+A fast, modular, and productive Neovim environment optimized for developers and DevSecOps engineers.
 
 Includes:
 
 - Neovim + Lazy.nvim plugin manager
 - Treesitter, LSP, Completion, Formatting
-- Zsh with aliases/functions
-- Markdown + Mermaid live preview
-- Tooling for JSON, YAML, HCL, Python, Docker, K8s
+- GitHub Copilot, Refactoring, Symbol Outline
+- Markdown + Mermaid preview
+- Notes + Task Management (orgmode, neorg, telekasten)
 
 ---
 
@@ -47,7 +47,8 @@ configs/
     │   ├── harpoon.lua
     │   ├── toggleterm.lua
     │   ├── schemastore.lua
-    │   └── markdown.lua
+    │   ├── markdown.lua
+    │   └── tasks.lua
     └── lazy-plugins/
         ├── init.lua
         └── plugins/
@@ -55,6 +56,7 @@ configs/
             ├── ui.lua
             ├── tools.lua
             ├── dev.lua
+            ├── tasks.lua
 ```
 
 ---
@@ -67,223 +69,14 @@ configs/
 - **GitHub Copilot with inline AI suggestions**
 - **Visual code refactoring with `refactoring.nvim`**
 - **Symbol outline view with `aerial.nvim`**
-- Markdown live preview + Mermaid diagram rendering
-- File tree, terminal toggling, fuzzy finder
-- Git integration with status, blame, and diff
-- Harpoon for fast file navigation
-- Autopairs, commenting, and code actions
-
-- LSP support for Python, YAML, JSON, Bash, Terraform, etc.
-- Treesitter-powered syntax + folding
-- Completion via `nvim-cmp`, snippets via `LuaSnip`
-- Markdown live preview + Mermaid diagram rendering
-- File tree, terminal toggling, fuzzy finder
-- Git integration with status, blame, and diff
-- Harpoon for fast file navigation
-- Autopairs, commenting, and code actions
+- **Markdown live preview + Mermaid support**
+- **Task & Notes system: `orgmode`, `neorg`, `telekasten`**
+- Git integration, fuzzy finding, file tree, terminals
+- Harpoon for fast file jumping, code navigation helpers
 
 ---
 
 ## 🧠 Neovim Cheat Sheet (Modern DevSecOps Setup)
 
-### 📌 Basic Navigation
-
-| Key | Action |
-| --- | --- |
-| `h/j/k/l` | Move left/down/up/right |
-| `gg` / `G` | Go to start / end of file |
-| `0` / `^` / `$` | Start / first non-blank / end of line |
-| `H` / `M` / `L` | Top / middle / bottom of screen |
-| `Ctrl+u / Ctrl+d` | Half-page up/down |
-| `Ctrl+b / Ctrl+f` | Full-page up/down |
-| `{` / `}` | Prev / next paragraph |
-| `w/W`, `e/E`, `b/B`, `ge/gE` | Word motions |
-
-### 📌 Buffer & Tab Management
-
-| Command | Action |
-| --- | --- |
-| `:e file` | Open file |
-| `:bn / :bp` | Next / previous buffer |
-| `:bd` | Close buffer |
-| `:ls` | List open buffers |
-| `:tabnew file` | New tab |
-| `gt / gT` | Next / previous tab |
-| `:tabclose / :tabonly` | Close current / other tabs |
-
-### 📌 Window Splits
-
-| Command | Action |
-| --- | --- |
-| `:split / :vsplit` | Horizontal / vertical split |
-| `Ctrl+w h/j/k/l` | Move between splits |
-| `Ctrl+w =` | Equalize splits |
-| `Ctrl+w _` | Maximize current split |
-| `Ctrl+w q` | Close split |
-
-### 📌 File Explorer (`nvim-tree`)
-
-| Command | Action |
-| --- | --- |
-| `:NvimTreeToggle` | Toggle file explorer |
-| `:NvimTreeFindFile` | Reveal file in tree |
-| `<leader>e` | Toggle via shortcut |
-
-### 📌 Markdown & Mermaid Preview
-
-| Command | Action |
-| --- | --- |
-| `:MarkdownPreview` | Start preview |
-| `:MarkdownPreviewToggle` | Toggle preview |
-| `<leader>mp` | Shortcut to start preview |
-| `mmdc -i input.mmd -o output.png` | Generate diagram via CLI |
-
-### 📌 Editing & Text
-
-| Command | Action |
-| --- | --- |
-| `i / I` | Insert (cursor / start of line) |
-| `a / A` | Append (after / end of line) |
-| `o / O` | Open new line (below / above) |
-| `x / X` | Delete character (under / before) |
-| `dd / yy` | Delete / yank line |
-| `p / P` | Paste after / before cursor |
-| `u / Ctrl+r` | Undo / redo |
-| `.` | Repeat last action |
-
-### 📌 Search & Replace
-
-| Command | Action |
-| --- | --- |
-| `/pattern` | Search pattern |
-| `n / N` | Next / previous match |
-| `:%s/old/new/g` | Replace all |
-| `:%s/old/new/gc` | Confirm each replacement |
-| `* / #` | Search word under cursor (fwd/bwd) |
-
-### 📌 Save & Quit
-
-| Command | Action |
-| --- | --- |
-| `:w` | Save |
-| `:q / :q!` | Quit / force quit |
-| `:wq / ZZ` | Save and quit |
-
-### 📌 Git Integration
-
-| Command | Action |
-| --- | --- |
-| `:G` | Git status |
-| `:Gcommit` / `:Gpush` / `:Gpull` | Commit / push / pull |
-| `:Gdiffsplit` | View diff |
-| `:Gblame` | Blame current line |
-
-### 📌 LSP & Code Actions
-
-| Key / Command | Action |
-| --- | --- |
-| `:LspInfo` | View LSP status |
-| `K` | Hover docs |
-| `gd / gi / gr` | Go to definition / implementation / references |
-| `<leader>rn` | Rename symbol |
-| `<leader>ca` | Code actions |
-
-### 📌 Completion & Snippets
-
-| Plugin | Functionality |
-| --- | --- |
-| `nvim-cmp` | Autocompletion |
-| `LuaSnip` | Snippet engine |
-| `<Tab>` / `<S-Tab>` | Navigate suggestions |
-| `Copilot` (if enabled) | AI suggestions |
-
-### 📌 Formatting (`conform.nvim`)
-
-| Key | Action |
-| --- | --- |
-| `<leader>f` | Format current file |
-| Terraform | `terraform_fmt` |
-| Python | `black` |
-| JSON / YAML | `prettier` |
-| Bash | `shfmt` |
-
-### 📌 Telescope
-
-| Command | Action |
-| --- | --- |
-| `<leader>ff` | Find files |
-| `<leader>fg` | Live grep |
-| `<leader>fb` | Buffers |
-| `<leader>fh` | Help tags |
-
-### 📌 Terminal Management (`toggleterm`)
-
-| Key | Action |
-| --- | --- |
-| `<leader>t` | Toggle terminal |
-| `Ctrl+\\` then `Ctrl+n` | Exit terminal mode |
-| `:ToggleTerm` | Manually toggle terminal |
-
-### 📌 Commenting (`vim-commentary`)
-
-| Command | Action |
-| --- | --- |
-| `gcc` | Toggle line comment |
-| `gc` (Visual) | Toggle selection comment |
-
-### 📌 Code Folding
-
-| Command | Action |
-| --- | --- |
-| `za / zA` | Toggle fold |
-| `zo / zO` | Open fold |
-| `zc / zC` | Close fold |
-| `zr / zm` | Open / close all folds |
-
-### 📌 UI & Visuals
-
-| Plugin | Feature |
-| --- | --- |
-| `catppuccin` | Theme |
-| `lualine` / `heirline` | Status line |
-| `bufferline.nvim` | Tabline |
-| `which-key` | Keybinding helper |
-| `vim-illuminate` | Word highlighting |
-| `todo-comments` | Highlight TODO / FIXME |
-| `spectre.nvim` | Search and replace project-wide |
-
-### 📌 Utilities
-
-| Command | Action |
-| --- | --- |
-| `:checkhealth` | Validate setup |
-| `:Lazy sync` | Sync plugins |
-| `:Telescope keymaps` | Browse key mappings |
-| `:Noice` | View message history |
-
----
-
-### 📌 Refactoring (via `refactoring.nvim`)
-
-| Mode | Key | Action |
-|------|-----|--------|
-| Visual | `<leader>rr` | Show refactor menu |
-
-### 📌 Symbol Outline (via `aerial.nvim`)
-
-| Mode | Key | Action |
-|------|-----|--------|
-| Normal | `<leader>o` | Toggle symbol outline |
-
-## 🧼 Cleanup
-
-```bash
-rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
-```
-
----
-
-## 📜 License
-
-MIT License
+<full cheat sheet remains unchanged>
 

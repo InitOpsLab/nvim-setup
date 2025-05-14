@@ -1,14 +1,17 @@
 # 🛠️ Terminal Dev Environment (Neovim + Lazy)
 
-A fast, modular, and productive Neovim environment optimized for developers and DevSecOps engineers.
+A fast, modular, and productive terminal environment optimized for developers and DevSecOps engineers.
 
 Includes:
 
 - Neovim + Lazy.nvim plugin manager
 - Treesitter, LSP, Completion, Formatting
-- GitHub Copilot, Refactoring, Symbol Outline
-- Markdown + Mermaid preview
-- Notes + Task Management (orgmode, neorg, telekasten)
+- Markdown + Mermaid live preview
+- Task planning with Orgmode, Neorg, and Telekasten
+- GitHub Copilot AI suggestions
+- Visual refactoring tools
+- Symbol outline navigation
+- Tooling for JSON, YAML, HCL, Python, Docker, K8s
 
 ---
 
@@ -66,17 +69,40 @@ configs/
 - LSP support for Python, YAML, JSON, Bash, Terraform, etc.
 - Treesitter-powered syntax + folding
 - Completion via `nvim-cmp`, snippets via `LuaSnip`
-- **GitHub Copilot with inline AI suggestions**
-- **Visual code refactoring with `refactoring.nvim`**
-- **Symbol outline view with `aerial.nvim`**
-- **Markdown live preview + Mermaid support**
-- **Task & Notes system: `orgmode`, `neorg`, `telekasten`**
-- Git integration, fuzzy finding, file tree, terminals
-- Harpoon for fast file jumping, code navigation helpers
+- GitHub Copilot with inline AI suggestions
+- Visual code refactoring with `refactoring.nvim`
+- Symbol outline view with `aerial.nvim`
+- Markdown live preview + Mermaid diagram rendering
+- File tree, terminal toggling, fuzzy finder
+- Git integration with status, blame, and diff
+- Harpoon for fast file navigation
+- Autopairs, commenting, and code actions
+- ✅ **Orgmode / Neorg / Telekasten** for Jira-style task planning & notes
 
 ---
 
 ## 🧠 Neovim Cheat Sheet (Modern DevSecOps Setup)
 
-<full cheat sheet remains unchanged>
+_(unchanged cheat sheet omitted for brevity)_
 
+### 📌 Task Planning & Notes
+
+| Plugin       | Highlights |
+|--------------|------------|
+| `orgmode.nvim` | Agenda views, structured TODOs, org files |
+| `neorg`         | Modular GTD workflows, task states, ZK |
+| `telekasten.nvim` | Markdown journaling + backlinks |
+
+---
+
+## 🧼 Cleanup
+
+```bash
+rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
+```
+
+---
+
+## 📜 License
+
+MIT License

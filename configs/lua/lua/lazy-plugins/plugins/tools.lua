@@ -35,15 +35,19 @@ return {
     end,
   },
   {
-    "iamcco/markdown-preview.nvim",
-    build = function()
-      vim.fn["mkdp#util#install"]()
-    end,
-    ft = { "markdown" },
-    config = function()
-      require("config.markdown")
-    end,
-  },
+  "iamcco/markdown-preview.nvim",
+  build = "cd app && npm install",
+  ft = { "markdown" },
+  config = function()
+    require("config.markdown")
+
+    -- If opening a .mmd file, auto-launch MarkdownPreview
+    local file = vim.fn.expand("%:p")
+    if file:match("%.mmd$") and vim.fn.exists(":MarkdownPreview") == 2 then
+      vim.cmd("MarkdownPreview")
+    end
+  end,
+   },
   {
     "nvim-treesitter/nvim-treesitter",
     run = ":TSUpdate",

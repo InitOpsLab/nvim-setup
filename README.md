@@ -1,4 +1,4 @@
-# 🛠️ Terminal Dev Environment (Neovim + Lazy)
+# 🛠️ Terminal Dev Environment (Neovim + Lazy + Zsh)
 
 A fast, modular, and productive terminal environment optimized for developers and DevSecOps engineers.
 
@@ -6,11 +6,8 @@ Includes:
 
 - Neovim + Lazy.nvim plugin manager
 - Treesitter, LSP, Completion, Formatting
+- Zsh with aliases/functions
 - Markdown + Mermaid live preview
-- Task planning with Orgmode, Neorg, and Telekasten
-- GitHub Copilot AI suggestions
-- Visual refactoring tools
-- Symbol outline navigation
 - Tooling for JSON, YAML, HCL, Python, Docker, K8s
 
 ---
@@ -28,7 +25,25 @@ Includes:
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start---
+
+### 🔧 LSP Setup with Mason
+
+This config uses:
+
+- [`mason.nvim`](https://github.com/williamboman/mason.nvim) – installs language servers
+- [`mason-lspconfig`](https://github.com/williamboman/mason-lspconfig.nvim) – wires them into Neovim LSP
+
+To check or install LSP servers:
+```vim
+:Mason
+```
+
+To confirm `pyright` or others are active:
+```vim
+:LspInfo
+```
+
 
 ```bash
 git clone https://github.com/your-user/neovim-lazy-devsetup.git
@@ -50,8 +65,7 @@ configs/
     │   ├── harpoon.lua
     │   ├── toggleterm.lua
     │   ├── schemastore.lua
-    │   ├── markdown.lua
-    │   └── tasks.lua
+    │   └── markdown.lua
     └── lazy-plugins/
         ├── init.lua
         └── plugins/
@@ -59,25 +73,20 @@ configs/
             ├── ui.lua
             ├── tools.lua
             ├── dev.lua
-            ├── tasks.lua
 ```
 
 ---
 
-## 🔌 Plugin Features (Updated)
+## 🔌 Plugin Features
 
-- LSP support for Python, YAML, JSON, Bash, Terraform, etc.
+- LSP support auto-installed via Mason for Python (`pyright`), YAML, JSON, Bash, Terraform, Lua, and more
 - Treesitter-powered syntax + folding
 - Completion via `nvim-cmp`, snippets via `LuaSnip`
-- GitHub Copilot with inline AI suggestions
-- Visual code refactoring with `refactoring.nvim`
-- Symbol outline view with `aerial.nvim`
 - Markdown live preview + Mermaid diagram rendering
 - File tree, terminal toggling, fuzzy finder
 - Git integration with status, blame, and diff
 - Harpoon for fast file navigation
 - Autopairs, commenting, and code actions
-- ✅ **Orgmode / Neorg / Telekasten** for Jira-style task planning & notes
 
 ---
 
@@ -177,6 +186,10 @@ configs/
 
 ### 📌 LSP & Code Actions
 
+| `:Mason` | Open Mason installer UI |
+| `:LspInfo` | Show active language servers |
+
+
 | Key / Command | Action |
 | --- | --- |
 | `:LspInfo` | View LSP status |
@@ -218,7 +231,7 @@ configs/
 | Key | Action |
 | --- | --- |
 | `<leader>t` | Toggle terminal |
-| `Ctrl+\` then `Ctrl+n` | Exit terminal mode |
+| `Ctrl+\\` then `Ctrl+n` | Exit terminal mode |
 | `:ToggleTerm` | Manually toggle terminal |
 
 ### 📌 Commenting (`vim-commentary`)
@@ -260,28 +273,6 @@ configs/
 
 ---
 
-### 📌 Refactoring (via `refactoring.nvim`)
-
-| Mode | Key | Action |
-|------|-----|--------|
-| Visual | `<leader>rr` | Show refactor menu |
-
-### 📌 Symbol Outline (via `aerial.nvim`)
-
-| Mode | Key | Action |
-|------|-----|--------|
-| Normal | `<leader>o` | Toggle symbol outline |
-
-### 📌 Task Planning & Notes
-
-| Plugin       | Highlights |
-|--------------|------------|
-| `orgmode.nvim` | Agenda views, structured TODOs, org files |
-| `neorg`         | Modular GTD workflows, task states, ZK |
-| `telekasten.nvim` | Markdown journaling + backlinks |
-
----
-
 ## 🧼 Cleanup
 
 ```bash
@@ -293,3 +284,4 @@ rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
 ## 📜 License
 
 MIT License
+

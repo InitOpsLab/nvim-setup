@@ -9,4 +9,6 @@ require("config.treesitter")
 require("config.folds")
 require("config.filetypes")
 require("config.sops")
+require("config.lsp")
+require("config.go")
 

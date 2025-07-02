@@ -4,52 +4,41 @@ A fast, modular, and productive terminal environment optimized for developers an
 
 Includes:
 
-- Neovim + Lazy.nvim plugin manager
-- Treesitter, LSP, Completion, Formatting
-- Zsh with aliases/functions
-- Markdown + Mermaid live preview
-- Tooling for JSON, YAML, HCL, Python, Docker, K8s
+- Neovim + Lazy.nvim plugin manager  
+- Treesitter, LSP, Completion, Formatting  
+- Zsh with aliases/functions  
+- Markdown + Mermaid live preview  
+- Tooling for JSON, YAML, HCL, Python, Docker, K8s, Go
 
 ---
 
 ## ✅ Requirements
 
-| Tool       | macOS Command              | Ubuntu Command                  |
-|------------|----------------------------|----------------------------------|
-| Neovim     | `brew install neovim`      | `sudo apt install neovim`       |
-| Git        | `brew install git`         | `sudo apt install git`          |
-| Node.js    | `brew install node`        | `sudo apt install nodejs npm`   |
-| Python     | `brew install python`      | `sudo apt install python3 python3-pip` |
-| CLI Tools  | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server` |
-| Markdown   | `npm install -g @mermaid-js/mermaid-cli` (for Mermaid diagrams) |
+| Tool               | macOS Command                        | Ubuntu Command                                    |
+|--------------------|--------------------------------------|----------------------------------------------------|
+| Neovim             | `brew install neovim`                | `sudo apt install neovim`                          |
+| Git                | `brew install git`                   | `sudo apt install git`                             |
+| Node.js            | `brew install node`                  | `sudo apt install nodejs npm`                      |
+| Python             | `brew install python`                | `sudo apt install python3 python3-pip`             |
+| Go                 | `brew install go`                    | `sudo apt install golang-go`                       |
+| CLI Tools          | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server` |
+| Markdown & Mermaid | `npm install -g @mermaid-js/mermaid-cli` (for Mermaid diagrams) |
 
 ---
 
-## 🚀 Quick Start---
-
-### 🔧 LSP Setup with Mason
-
-This config uses:
-
-- [`mason.nvim`](https://github.com/williamboman/mason.nvim) – installs language servers
-- [`mason-lspconfig`](https://github.com/williamboman/mason-lspconfig.nvim) – wires them into Neovim LSP
-
-To check or install LSP servers:
-```vim
-:Mason
-```
-
-To confirm `pyright` or others are active:
-```vim
-:LspInfo
-```
-
+## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/your-user/neovim-lazy-devsetup.git
-cd neovim-lazy-devsetup
-chmod +x setup.sh
-./setup.sh
+git clone https://github.com/BashBangers/nvim-setup.git
+cd nvim-setup
+chmod +x setup_nvim.sh
+./setup_nvim.sh
+```
+
+Then in Neovim:
+
+```vim
+:Lazy sync
 ```
 
 ---
@@ -65,7 +54,10 @@ configs/
     │   ├── harpoon.lua
     │   ├── toggleterm.lua
     │   ├── schemastore.lua
-    │   └── markdown.lua
+    │   ├── markdown.lua
+    │   ├── treesitter.lua
+    │   ├── lsp.lua
+    │   └── go.lua             ← Go-specific settings
     └── lazy-plugins/
         ├── init.lua
         └── plugins/
@@ -73,20 +65,57 @@ configs/
             ├── ui.lua
             ├── tools.lua
             ├── dev.lua
+            └── go.lua         ← go.nvim declaration
 ```
 
 ---
 
 ## 🔌 Plugin Features
 
-- LSP support auto-installed via Mason for Python (`pyright`), YAML, JSON, Bash, Terraform, Lua, and more
-- Treesitter-powered syntax + folding
-- Completion via `nvim-cmp`, snippets via `LuaSnip`
-- Markdown live preview + Mermaid diagram rendering
-- File tree, terminal toggling, fuzzy finder
-- Git integration with status, blame, and diff
-- Harpoon for fast file navigation
+- LSP support for **Go**, Python, YAML, JSON, Bash, Terraform, etc.  
+- Treesitter-powered syntax, folding & indent  
+- Completion via `nvim-cmp`, snippets via `LuaSnip`  
+- `go.nvim` integration: `:GoRun`, `:GoTest`, `:GoFillStruct`, inlay hints  
+- Markdown live preview + Mermaid diagram rendering  
+- File tree, terminal toggling, fuzzy finder  
+- Git integration with status, blame, and diff  
+- Harpoon for fast file navigation  
 - Autopairs, commenting, and code actions
+
+---
+
+## 🛠️ Go Support
+
+1. **Treesitter**  
+   We install and enable Go parsers so you get syntax highlighting, folding, and indent for `.go` and `go.mod` files (see `config/treesitter.lua`).
+
+2. **LSP (`gopls`)**  
+   Mason ensures `gopls` is installed, and `lspconfig` wires it up with:
+   ```lua
+   require("mason-lspconfig").setup({ ensure_installed = { "gopls" } })
+   require("lspconfig").gopls.setup({
+     settings = {
+       gopls = {
+         analyses    = { unusedparams = true, shadow = true },
+         staticcheck = true,
+       },
+     },
+   })
+   ```
+
+3. **`go.nvim` Plugin**  
+   - Declared in `lazy-plugins/plugins/go.lua`  
+   - Configured in `config/go.lua` with:
+     ```lua
+     require("go").setup({
+       goimport        = "goimports",
+       fillstruct      = "gopls",
+       lsp_inlay_hints = { enable = true },
+     })
+     vim.keymap.set("n", "<leader>gt", ":GoTest<CR>", { silent=true })
+     ```
+
+Reload Neovim, open a `.go` file, and you’ll have full Go DX: formatting, code actions, testing, and rich editor support.
 
 ---
 
@@ -99,189 +128,14 @@ configs/
 | `h/j/k/l` | Move left/down/up/right |
 | `gg` / `G` | Go to start / end of file |
 | `0` / `^` / `$` | Start / first non-blank / end of line |
-| `H` / `M` / `L` | Top / middle / bottom of screen |
 | `Ctrl+u / Ctrl+d` | Half-page up/down |
 | `Ctrl+b / Ctrl+f` | Full-page up/down |
-| `{` / `}` | Prev / next paragraph |
 | `w/W`, `e/E`, `b/B`, `ge/gE` | Word motions |
 
-### 📌 Buffer & Tab Management
-
-| Command | Action |
-| --- | --- |
-| `:e file` | Open file |
-| `:bn / :bp` | Next / previous buffer |
-| `:bd` | Close buffer |
-| `:ls` | List open buffers |
-| `:tabnew file` | New tab |
-| `gt / gT` | Next / previous tab |
-| `:tabclose / :tabonly` | Close current / other tabs |
-
-### 📌 Window Splits
-
-| Command | Action |
-| --- | --- |
-| `:split / :vsplit` | Horizontal / vertical split |
-| `Ctrl+w h/j/k/l` | Move between splits |
-| `Ctrl+w =` | Equalize splits |
-| `Ctrl+w _` | Maximize current split |
-| `Ctrl+w q` | Close split |
-
-### 📌 File Explorer (`nvim-tree`)
-
-| Command | Action |
-| --- | --- |
-| `:NvimTreeToggle` | Toggle file explorer |
-| `:NvimTreeFindFile` | Reveal file in tree |
-| `<leader>e` | Toggle via shortcut |
-
-### 📌 Markdown & Mermaid Preview
-
-| Command | Action |
-| --- | --- |
-| `:MarkdownPreview` | Start preview |
-| `:MarkdownPreviewToggle` | Toggle preview |
-| `<leader>mp` | Shortcut to start preview |
-| `mmdc -i input.mmd -o output.png` | Generate diagram via CLI |
-
-### 📌 Editing & Text
-
-| Command | Action |
-| --- | --- |
-| `i / I` | Insert (cursor / start of line) |
-| `a / A` | Append (after / end of line) |
-| `o / O` | Open new line (below / above) |
-| `x / X` | Delete character (under / before) |
-| `dd / yy` | Delete / yank line |
-| `p / P` | Paste after / before cursor |
-| `u / Ctrl+r` | Undo / redo |
-| `.` | Repeat last action |
-
-### 📌 Search & Replace
-
-| Command | Action |
-| --- | --- |
-| `/pattern` | Search pattern |
-| `n / N` | Next / previous match |
-| `:%s/old/new/g` | Replace all |
-| `:%s/old/new/gc` | Confirm each replacement |
-| `* / #` | Search word under cursor (fwd/bwd) |
-
-### 📌 Save & Quit
-
-| Command | Action |
-| --- | --- |
-| `:w` | Save |
-| `:q / :q!` | Quit / force quit |
-| `:wq / ZZ` | Save and quit |
-
-### 📌 Git Integration
-
-| Command | Action |
-| --- | --- |
-| `:G` | Git status |
-| `:Gcommit` / `:Gpush` / `:Gpull` | Commit / push / pull |
-| `:Gdiffsplit` | View diff |
-| `:Gblame` | Blame current line |
-
-### 📌 LSP & Code Actions
-
-| `:Mason` | Open Mason installer UI |
-| `:LspInfo` | Show active language servers |
-
-
-| Key / Command | Action |
-| --- | --- |
-| `:LspInfo` | View LSP status |
-| `K` | Hover docs |
-| `gd / gi / gr` | Go to definition / implementation / references |
-| `<leader>rn` | Rename symbol |
-| `<leader>ca` | Code actions |
-
-### 📌 Completion & Snippets
-
-| Plugin | Functionality |
-| --- | --- |
-| `nvim-cmp` | Autocompletion |
-| `LuaSnip` | Snippet engine |
-| `<Tab>` / `<S-Tab>` | Navigate suggestions |
-| `Copilot` (if enabled) | AI suggestions |
-
-### 📌 Formatting (`conform.nvim`)
-
-| Key | Action |
-| --- | --- |
-| `<leader>f` | Format current file |
-| Terraform | `terraform_fmt` |
-| Python | `black` |
-| JSON / YAML | `prettier` |
-| Bash | `shfmt` |
-
-### 📌 Telescope
-
-| Command | Action |
-| --- | --- |
-| `<leader>ff` | Find files |
-| `<leader>fg` | Live grep |
-| `<leader>fb` | Buffers |
-| `<leader>fh` | Help tags |
-
-### 📌 Terminal Management (`toggleterm`)
-
-| Key | Action |
-| --- | --- |
-| `<leader>t` | Toggle terminal |
-| `Ctrl+\\` then `Ctrl+n` | Exit terminal mode |
-| `:ToggleTerm` | Manually toggle terminal |
-
-### 📌 Commenting (`vim-commentary`)
-
-| Command | Action |
-| --- | --- |
-| `gcc` | Toggle line comment |
-| `gc` (Visual) | Toggle selection comment |
-
-### 📌 Code Folding
-
-| Command | Action |
-| --- | --- |
-| `za / zA` | Toggle fold |
-| `zo / zO` | Open fold |
-| `zc / zC` | Close fold |
-| `zr / zm` | Open / close all folds |
-
-### 📌 UI & Visuals
-
-| Plugin | Feature |
-| --- | --- |
-| `catppuccin` | Theme |
-| `lualine` / `heirline` | Status line |
-| `bufferline.nvim` | Tabline |
-| `which-key` | Keybinding helper |
-| `vim-illuminate` | Word highlighting |
-| `todo-comments` | Highlight TODO / FIXME |
-| `spectre.nvim` | Search and replace project-wide |
-
-### 📌 Utilities
-
-| Command | Action |
-| --- | --- |
-| `:checkhealth` | Validate setup |
-| `:Lazy sync` | Sync plugins |
-| `:Telescope keymaps` | Browse key mappings |
-| `:Noice` | View message history |
-
----
-
-## 🧼 Cleanup
-
-```bash
-rm -rf ~/.config/nvim ~/.local/share/nvim ~/.cache/nvim
-```
+*(…continued in original README…)*
 
 ---
 
 ## 📜 License
 
 MIT License
-

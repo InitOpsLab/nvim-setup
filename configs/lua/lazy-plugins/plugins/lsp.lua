@@ -1,8 +1,6 @@
 return {
   { "neovim/nvim-lspconfig" },
-  { "williamboman/mason.nvim" },
-  { "williamboman/mason-lspconfig.nvim",
-    version = "*",
-  }
+  { "williamboman/mason.nvim", build = ":MasonUpdate" },
+  { "williamboman/mason-lspconfig.nvim" },
 }
 

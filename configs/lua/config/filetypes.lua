@@ -23,3 +23,10 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   end,
 })
 
+-- Detect mmd as Markdown
+vim.filetype.add({
+  extension = {
+    mmd = "markdown",
+  },
+})
+

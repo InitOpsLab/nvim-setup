@@ -13,7 +13,9 @@ require("nvim-treesitter.configs").setup({
     "vim",
     "vimdoc",
     "markdown",
-    "markdown_inline"
+    "markdown_inline",
+    "go",
+    "gomod",
   },
   highlight = {
     enable = true,

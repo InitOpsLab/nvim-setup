@@ -1,13 +1,21 @@
 -- ~/.config/nvim/lua/config/init.lua
 
-require("options")
-require("config.toggleterm")
-require("config.harpoon")
-require("config.schemastore")
-require("config.markdown")
-require("config.treesitter")
-require("config.folds")
-require("config.filetypes")
-require("config.sops")
-require("config.lsp")
+local function safe_require(module)
+	local ok, err = pcall(require, module)
+	if not ok then
+		vim.notify("Failed to load module: " .. module .. "\n" .. err, vim.log.levels.WARN)
+	end
+end
 
+safe_require("options")
+safe_require("config.toggleterm")
+safe_require("config.harpoon")
+safe_require("config.schemastore")
+safe_require("config.markdown")
+safe_require("config.treesitter")
+safe_require("config.folds")
+safe_require("config.filetypes")
+safe_require("config.sops")
+safe_require("config.ruby")
+safe_require("config.conform")
+safe_require("config.dap")

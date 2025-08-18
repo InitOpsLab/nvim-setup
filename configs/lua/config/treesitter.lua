@@ -16,6 +16,7 @@ require("nvim-treesitter.configs").setup({
     "markdown_inline",
     "go",
     "gomod",
+    "ruby",
   },
   highlight = {
     enable = true,

@@ -1,28 +1,30 @@
 # 🛠️ Terminal Dev Environment (Neovim + Lazy + Zsh)
 
-A fast, modular, and productive terminal environment optimized for developers and DevSecOps engineers.
+A **fast, modular, and developer-friendly terminal setup** optimized for software engineers and DevSecOps.  
 
-Includes:
+![Demo](./assets/demo.gif)
 
-- Neovim + Lazy.nvim plugin manager  
-- Treesitter, LSP, Completion, Formatting  
-- Zsh with aliases/functions  
-- Markdown + Mermaid live preview  
-- Tooling for JSON, YAML, HCL, Python, Docker, K8s, Go
+This environment turns Neovim into a full IDE with batteries included:
+
+- **Neovim** with [Lazy.nvim](https://github.com/folke/lazy.nvim) plugin manager  
+- **LSP, Treesitter, Completion, Formatting** for multiple languages  
+- **Zsh** with handy aliases & functions  
+- **Markdown + Mermaid live preview** for docs and diagrams  
+- Built-in tooling for JSON, YAML, HCL, Python, Docker, Kubernetes, Go, and more  
 
 ---
 
 ## ✅ Requirements
 
-| Tool               | macOS Command                        | Ubuntu Command                                    |
-|--------------------|--------------------------------------|----------------------------------------------------|
-| Neovim             | `brew install neovim`                | `sudo apt install neovim`                          |
-| Git                | `brew install git`                   | `sudo apt install git`                             |
-| Node.js            | `brew install node`                  | `sudo apt install nodejs npm`                      |
-| Python             | `brew install python`                | `sudo apt install python3 python3-pip`             |
-| Go                 | `brew install go`                    | `sudo apt install golang-go`                       |
+| Tool               | macOS (brew)                 | Ubuntu (apt)                                    |
+|--------------------|------------------------------|-------------------------------------------------|
+| Neovim             | `brew install neovim`        | `sudo apt install neovim`                       |
+| Git                | `brew install git`           | `sudo apt install git`                          |
+| Node.js            | `brew install node`          | `sudo apt install nodejs npm`                   |
+| Python             | `brew install python`        | `sudo apt install python3 python3-pip`          |
+| Go                 | `brew install go`            | `sudo apt install golang-go`                    |
 | CLI Tools          | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server` |
-| Markdown & Mermaid | `npm install -g @mermaid-js/mermaid-cli` (for Mermaid diagrams) |
+| Markdown & Mermaid | `npm install -g @mermaid-js/mermaid-cli` |
 
 ---
 
@@ -35,7 +37,7 @@ chmod +x setup_nvim.sh
 ./setup_nvim.sh
 ```
 
-Then in Neovim:
+Then inside Neovim:
 
 ```vim
 :Lazy sync
@@ -72,25 +74,25 @@ configs/
 
 ## 🔌 Plugin Features
 
-- LSP support for **Go**, Python, YAML, JSON, Bash, Terraform, etc.  
-- Treesitter-powered syntax, folding & indent  
-- Completion via `nvim-cmp`, snippets via `LuaSnip`  
-- `go.nvim` integration: `:GoRun`, `:GoTest`, `:GoFillStruct`, inlay hints  
-- Markdown live preview + Mermaid diagram rendering  
-- File tree, terminal toggling, fuzzy finder  
-- Git integration with status, blame, and diff  
-- Harpoon for fast file navigation  
-- Autopairs, commenting, and code actions
+- **LSP** for Go, Python, YAML, JSON, Bash, Terraform, and more  
+- **Treesitter** for syntax, folding, and indent  
+- **Completion** via `nvim-cmp`, snippets via `LuaSnip`  
+- **Go.nvim** integration: `:GoRun`, `:GoTest`, `:GoFillStruct`, inlay hints  
+- **Markdown live preview** with Mermaid diagrams  
+- **File tree, terminal toggling, fuzzy finder** with Telescope  
+- **Git tools**: status, blame, diffs with gitsigns + fugitive  
+- **Harpoon** for fast file navigation  
+- **Autopairs, commenting, and code actions**
 
 ---
 
 ## 🛠️ Go Support
 
 1. **Treesitter**  
-   We install and enable Go parsers so you get syntax highlighting, folding, and indent for `.go` and `go.mod` files (see `config/treesitter.lua`).
+   Go parsers enabled for `.go` and `go.mod` files.
 
 2. **LSP (`gopls`)**  
-   Mason ensures `gopls` is installed, and `lspconfig` wires it up with:
+   Managed via Mason + LSPConfig:
    ```lua
    require("mason-lspconfig").setup({ ensure_installed = { "gopls" } })
    require("lspconfig").gopls.setup({
@@ -104,18 +106,18 @@ configs/
    ```
 
 3. **`go.nvim` Plugin**  
-   - Declared in `lazy-plugins/plugins/go.lua`  
-   - Configured in `config/go.lua` with:
-     ```lua
-     require("go").setup({
-       goimport        = "goimports",
-       fillstruct      = "gopls",
-       lsp_inlay_hints = { enable = true },
-     })
-     vim.keymap.set("n", "<leader>gt", ":GoTest<CR>", { silent=true })
-     ```
+   Declared in `lazy-plugins/plugins/go.lua`  
+   Configured in `config/go.lua`:
+   ```lua
+   require("go").setup({
+     goimport        = "goimports",
+     fillstruct      = "gopls",
+     lsp_inlay_hints = { enable = true },
+   })
+   vim.keymap.set("n", "<leader>gt", ":GoTest<CR>", { silent=true })
+   ```
 
-Reload Neovim, open a `.go` file, and you’ll have full Go DX: formatting, code actions, testing, and rich editor support.
+Reload Neovim, open a `.go` file, and enjoy full Go DX: formatting, code actions, tests, and inlay hints.
 
 ---
 
@@ -132,7 +134,7 @@ Reload Neovim, open a `.go` file, and you’ll have full Go DX: formatting, code
 | `Ctrl+b / Ctrl+f` | Full-page up/down |
 | `w/W`, `e/E`, `b/B`, `ge/gE` | Word motions |
 
-*(…continued in original README…)*
+*(…extend as needed for your workflow…)*
 
 ---
 

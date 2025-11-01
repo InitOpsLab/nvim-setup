@@ -1,143 +1,255 @@
 # 🛠️ Terminal Dev Environment (Neovim + Lazy + Zsh)
 
-A **fast, modular, and developer-friendly terminal setup** optimized for software engineers and DevSecOps.  
+A **fast, modular, and developer-friendly terminal setup** optimized for software engineers and DevSecOps. This configuration transforms Neovim into a full-featured IDE with modern tooling, AI assistance, and comprehensive language support.
 
 ![Demo](./assets/demo.gif)
 
-This environment turns Neovim into a full IDE with batteries included:
+---
 
-- **Neovim** with [Lazy.nvim](https://github.com/folke/lazy.nvim) plugin manager  
-- **LSP, Treesitter, Completion, Formatting** for multiple languages  
-- **Zsh** with handy aliases & functions  
-- **Markdown + Mermaid live preview** for docs and diagrams  
-- Built-in tooling for JSON, YAML, HCL, Python, Docker, Kubernetes, Go, and more  
+## ✨ Features
+
+### Core Capabilities
+
+- **Language Server Protocol (LSP)** - Full IDE features for Go, Python, YAML, JSON, Bash, Terraform, Ruby, and more
+- **Treesitter** - Advanced syntax highlighting, code folding, and indentation
+- **Intelligent Completion** - Auto-completion via `nvim-cmp` with snippets via `LuaSnip`
+- **Code Formatting** - Automatic formatting via Conform.nvim
+- **Git Integration** - Status, blame, diffs with gitsigns and fugitive
+
+### AI & Productivity
+
+- **GitHub Copilot** - AI-powered code suggestions
+- **Refactoring Tools** - Visual refactoring support with ThePrimeagen/refactoring.nvim
+- **Symbol Outline** - Code structure navigation with Aerial.nvim
+
+### Debugging & Development
+
+- **Debug Adapter Protocol (DAP)** - Full debugging support with UI for multiple languages
+- **Go.nvim** - Enhanced Go development with `:GoRun`, `:GoTest`, `:GoFillStruct`, and inlay hints
+- **File Navigation** - Fast file switching with Harpoon, fuzzy finder with Telescope, file tree with nvim-tree
+
+### Additional Tools
+
+- **Markdown Preview** - Live preview with Mermaid diagram support
+- **Terminal Integration** - Integrated terminal toggling
+- **Task Management** - Orgmode/Neorg support for notes and tasks
+- **SOPS Support** - Encryption support for sensitive configuration files
+- **Project Management** - Automatic project root detection
 
 ---
 
 ## ✅ Requirements
 
-| Tool               | macOS (brew)                 | Ubuntu (apt)                                    |
-|--------------------|------------------------------|-------------------------------------------------|
-| Neovim             | `brew install neovim`        | `sudo apt install neovim`                       |
-| Git                | `brew install git`           | `sudo apt install git`                          |
-| Node.js            | `brew install node`          | `sudo apt install nodejs npm`                   |
-| Python             | `brew install python`        | `sudo apt install python3 python3-pip`          |
-| Go                 | `brew install go`            | `sudo apt install golang-go`                    |
-| CLI Tools          | `jq`, `yq`, `fzf`, `fd`, `ripgrep`, `gh`, `bat`, `exa`, `terraform`, `lua-language-server` |
-| Markdown & Mermaid | `npm install -g @mermaid-js/mermaid-cli` |
+### System Requirements
+
+- **Neovim** 0.9+ (recommended: latest stable)
+- **Git**
+- **Node.js** and npm
+- **Python** 3.x
+- **Go** (optional, for Go development)
+
+### CLI Tools
+
+The setup script will install these, or you can install manually:
+
+| Tool | macOS (brew) | Ubuntu (apt) |
+|------|--------------|--------------|
+| `jq`, `yq` | `brew install jq yq` | `sudo apt install jq yq` |
+| `fzf`, `fd` | `brew install fzf fd` | `sudo apt install fzf fd-find` |
+| `ripgrep` | `brew install ripgrep` | `sudo apt install ripgrep` |
+| `gh` | `brew install gh` | Follow [GitHub CLI install](https://cli.github.com/) |
+| `bat`, `exa` | `brew install bat eza` | `sudo apt install bat eza` |
+| `terraform` | `brew install terraform` | `sudo apt install terraform` |
+| `lua-language-server` | `brew install lua-language-server` | `sudo apt install lua-language-server` |
+
+### NPM Packages
+
+```bash
+npm install -g @mermaid-js/mermaid-cli yaml-language-server vscode-langservers-extracted
+```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Installation
+
+### Quick Start
+
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/BashBangers/nvim-setup.git
 cd nvim-setup
+```
+
+1. Run the setup script:
+
+```bash
 chmod +x setup_nvim.sh
 ./setup_nvim.sh
 ```
 
-Then inside Neovim:
+The script will:
+
+- Detect your OS (macOS or Ubuntu)
+- Install required dependencies
+- Set up Lazy.nvim plugin manager
+- Copy configuration files to `~/.config/nvim/`
+- Auto-sync plugins
+
+1. Launch Neovim and sync plugins:
 
 ```vim
 :Lazy sync
 ```
 
+### Manual Installation
+
+If you prefer manual setup:
+
+1. Copy the configuration:
+
+```bash
+mkdir -p ~/.config/nvim
+cp -r configs/* ~/.config/nvim/
+```
+
+1. Install Lazy.nvim:
+
+```bash
+git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
+  --branch=stable ~/.local/share/nvim/lazy/lazy.nvim
+```
+
+1. Launch Neovim and run `:Lazy sync`
+
 ---
 
-## 📁 Folder Structure
+## 🎯 Usage
 
-```
+### Key Commands
+
+#### Navigation
+
+- `<leader>` - Space (default leader key)
+- `<leader>ff` - Find files with Telescope
+- `<leader>fg` - Search in files
+- `<leader>fb` - Browse buffers
+- `<leader>gt` - Run Go tests (Go files)
+
+#### Git
+
+- `<leader>gs` - Git status (fugitive)
+- View diffs and blame directly in Neovim
+
+#### Code Actions
+
+- `K` - Hover documentation
+- `gd` - Go to definition
+- `gr` - References
+- `<leader>ca` - Code actions
+- `<leader>rr` - Visual refactoring (visual mode)
+
+#### Debugging
+
+- DAP commands available when debuggers are configured
+- Check `config/dap.lua` and `config/dap-langs.lua` for setup
+
+### Configuration
+
+Configuration files are organized in `~/.config/nvim/lua/`:
+
+- `config/` - Plugin configurations
+- `lazy-plugins/plugins/` - Plugin declarations
+- `options.lua` - Editor options
+
+Customize by editing files in `~/.config/nvim/lua/config/`.
+
+---
+
+## 📁 Project Structure
+
+```text
 configs/
-├── init.lua
+├── init.lua                 # Entry point
 └── lua/
-    ├── options.lua
-    ├── config/
-    │   ├── harpoon.lua
-    │   ├── toggleterm.lua
-    │   ├── schemastore.lua
-    │   ├── markdown.lua
-    │   ├── treesitter.lua
-    │   ├── lsp.lua
-    │   └── go.lua             ← Go-specific settings
-    └── lazy-plugins/
-        ├── init.lua
-        └── plugins/
-            ├── lsp.lua
-            ├── ui.lua
-            ├── tools.lua
-            ├── dev.lua
-            └── go.lua         ← go.nvim declaration
+    ├── options.lua          # Editor options
+    ├── config/              # Plugin configurations
+    └── lazy-plugins/        # Lazy.nvim setup
+        └── plugins/         # Plugin declarations
 ```
 
----
-
-## 🔌 Plugin Features
-
-- **LSP** for Go, Python, YAML, JSON, Bash, Terraform, and more  
-- **Treesitter** for syntax, folding, and indent  
-- **Completion** via `nvim-cmp`, snippets via `LuaSnip`  
-- **Go.nvim** integration: `:GoRun`, `:GoTest`, `:GoFillStruct`, inlay hints  
-- **Markdown live preview** with Mermaid diagrams  
-- **File tree, terminal toggling, fuzzy finder** with Telescope  
-- **Git tools**: status, blame, diffs with gitsigns + fugitive  
-- **Harpoon** for fast file navigation  
-- **Autopairs, commenting, and code actions**
+Each language/tool has its own configuration file in `config/` for easy customization.
 
 ---
 
-## 🛠️ Go Support
+## 🛠️ Language-Specific Setup
 
-1. **Treesitter**  
-   Go parsers enabled for `.go` and `go.mod` files.
+### Go Development
 
-2. **LSP (`gopls`)**  
-   Managed via Mason + LSPConfig:
-   ```lua
-   require("mason-lspconfig").setup({ ensure_installed = { "gopls" } })
-   require("lspconfig").gopls.setup({
-     settings = {
-       gopls = {
-         analyses    = { unusedparams = true, shadow = true },
-         staticcheck = true,
-       },
-     },
-   })
-   ```
+The configuration includes full Go support:
 
-3. **`go.nvim` Plugin**  
-   Declared in `lazy-plugins/plugins/go.lua`  
-   Configured in `config/go.lua`:
-   ```lua
-   require("go").setup({
-     goimport        = "goimports",
-     fillstruct      = "gopls",
-     lsp_inlay_hints = { enable = true },
-   })
-   vim.keymap.set("n", "<leader>gt", ":GoTest<CR>", { silent=true })
-   ```
+- **Treesitter** parsers for `.go` and `go.mod`
+- **gopls** LSP server (auto-installed via Mason)
+- **go.nvim** plugin with commands:
+  - `:GoRun` - Run current file
+  - `:GoTest` - Run tests
+  - `:GoFillStruct` - Fill struct fields
+  - Inlay hints enabled
 
-Reload Neovim, open a `.go` file, and enjoy full Go DX: formatting, code actions, tests, and inlay hints.
+### Other Languages
+
+LSP servers are automatically installed via Mason when you open a file type. Configured languages include:
+
+- Python, Ruby, JavaScript/TypeScript
+- YAML, JSON, Terraform (HCL)
+- Bash, Lua, and more
+
+Add new language servers by editing `lua/lazy-plugins/plugins/lsp.lua`.
 
 ---
 
-## 🧠 Neovim Cheat Sheet (Modern DevSecOps Setup)
+## 🐛 Troubleshooting
 
-### 📌 Basic Navigation
+### Plugins not loading
 
-| Key | Action |
-| --- | --- |
-| `h/j/k/l` | Move left/down/up/right |
-| `gg` / `G` | Go to start / end of file |
-| `0` / `^` / `$` | Start / first non-blank / end of line |
-| `Ctrl+u / Ctrl+d` | Half-page up/down |
-| `Ctrl+b / Ctrl+f` | Full-page up/down |
-| `w/W`, `e/E`, `b/B`, `ge/gE` | Word motions |
+- Run `:Lazy sync` to ensure all plugins are installed
+- Check `:Lazy health` for plugin status
+- Restart Neovim after configuration changes
 
-*(…extend as needed for your workflow…)*
+### LSP not working
+
+- Ensure language servers are installed: `:Mason`
+- Check `:LspInfo` to see active LSP servers
+- Verify the language server is in your PATH
+
+### Performance issues
+
+- Reduce plugins in `lazy-plugins/plugins/` if not needed
+- Check `:Lazy profile` for slow-loading plugins
+- Disable unused language servers
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## 📜 License
 
-MIT License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- [Lazy.nvim](https://github.com/folke/lazy.nvim) - Modern plugin manager
+- [Neovim](https://neovim.io/) - Hyperextensible Vim-based text editor
+- All the amazing plugin authors in the Neovim community

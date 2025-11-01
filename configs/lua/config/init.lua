@@ -19,4 +19,5 @@ safe_require("config.conform")
 safe_require("config.dap")
 
 -- ✅ Native project root detection (replaces project.nvim)
-safe_require("config.project")
+safe_require("config.dap")
+safe_require("config.project") -- ✅ native project root detection

@@ -1,122 +1,159 @@
 -- ~/.config/nvim/lua/lazy-plugins/plugins/lsp.lua
 return {
-  -- Treesitter (syntax, folding expr source)
-  {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    config = function()
-      require("config.treesitter")
-    end,
-  },
+	--------------------------------------------------------------------------
+	-- 🌳 Treesitter (syntax highlighting, folding, etc.)
+	--------------------------------------------------------------------------
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+		config = function()
+			require("config.treesitter")
+		end,
+	},
 
-  -- LSP core
-  {
-    "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "hrsh7th/cmp-nvim-lsp",
-    },
-    config = function()
-      local lspconfig = require("lspconfig")
+	--------------------------------------------------------------------------
+	-- ⚙️ Core LSP Configuration
+	--------------------------------------------------------------------------
+	{
+		"neovim/nvim-lspconfig",
+		cmd = { "LspInfo", "LspStart", "LspStop" },
+		event = { "BufReadPre", "BufNewFile" },
+		dependencies = {
+			"williamboman/mason.nvim",
+			"williamboman/mason-lspconfig.nvim",
+			"hrsh7th/cmp-nvim-lsp",
+			"b0o/schemastore.nvim",
+		},
+		config = function()
+			-- Always prefer the new 0.11 API
+			local lsp = vim.lsp.config
 
-      -- Capabilities (completion)
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      pcall(function()
-        capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-      end)
+			-- Completion capabilities
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			pcall(function()
+				capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+			end)
 
-      -- on_attach: keymaps + organize imports (Go)
-      local on_attach = function(_, bufnr)
-        local function map(mode, lhs, rhs, desc)
-          vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-        end
-        map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
-        map("n", "<F12>", vim.lsp.buf.definition, "Go to Definition")
-        map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
-        map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
-        map("n", "gr", vim.lsp.buf.references, "Find References")
-        map("n", "<S-F12>", vim.lsp.buf.references, "Find References")
-        map("n", "K", vim.lsp.buf.hover, "Hover Docs")
-        map("n", "<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
-        map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Action")
+			-- Common LSP keymaps
+			local on_attach = function(_, bufnr)
+				local map = function(mode, lhs, rhs, desc)
+					vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+				end
+				map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
+				map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
+				map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
+				map("n", "gr", vim.lsp.buf.references, "Find References")
+				map("n", "K", vim.lsp.buf.hover, "Hover Docs")
+				map("n", "<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
+				map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Action")
+				map("n", "<leader>oi", function()
+					vim.lsp.buf.code_action({
+						apply = true,
+						context = { only = { "source.organizeImports" } },
+					})
+				end, "Organize Imports")
+			end
 
-        map("n", "gvd", function() vim.cmd("vsplit"); vim.lsp.buf.definition() end, "Definition in vsplit")
-        map("n", "gvr", function() vim.cmd("vsplit"); vim.lsp.buf.references() end, "References in vsplit")
-        map("n", "gtd", function() vim.cmd("tab split"); vim.lsp.buf.definition() end, "Definition in new tab")
-        map("n", "gtr", function() vim.cmd("tab split"); vim.lsp.buf.references() end, "References in new tab")
+			----------------------------------------------------------------------
+			-- 🧰 Mason setup
+			----------------------------------------------------------------------
+			require("mason").setup()
+			local mlsp = require("mason-lspconfig")
 
-        map("n", "<leader>oi", function()
-          vim.lsp.buf.code_action({ apply = true, context = { only = { "source.organizeImports" } } })
-        end, "Organize Imports (Go)")
-      end
+			mlsp.setup({
+				ensure_installed = {
+					-- 🧠 General language servers
+					"lua_ls", -- Lua
+					"pyright", -- Python
+					"tsserver", -- JavaScript/TypeScript
+					"bashls", -- Bash
+					"yamlls", -- YAML
+					"jsonls", -- JSON / SchemaStore
+					"gopls", -- Go
+					"solargraph", -- Ruby
+					"terraformls", -- HCL / Terraform
+					"sqlls", -- SQL
+				},
+				automatic_installation = true,
+			})
 
-      require("mason").setup()
-      local mlsp = require("mason-lspconfig")
-      mlsp.setup({
-        ensure_installed = {
-          "lua_ls", "pyright", "ts_ls", "bashls", "yamlls", "jsonls",
-          "terraformls", "gopls", "sqlls",
-        },
-        automatic_installation = true,
-      })
+			----------------------------------------------------------------------
+			-- 🧠 Mason LSP Setup Handlers
+			----------------------------------------------------------------------
+			mlsp.setup_handlers({
+				function(server)
+					local opts = { on_attach = on_attach, capabilities = capabilities }
 
-      local function setup_server(server)
-        local opts = { on_attach = on_attach, capabilities = capabilities }
+					-- Lua
+					if server == "lua_ls" then
+						opts.settings = {
+							Lua = {
+								diagnostics = { globals = { "vim" } },
+								workspace = { checkThirdParty = false },
+								telemetry = { enable = false },
+							},
+						}
 
-        if server == "lua_ls" then
-          opts.settings = {
-            Lua = {
-              diagnostics = { globals = { "vim" } },
-              workspace = { checkThirdParty = false },
-              telemetry = { enable = false },
-            },
-          }
-        elseif server == "gopls" then
-          opts.settings = {
-            gopls = {
-              gofumpt = true,
-              usePlaceholders = true,
-              staticcheck = true,
-              directoryFilters = { "-vendor" },
-              analyses = {
-                unusedparams = true, nilness = true, shadow = true, unusedwrite = true, useany = true,
-              },
-              hints = {
-                assignVariableTypes = true, compositeLiteralFields = true, compositeLiteralTypes = true,
-                constantValues = true, functionTypeParameters = true, parameterNames = true, rangeVariableTypes = true,
-              },
-              codelenses = {
-                gc_details = true, generate = true, run_govulncheck = true, test = true,
-                tidy = true, upgrade_dependency = true, vendor = true,
-              },
-            },
-          }
-        end
+					-- Go
+					elseif server == "gopls" then
+						opts.settings = {
+							gopls = {
+								gofumpt = true,
+								staticcheck = true,
+								usePlaceholders = true,
+								directoryFilters = { "-vendor" },
+							},
+						}
 
-        -- tsserver/ts_ls compatibility
-        if server == "ts_ls" and not lspconfig[server] and lspconfig["tsserver"] then
-          server = "tsserver"
-        elseif server == "tsserver" and not lspconfig[server] and lspconfig["ts_ls"] then
-          server = "ts_ls"
-        end
+					-- Python
+					elseif server == "pyright" then
+						opts.settings = {
+							python = {
+								analysis = {
+									typeCheckingMode = "basic",
+									autoSearchPaths = true,
+									useLibraryCodeForTypes = true,
+								},
+							},
+						}
 
-        if lspconfig[server] then
-          lspconfig[server].setup(opts)
-        end
-      end
+					-- Ruby
+					elseif server == "solargraph" then
+						opts.settings = { solargraph = { diagnostics = true } }
 
-      if type(mlsp.setup_handlers) == "function" then
-        mlsp.setup_handlers({ function(server) setup_server(server) end })
-      else
-        local installed = {}
-        pcall(function() installed = mlsp.get_installed_servers() end)
-        for _, server in ipairs(installed or {}) do setup_server(server) end
-      end
-    end,
-  },
+					-- YAML
+					elseif server == "yamlls" then
+						local schemastore = require("schemastore")
+						opts.settings = {
+							yaml = {
+								schemas = schemastore.yaml.schemas(),
+								validate = true,
+							},
+						}
 
-  -- (Dependencies declared above; no separate mason specs needed)
+					-- JSON
+					elseif server == "jsonls" then
+						local schemastore = require("schemastore")
+						opts.settings = {
+							json = {
+								schemas = schemastore.json.schemas(),
+								validate = { enable = true },
+							},
+						}
+
+					-- HCL / Terraform
+					elseif server == "terraformls" then
+						opts.cmd = { "terraform-ls", "serve" }
+						opts.filetypes = { "terraform", "hcl", "tf", "tfvars" }
+					end
+
+					if lsp[server] and lsp[server].setup then
+						lsp[server].setup(opts)
+					else
+						vim.notify("LSP setup skipped: " .. server, vim.log.levels.WARN)
+					end
+				end,
+			})
+		end,
+	},
 }
-

@@ -23,36 +23,9 @@ return {
 
 	--------------------------------------------------------------------------
 	-- 🧩 SchemaStore (JSON & YAML)
+	-- (no explicit setup here; jsonls/yamlls read schemastore via LSP handlers)
 	--------------------------------------------------------------------------
-	{
-		"b0o/schemastore.nvim",
-		config = function()
-			local lsp = vim.lsp.config or require("lspconfig")
-			local schemastore = require("schemastore")
-
-			if lsp.jsonls and lsp.jsonls.setup then
-				lsp.jsonls.setup({
-					settings = {
-						json = {
-							schemas = schemastore.json.schemas(),
-							validate = { enable = true },
-						},
-					},
-				})
-			end
-
-			if lsp.yamlls and lsp.yamlls.setup then
-				lsp.yamlls.setup({
-					settings = {
-						yaml = {
-							schemas = schemastore.yaml.schemas(),
-							validate = true,
-						},
-					},
-				})
-			end
-		end,
-	},
+	{ "b0o/schemastore.nvim" },
 
 	--------------------------------------------------------------------------
 	-- 💬 Commenting
@@ -64,11 +37,27 @@ return {
 	},
 
 	--------------------------------------------------------------------------
-	-- 🪄 Autopairs (brackets, quotes)
+	-- 🪄 Autopairs
 	--------------------------------------------------------------------------
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
 		opts = {},
+	},
+
+	--------------------------------------------------------------------------
+	-- 📝 Markdown Preview
+	--------------------------------------------------------------------------
+	{
+		"iamcco/markdown-preview.nvim",
+		build = "cd app && npm install",
+		ft = { "markdown" },
+		config = function()
+			require("config.markdown")
+			local file = vim.fn.expand("%:p")
+			if file:match("%.mmd$") and vim.fn.exists(":MarkdownPreview") == 2 then
+				vim.cmd("MarkdownPreview")
+			end
+		end,
 	},
 }

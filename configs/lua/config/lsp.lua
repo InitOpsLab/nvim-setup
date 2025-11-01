@@ -35,13 +35,30 @@ end, { desc = "Diagnostics (if any) or Hover" })
 -- Pyright (Python)
 lspconfig.pyright.setup({})
 
--- Go (gopls)
+-- Go (gopls) - Disabled hover hints and inline information
 lspconfig.gopls.setup({
   settings = {
     gopls = {
-      analyses    = { unusedparams = true, shadow = true },
-      staticcheck = true,
+      -- Disable hover information and inline hints
+      hints = {
+        assignVariableTypes = false,
+        compositeLiteralFields = false,
+        compositeLiteralTypes = false,
+        constantValues = false,
+        functionTypeParameters = false,
+        parameterNames = false,
+        rangeVariableTypes = false,
+      },
+      -- Disable analyses that show inline information
+      analyses = { 
+        unusedparams = false, 
+        shadow = false 
+      },
+      staticcheck = false,
+      -- Disable other features that might show hints
+      usePlaceholders = false,
+      completeUnimported = false,
+      deepCompletion = false,
     },
   },
 })
-)

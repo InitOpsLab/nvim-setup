@@ -7,17 +7,18 @@ local function safe_require(module)
 	end
 end
 
+-- 1) Load core options first (if you use lua/options.lua)
 safe_require("options")
-safe_require("config.toggleterm")
-safe_require("config.harpoon")
-safe_require("config.markdown")
-safe_require("config.treesitter")
-safe_require("config.folds")
-safe_require("config.filetypes")
-safe_require("config.sops")
-safe_require("config.conform")
-safe_require("config.dap")
 
--- ✅ Native project root detection (replaces project.nvim)
-safe_require("config.dap")
-safe_require("config.project") -- ✅ native project root detection
+-- 2) Dynamically load every lua/config/*.lua file EXCEPT init.lua
+local config_dir = vim.fn.stdpath("config") .. "/lua/config"
+local files = vim.fn.glob(config_dir .. "/*.lua", false, true)
+
+for _, file in ipairs(files) do
+	local name = vim.fn.fnamemodify(file, ":t:r") -- filename without extension
+
+	-- Skip this file itself (init.lua)
+	if name ~= "init" then
+		safe_require("config." .. name)
+	end
+end

@@ -31,10 +31,12 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 ### Additional Tools
 
 - **Markdown Preview** - Live preview with Mermaid diagram support
-- **Terminal Integration** - Integrated terminal toggling
+- **Terminal Integration** - Integrated terminal toggling (toggleterm)
 - **Task Management** - Orgmode/Neorg support for notes and tasks
 - **SOPS Support** - Encryption support for sensitive configuration files
 - **Project Management** - Automatic project root detection
+- **Which-Key** - Interactive key mapping discovery
+- **Catppuccin Theme** - Modern, beautiful color scheme
 
 ---
 
@@ -126,14 +128,20 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 
 ## 🎯 Usage
 
+> **Tip:** Press `<leader>` (Space) and wait to see available key mappings via which-key, or press `<leader>?` to see all mappings.
+
 ### Key Commands
 
 #### Navigation
 
 - `<leader>` - Space (default leader key)
 - `<leader>ff` - Find files with Telescope
-- `<leader>fg` - Search in files
+- `<leader>fg` - Search in files (live grep)
 - `<leader>fb` - Browse buffers
+- `<leader>fh` - Find help tags
+- `<leader>a` - Add file to Harpoon
+- `<C-e>` - Toggle Harpoon quick menu
+- `<leader>1-4` - Navigate to Harpoon file 1-4
 - `<leader>gt` - Run Go tests (Go files)
 
 #### Git
@@ -142,19 +150,35 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 - `:Gdiff` - View diffs
 - `:Gblame` - View blame
 - View diffs and blame directly in Neovim
+- Git signs shown in the gutter (gitsigns)
 
 #### Code Actions
 
-- `K` - Hover documentation
+- `K` - Hover documentation (or diagnostics if available)
 - `gd` - Go to definition
-- `gr` - References
+- `gr` - Find references
 - `<leader>ca` - Code actions
+- `<leader>rn` - Rename symbol
+- `<leader>oi` - Organize imports
 - `<leader>rr` - Visual refactoring (visual mode)
+- `<leader>o` - Toggle symbol outline (Aerial)
 
 #### Debugging
 
-- DAP commands available when debuggers are configured
+- `<F5>` - Continue/Start debugging
+- `<F9>` - Toggle breakpoint
+- `<F10>` - Step over
+- `<F11>` - Step into
+- `<S-F11>` - Step out
+- `<leader>du` - Toggle DAP UI
 - Check `config/dap.lua` and `config/dap-langs.lua` for setup
+
+#### SOPS (Encrypted Files)
+
+- `<leader>se` - Edit encrypted file
+- `<leader>sv` - VSplit encrypted file
+- `<leader>sy` - Copy decrypted buffer to clipboard
+- `<leader>sp` - Paste from clipboard
 
 ### Configuration
 

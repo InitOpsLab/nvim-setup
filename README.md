@@ -81,7 +81,7 @@ git clone https://github.com/BashBangers/nvim-setup.git
 cd nvim-setup
 ```
 
-1. Run the setup script:
+2. Run the setup script:
 
 ```bash
 chmod +x setup_nvim.sh
@@ -96,7 +96,7 @@ The script will:
 - Copy configuration files to `~/.config/nvim/`
 - Auto-sync plugins
 
-1. Launch Neovim and sync plugins:
+3. Launch Neovim and sync plugins:
 
 ```vim
 :Lazy sync
@@ -113,14 +113,14 @@ mkdir -p ~/.config/nvim
 cp -r configs/* ~/.config/nvim/
 ```
 
-1. Install Lazy.nvim:
+2. Install Lazy.nvim:
 
 ```bash
 git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
   --branch=stable ~/.local/share/nvim/lazy/lazy.nvim
 ```
 
-1. Launch Neovim and run `:Lazy sync`
+3. Launch Neovim and run `:Lazy sync`
 
 ---
 
@@ -138,7 +138,9 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 
 #### Git
 
-- `<leader>gs` - Git status (fugitive)
+- `:Git` or `:Gstatus` - Git status (fugitive)
+- `:Gdiff` - View diffs
+- `:Gblame` - View blame
 - View diffs and blame directly in Neovim
 
 #### Code Actions

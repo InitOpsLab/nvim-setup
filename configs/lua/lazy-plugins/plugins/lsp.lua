@@ -165,6 +165,14 @@ return {
 							schemas = require("schemastore").yaml.schemas(),
 							validate = true,
 							format = { enable = true },
+							hover = true,
+							completion = true,
+							-- Disable telemetry
+							redhat = {
+								telemetry = {
+									enabled = false,
+								},
+							},
 						},
 					},
 				},

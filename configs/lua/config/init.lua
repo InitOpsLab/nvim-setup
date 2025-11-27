@@ -16,7 +16,7 @@ for _, file in ipairs(files) do
 	local name = vim.fn.fnamemodify(file, ":t:r") -- filename without extension
 
 	-- Skip configs that are loaded by their respective plugins
-	local plugin_loaded = { init = true, go = true, sidekick = true, copilot = true }
+	local plugin_loaded = { init = true, go = true, sidekick = true, copilot = true, kubernetes = true }
 	if not plugin_loaded[name] then
 		safe_require("config." .. name)
 	end

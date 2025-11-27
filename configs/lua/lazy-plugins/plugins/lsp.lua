@@ -80,15 +80,7 @@ return {
 					})
 				end, "Organize Imports")
 
-				-- Format on save (if supported by client)
-				if client.supports_method("textDocument/formatting") then
-					vim.api.nvim_create_autocmd("BufWritePre", {
-						buffer = bufnr,
-						callback = function()
-							vim.lsp.buf.format({ async = false })
-						end,
-					})
-				end
+				-- Note: Format on save handled by conform.nvim (config/conform.lua)
 			end
 
 			----------------------------------------------------------------------

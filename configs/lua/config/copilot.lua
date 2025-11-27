@@ -3,6 +3,7 @@
 local copilot = require("copilot")
 
 copilot.setup({
+	copilot_node_command = vim.fn.expand("$HOME") .. "/.local/share/fnm/node-versions/v22.21.1/installation/bin/node",
 	suggestion = {
 		enabled = false,
 		auto_trigger = true,

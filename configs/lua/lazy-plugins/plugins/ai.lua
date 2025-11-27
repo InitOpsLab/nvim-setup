@@ -14,7 +14,7 @@ return {
 	-- 🤝 Copilot + nvim-cmp integration
 	{
 		"zbirenbaum/copilot-cmp",
-		after = { "copilot.lua" },
+		dependencies = { "zbirenbaum/copilot.lua" },
 		config = function()
 			require("copilot_cmp").setup()
 		end,

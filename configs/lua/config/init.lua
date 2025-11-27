@@ -7,18 +7,17 @@ local function safe_require(module)
 	end
 end
 
--- 1) Load core options first (if you use lua/options.lua)
-safe_require("options")
-
--- 2) Dynamically load every lua/config/*.lua file EXCEPT init.lua
+-- Dynamically load every lua/config/*.lua file EXCEPT init.lua
+-- Note: options.lua is already loaded by init.lua before plugins
 local config_dir = vim.fn.stdpath("config") .. "/lua/config"
 local files = vim.fn.glob(config_dir .. "/*.lua", false, true)
 
 for _, file in ipairs(files) do
 	local name = vim.fn.fnamemodify(file, ":t:r") -- filename without extension
 
-	-- Skip this file itself (init.lua)
-	if name ~= "init" then
+	-- Skip configs that are loaded by their respective plugins
+	local plugin_loaded = { init = true, go = true, sidekick = true, copilot = true }
+	if not plugin_loaded[name] then
 		safe_require("config." .. name)
 	end
 end

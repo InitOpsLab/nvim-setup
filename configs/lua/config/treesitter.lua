@@ -26,14 +26,7 @@ require("nvim-treesitter.configs").setup({
     enable = true,
     disable = { "json" }, -- can add "yaml", "hcl" if needed
   },
-  autotag = {
-    enable = true,
-  },
-  matchup = {
-    enable = true,
-  },
-  playground = {
-    enable = false,
-  },
+  -- Note: autotag requires nvim-ts-autotag plugin
+  -- Note: matchup requires vim-matchup plugin
 })
 

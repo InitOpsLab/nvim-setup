@@ -10,7 +10,7 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### Core Capabilities
 
-- **Language Server Protocol (LSP)** - Full IDE features for Go, Python, YAML, JSON, Bash, Terraform, Ruby, and more
+- **Language Server Protocol (LSP)** - Full IDE features for Go, Python, YAML, JSON, Bash, Terraform, Ruby, Kubernetes, and more
 - **Treesitter** - Advanced syntax highlighting, code folding, and indentation
 - **Intelligent Completion** - Auto-completion via `nvim-cmp` with snippets via `LuaSnip`
 - **Code Formatting** - Automatic formatting via Conform.nvim
@@ -30,11 +30,14 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### Additional Tools
 
+- **Kubernetes Support** - Cluster interaction (logs, exec, describe, port-forward) with safety features
 - **Markdown Preview** - Live preview with Mermaid diagram support
-- **Terminal Integration** - Integrated terminal toggling
+- **Terminal Integration** - Integrated terminal toggling (toggleterm)
 - **Task Management** - Orgmode/Neorg support for notes and tasks
 - **SOPS Support** - Encryption support for sensitive configuration files
 - **Project Management** - Automatic project root detection
+- **Which-Key** - Interactive key mapping discovery
+- **Catppuccin Theme** - Modern, beautiful color scheme
 
 ---
 
@@ -47,6 +50,7 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 - **Node.js** and npm
 - **Python** 3.x
 - **Go** (optional, for Go development)
+- **kubectl** (optional, for Kubernetes development)
 
 ### CLI Tools
 
@@ -60,6 +64,7 @@ The setup script will install these, or you can install manually:
 | `gh` | `brew install gh` | Follow [GitHub CLI install](https://cli.github.com/) |
 | `bat`, `exa` | `brew install bat eza` | `sudo apt install bat eza` |
 | `terraform` | `brew install terraform` | `sudo apt install terraform` |
+| `kubectl` | `brew install kubectl` | `sudo apt install kubectl` |
 | `lua-language-server` | `brew install lua-language-server` | `sudo apt install lua-language-server` |
 
 ### NPM Packages
@@ -81,7 +86,7 @@ git clone https://github.com/BashBangers/nvim-setup.git
 cd nvim-setup
 ```
 
-1. Run the setup script:
+2. Run the setup script:
 
 ```bash
 chmod +x setup_nvim.sh
@@ -96,7 +101,7 @@ The script will:
 - Copy configuration files to `~/.config/nvim/`
 - Auto-sync plugins
 
-1. Launch Neovim and sync plugins:
+3. Launch Neovim and sync plugins:
 
 ```vim
 :Lazy sync
@@ -113,18 +118,20 @@ mkdir -p ~/.config/nvim
 cp -r configs/* ~/.config/nvim/
 ```
 
-1. Install Lazy.nvim:
+2. Install Lazy.nvim:
 
 ```bash
 git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
   --branch=stable ~/.local/share/nvim/lazy/lazy.nvim
 ```
 
-1. Launch Neovim and run `:Lazy sync`
+3. Launch Neovim and run `:Lazy sync`
 
 ---
 
 ## 🎯 Usage
+
+> **Tip:** Press `<leader>` (Space) and wait to see available key mappings via which-key, or press `<leader>?` to see all mappings.
 
 ### Key Commands
 
@@ -132,27 +139,57 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 
 - `<leader>` - Space (default leader key)
 - `<leader>ff` - Find files with Telescope
-- `<leader>fg` - Search in files
+- `<leader>fg` - Search in files (live grep)
 - `<leader>fb` - Browse buffers
+- `<leader>fh` - Find help tags
+- `<leader>a` - Add file to Harpoon
+- `<C-e>` - Toggle Harpoon quick menu
+- `<leader>1-4` - Navigate to Harpoon file 1-4
 - `<leader>gt` - Run Go tests (Go files)
 
 #### Git
 
-- `<leader>gs` - Git status (fugitive)
+- `:Git` or `:Gstatus` - Git status (fugitive)
+- `:Gdiff` - View diffs
+- `:Gblame` - View blame
 - View diffs and blame directly in Neovim
+- Git signs shown in the gutter (gitsigns)
 
 #### Code Actions
 
-- `K` - Hover documentation
+- `K` - Hover documentation (or diagnostics if available)
 - `gd` - Go to definition
-- `gr` - References
+- `gr` - Find references
 - `<leader>ca` - Code actions
+- `<leader>rn` - Rename symbol
+- `<leader>oi` - Organize imports
 - `<leader>rr` - Visual refactoring (visual mode)
+- `<leader>o` - Toggle symbol outline (Aerial)
 
 #### Debugging
 
-- DAP commands available when debuggers are configured
+- `<F5>` - Continue/Start debugging
+- `<F9>` - Toggle breakpoint
+- `<F10>` - Step over
+- `<F11>` - Step into
+- `<S-F11>` - Step out
+- `<leader>du` - Toggle DAP UI
 - Check `config/dap.lua` and `config/dap-langs.lua` for setup
+
+#### SOPS (Encrypted Files)
+
+- `<leader>se` - Edit encrypted file
+- `<leader>sv` - VSplit encrypted file
+- `<leader>sy` - Copy decrypted buffer to clipboard
+- `<leader>sp` - Paste from clipboard
+
+#### Kubernetes
+
+- `:Kubectl` - Open Kubernetes cluster interaction menu
+- **Safety Feature**: `create` and `delete` commands are blocked by default
+- View logs, exec into pods, describe resources, port-forward, and more
+- YAML schema validation and hover info for Kubernetes resources
+- Customize blocked commands in `config/kubernetes.lua`
 
 ### Configuration
 
@@ -195,6 +232,26 @@ The configuration includes full Go support:
   - `:GoTest` - Run tests
   - `:GoFillStruct` - Fill struct fields
   - Inlay hints enabled
+
+### Kubernetes Development
+
+The configuration includes comprehensive Kubernetes support:
+
+- **kubectl.nvim** - Interactive cluster management:
+  - View pod logs, exec into containers
+  - Describe resources, port-forward services
+  - Resource tree visualization
+  - **Safety**: `create` and `delete` commands are blocked by default
+  - Customize blocked commands in `config/kubernetes.lua`
+- **kubernetes.nvim** - YAML/CRD support:
+  - Schema validation for Kubernetes resources
+  - Hover documentation for resource fields
+  - Auto-completion for resource types
+
+**Usage:**
+
+- Open Kubernetes menu: `:Kubectl`
+- Edit blocked commands: `~/.config/nvim/lua/config/kubernetes.lua`
 
 ### Other Languages
 

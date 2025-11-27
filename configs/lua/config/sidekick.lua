@@ -16,10 +16,11 @@ sidekick.setup({
 		-- Reload buffers when the AI CLI edits files on disk
 		watch = true,
 
-		-- Use tmux/zellij for persistent sessions if available
+		-- ❗ IMPORTANT: disable tmux/zellij mux to avoid "unknown backend: tmux"
 		mux = {
-			enabled = true,
-			backend = "tmux", -- change to "zellij" if you prefer
+			enabled = false,
+			backend = "tmux", -- value is ignored while enabled = false
+			create = "terminal",
 		},
 
 		-- Claude is built-in as "claude" (expects a `claude` CLI in $PATH)
@@ -46,12 +47,10 @@ local function map(mode, lhs, rhs, desc)
 end
 
 -- Global AI CLI toggle (works in normal / insert / visual / terminal)
--- Still handy even on Mac; Control is easy to reach with left pinky.
 map({ "n", "t", "i", "x" }, "<C-.>", function()
 	cli.toggle()
 end, "AI: Toggle CLI")
 
--- NOTE: We avoid <leader>a… because Harpoon uses <leader>a to mark files.
 -- Mac-friendly group prefix: <leader>m (Space + m)
 
 -- Open / toggle current AI CLI (whatever tool is active)
@@ -70,7 +69,7 @@ end, "AI: Claude")
 -- Select AI tool (Claude, Gemini, Copilot CLI, etc.)
 map("n", "<leader>ms", function()
 	cli.select()
-end, "AI: Select tool")
+end, "AI: Select CLI tool")
 
 -- Send “this” (context-aware chunk around cursor)
 map({ "n", "x" }, "<leader>mt", function()

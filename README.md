@@ -10,7 +10,7 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### Core Capabilities
 
-- **Language Server Protocol (LSP)** - Full IDE features for Go, Python, YAML, JSON, Bash, Terraform, Ruby, and more
+- **Language Server Protocol (LSP)** - Full IDE features for Go, Python, YAML, JSON, Bash, Terraform, Ruby, Kubernetes, and more
 - **Treesitter** - Advanced syntax highlighting, code folding, and indentation
 - **Intelligent Completion** - Auto-completion via `nvim-cmp` with snippets via `LuaSnip`
 - **Code Formatting** - Automatic formatting via Conform.nvim
@@ -30,6 +30,7 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### Additional Tools
 
+- **Kubernetes Support** - Cluster interaction (logs, exec, describe, port-forward) with safety features
 - **Markdown Preview** - Live preview with Mermaid diagram support
 - **Terminal Integration** - Integrated terminal toggling (toggleterm)
 - **Task Management** - Orgmode/Neorg support for notes and tasks
@@ -49,6 +50,7 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 - **Node.js** and npm
 - **Python** 3.x
 - **Go** (optional, for Go development)
+- **kubectl** (optional, for Kubernetes development)
 
 ### CLI Tools
 
@@ -62,6 +64,7 @@ The setup script will install these, or you can install manually:
 | `gh` | `brew install gh` | Follow [GitHub CLI install](https://cli.github.com/) |
 | `bat`, `exa` | `brew install bat eza` | `sudo apt install bat eza` |
 | `terraform` | `brew install terraform` | `sudo apt install terraform` |
+| `kubectl` | `brew install kubectl` | `sudo apt install kubectl` |
 | `lua-language-server` | `brew install lua-language-server` | `sudo apt install lua-language-server` |
 
 ### NPM Packages
@@ -180,6 +183,14 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 - `<leader>sy` - Copy decrypted buffer to clipboard
 - `<leader>sp` - Paste from clipboard
 
+#### Kubernetes
+
+- `:Kubectl` - Open Kubernetes cluster interaction menu
+- **Safety Feature**: `create` and `delete` commands are blocked by default
+- View logs, exec into pods, describe resources, port-forward, and more
+- YAML schema validation and hover info for Kubernetes resources
+- Customize blocked commands in `config/kubernetes.lua`
+
 ### Configuration
 
 Configuration files are organized in `~/.config/nvim/lua/`:
@@ -221,6 +232,26 @@ The configuration includes full Go support:
   - `:GoTest` - Run tests
   - `:GoFillStruct` - Fill struct fields
   - Inlay hints enabled
+
+### Kubernetes Development
+
+The configuration includes comprehensive Kubernetes support:
+
+- **kubectl.nvim** - Interactive cluster management:
+  - View pod logs, exec into containers
+  - Describe resources, port-forward services
+  - Resource tree visualization
+  - **Safety**: `create` and `delete` commands are blocked by default
+  - Customize blocked commands in `config/kubernetes.lua`
+- **kubernetes.nvim** - YAML/CRD support:
+  - Schema validation for Kubernetes resources
+  - Hover documentation for resource fields
+  - Auto-completion for resource types
+
+**Usage:**
+
+- Open Kubernetes menu: `:Kubectl`
+- Edit blocked commands: `~/.config/nvim/lua/config/kubernetes.lua`
 
 ### Other Languages
 

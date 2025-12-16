@@ -7,7 +7,8 @@ YELLOW="\\033[1;33m"
 RED="\\033[1;31m"
 RESET="\\033[0m"
 
-CONFIGS_DIR="$(pwd)/configs"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIGS_DIR="$SCRIPT_DIR/configs"
 
 log_info() { echo -e "${GREEN}[INFO]${RESET} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${RESET} $1"; }
@@ -32,6 +33,21 @@ is_installed() {
   command -v "$1" >/dev/null 2>&1
 }
 
+# Map package names to their actual command names
+get_command_name() {
+  local pkg="$1"
+  case "$pkg" in
+    neovim) echo "nvim" ;;
+    python|python3) echo "python3" ;;
+    nodejs|node) echo "node" ;;
+    fd|fd-find) echo "fd" ;;
+    lua-language-server) echo "lua-language-server" ;;
+    ripgrep) echo "rg" ;;
+    bat) echo "bat" ;;
+    *) echo "$pkg" ;;
+  esac
+}
+
 install_mac() {
   log_info "Installing dependencies for macOS..."
   brew update
@@ -40,7 +56,9 @@ install_mac() {
     lua-language-server gh bat yq eza)
 
   for pkg in "${packages[@]}"; do
-    if is_installed "$pkg"; then
+    local cmd
+    cmd=$(get_command_name "$pkg")
+    if is_installed "$cmd"; then
       log_info "$pkg is already installed."
     else
       brew install "$pkg"
@@ -53,24 +71,76 @@ install_mac() {
 
 install_ubuntu() {
   log_info "Installing dependencies for Ubuntu..."
-  sudo apt update && sudo apt upgrade -y
+  sudo apt update
 
-  local packages=(neovim git python3 python3-pip nodejs npm ripgrep
-    fzf fd-find jq terraform lua-language-server gh bat yq eza)
+  # Add Neovim PPA for latest version
+  if ! is_installed "nvim"; then
+    log_info "Adding Neovim PPA..."
+    sudo add-apt-repository -y ppa:neovim-ppa/unstable
+    sudo apt update
+  fi
+
+  # Add HashiCorp repo for terraform
+  if ! is_installed "terraform"; then
+    log_info "Adding HashiCorp repository..."
+    sudo apt install -y gnupg software-properties-common
+    wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg >/dev/null
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+    sudo apt update
+  fi
+
+  # Core packages available in Ubuntu repos
+  local packages=(neovim git python3 python3-pip nodejs npm ripgrep fzf fd-find jq terraform gh bat)
 
   for pkg in "${packages[@]}"; do
-    if is_installed "$pkg"; then
+    local cmd
+    cmd=$(get_command_name "$pkg")
+    # Special case: fd-find installs as fdfind on Ubuntu
+    if [[ "$pkg" == "fd-find" ]]; then
+      cmd="fdfind"
+    fi
+    if is_installed "$cmd"; then
       log_info "$pkg is already installed."
     else
-      sudo apt install -y "$pkg"
+      sudo apt install -y "$pkg" || log_warn "Failed to install $pkg, skipping..."
     fi
   done
 
-  mkdir -p ~/.local/bin
-  ln -sf "$(which fdfind)" ~/.local/bin/fd
+  # Create fd symlink if fdfind exists
+  if is_installed "fdfind"; then
+    mkdir -p ~/.local/bin
+    ln -sf "$(which fdfind)" ~/.local/bin/fd
+    log_info "Created fd symlink."
+  fi
+
+  # Install tools not in Ubuntu repos via other methods
+  if ! is_installed "lua-language-server"; then
+    log_info "Installing lua-language-server via GitHub release..."
+    local lls_version="3.7.4"
+    local lls_dir="$HOME/.local/share/lua-language-server"
+    mkdir -p "$lls_dir"
+    curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${lls_version}/lua-language-server-${lls_version}-linux-x64.tar.gz" | tar xz -C "$lls_dir"
+    mkdir -p ~/.local/bin
+    ln -sf "$lls_dir/bin/lua-language-server" ~/.local/bin/lua-language-server
+  fi
+
+  if ! is_installed "yq"; then
+    log_info "Installing yq via GitHub release..."
+    sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+    sudo chmod +x /usr/local/bin/yq
+  fi
+
+  if ! is_installed "eza"; then
+    log_info "Installing eza via cargo..."
+    if is_installed "cargo"; then
+      cargo install eza
+    else
+      log_warn "cargo not installed, skipping eza installation."
+    fi
+  fi
 
   # Install npm-based tools
-  npm install -g @mermaid-js/mermaid-cli yaml-language-server vscode-langservers-extracted
+  sudo npm install -g @mermaid-js/mermaid-cli yaml-language-server vscode-langservers-extracted
 }
 
 install_lazy_nvim() {
@@ -88,13 +158,24 @@ setup_nvim_config() {
   fi
 
   log_info "Setting up Neovim configuration..."
+
+  # Backup existing config if present
+  if [[ -d ~/.config/nvim ]]; then
+    local backup_dir
+    backup_dir="$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
+    log_warn "Existing Neovim config found. Backing up to $backup_dir"
+    mv ~/.config/nvim "$backup_dir"
+  fi
+
   mkdir -p ~/.config/nvim
   cp "$CONFIGS_DIR/init.lua" ~/.config/nvim/init.lua
   cp -r "$CONFIGS_DIR/lua" ~/.config/nvim/
 
   # Auto-sync plugins
   log_info "Running Lazy sync..."
-  nvim --headless "+Lazy! sync" +qa || true
+  if ! nvim --headless "+Lazy! sync" +qa 2>&1; then
+    log_warn "Lazy sync encountered issues. You may need to run :Lazy sync manually in Neovim."
+  fi
 }
 
 # === Run Setup ===

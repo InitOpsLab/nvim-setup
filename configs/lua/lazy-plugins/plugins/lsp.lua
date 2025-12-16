@@ -225,6 +225,17 @@ return {
 						},
 					},
 				},
+
+				-- Helm (Go templates for Kubernetes)
+				helm_ls = {
+					settings = {
+						["helm-ls"] = {
+							yamlls = {
+								path = "yaml-language-server",
+							},
+						},
+					},
+				},
 			}
 
 			----------------------------------------------------------------------
@@ -274,6 +285,7 @@ return {
 					"bashls",
 					"sqlls",
 					"solargraph",
+					"helm_ls",
 				},
 				automatic_installation = true,
 				handlers = {

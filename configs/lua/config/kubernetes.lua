@@ -131,6 +131,134 @@ local function setup_kubectl()
 		})
 		vim.notify("kubectl.nvim: Warning - Could not create command filter wrapper", vim.log.levels.WARN)
 	end
+	
+	-- Fix: Ensure kubectl always opens in a split with a temporary buffer
+	-- This prevents "Buffer is not modifiable" errors and ensures kubectl never overwrites files
+	-- kubectl output always goes to a temporary buffer in a split, never to the current file
+	
+	-- Function to always create a temporary buffer in a split for kubectl operations
+	local function ensure_kubectl_buffer()
+		-- Always create a new split with a temporary buffer for kubectl output
+		-- This ensures we never overwrite the current file
+		vim.cmd("split")
+		
+		-- Create a temporary buffer name
+		local tmp_name = "kubectl://" .. os.time() .. "-" .. math.random(1000, 9999)
+		vim.api.nvim_buf_set_name(0, tmp_name)
+		
+		-- Configure as a temporary, modifiable buffer
+		vim.bo.modifiable = true
+		vim.bo.readonly = false
+		vim.bo.buftype = "nofile"  -- Not a real file, won't be saved
+		vim.bo.swapfile = false     -- No swap file
+		vim.bo.bufhidden = "wipe"   -- Wipe when hidden
+		vim.bo.filetype = "yaml"    -- Set filetype for syntax highlighting
+		
+		return true
+	end
+	
+	-- Hook into kubectl.nvim's buffer operations to always use temporary buffer
+	pcall(function()
+		local actions = kubectl.actions
+		if actions and actions.buffers then
+			local buffers = actions.buffers
+			
+			-- Wrap set_buffer_lines to ensure we're using a temporary buffer
+			if buffers.set_buffer_lines then
+				local original_set_lines = buffers.set_buffer_lines
+				buffers.set_buffer_lines = function(bufnr, start_idx, end_idx, replacement)
+					-- Ensure we have a temporary buffer (always create split)
+					ensure_kubectl_buffer()
+					-- Use the current buffer (the one we just created)
+					bufnr = vim.api.nvim_get_current_buf()
+					-- Ensure it's modifiable
+					pcall(function()
+						vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
+						vim.api.nvim_buf_set_option(bufnr, "readonly", false)
+					end)
+					return original_set_lines(bufnr, start_idx, end_idx, replacement)
+				end
+			end
+			
+			-- Wrap set_content to always use temporary buffer
+			if buffers.set_content then
+				local original_set_content = buffers.set_content
+				buffers.set_content = function(bufnr, content)
+					-- Always create a temporary buffer for kubectl output
+					ensure_kubectl_buffer()
+					-- Use the current buffer (the one we just created)
+					bufnr = vim.api.nvim_get_current_buf()
+					-- Ensure it's modifiable
+					pcall(function()
+						vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
+						vim.api.nvim_buf_set_option(bufnr, "readonly", false)
+					end)
+					return original_set_content(bufnr, content)
+				end
+			end
+		end
+		
+		-- Hook into the views/display functions to always use temporary buffer
+		local views = kubectl.views
+		if views then
+			-- Wrap displayContentRaw to always create temporary buffer before display
+			if views.displayContentRaw then
+				local original_display = views.displayContentRaw
+				views.displayContentRaw = function(...)
+					-- Always create a temporary buffer for kubectl output
+					ensure_kubectl_buffer()
+					return original_display(...)
+				end
+			end
+		end
+	end)
+	
+	-- Create a pre-command hook to always create temporary buffer before kubectl operations
+	vim.api.nvim_create_autocmd("CmdlineEnter", {
+		callback = function()
+			local cmdline = vim.fn.getcmdline()
+			if cmdline:match("^Kubectl") then
+				-- Always create a temporary buffer before kubectl operations
+				ensure_kubectl_buffer()
+			end
+		end,
+	})
+	
+	-- Also hook into buffer creation via autocmds
+	vim.api.nvim_create_autocmd("FileType", {
+		pattern = { "k8s_*" },
+		callback = function(event)
+			vim.bo[event.buf].modifiable = true
+			vim.bo[event.buf].readonly = false
+		end,
+	})
+	
+	-- Handle buffer events for kubectl buffers - make them modifiable immediately
+	vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "BufNew", "BufCreate", "BufAdd" }, {
+		callback = function(event)
+			local bufname = vim.api.nvim_buf_get_name(event.buf)
+			local filetype = vim.bo[event.buf].filetype
+			-- Check if this is a kubectl buffer (kubectl.nvim uses k8s_* filetypes)
+			if bufname:match("kubectl") or filetype:match("k8s_") then
+				vim.bo[event.buf].modifiable = true
+				vim.bo[event.buf].readonly = false
+			end
+		end,
+	})
+	
+	-- Additional safeguard: Before any kubectl command, ensure we have a modifiable buffer
+	-- This runs before kubectl.nvim tries to write
+	vim.api.nvim_create_autocmd("User", {
+		pattern = { "Kubectl*" },
+		callback = function()
+			local current_buf = vim.api.nvim_get_current_buf()
+			if not vim.api.nvim_buf_get_option(current_buf, "modifiable") then
+				vim.cmd("split")
+				vim.bo.modifiable = true
+				vim.bo.readonly = false
+			end
+		end,
+	})
 end
 
 -- Setup function for kubernetes.nvim

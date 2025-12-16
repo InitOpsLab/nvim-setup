@@ -13,6 +13,8 @@ require("conform").setup({
 		ruby = { "rubocop" },
 		markdown = { "prettier" },
 		go = { "gofumpt", "goimports", "golines" },
+		helm = { "prettier" },
+		gotmpl = { "prettier" },
 	},
 
 	format_on_save = {

@@ -10,32 +10,33 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### Core Capabilities
 
-- **Language Server Protocol (LSP)** - Full IDE features for Go, Python, YAML, JSON, Bash, Terraform, Ruby, Kubernetes, and more
+- **Language Server Protocol (LSP)** - Full IDE features for Go, Python, YAML, JSON, Bash, Terraform, Ruby, TypeScript, Lua, Helm, and more
 - **Treesitter** - Advanced syntax highlighting, code folding, and indentation
-- **Intelligent Completion** - Auto-completion via `nvim-cmp` with snippets via `LuaSnip`
-- **Code Formatting** - Automatic formatting via Conform.nvim
-- **Git Integration** - Status, blame, diffs with gitsigns and fugitive
+- **Intelligent Completion** - Auto-completion via `nvim-cmp` with Copilot and snippets via `LuaSnip`
+- **Code Formatting** - Automatic format-on-save via Conform.nvim
+- **Git Integration** - Status signs in gutter with gitsigns
 
 ### AI & Productivity
 
-- **GitHub Copilot** - AI-powered code suggestions
+- **GitHub Copilot** - AI-powered code completion integrated with nvim-cmp
+- **Sidekick.nvim** - Claude AI CLI integration for code assistance
 - **Refactoring Tools** - Visual refactoring support with ThePrimeagen/refactoring.nvim
 - **Symbol Outline** - Code structure navigation with Aerial.nvim
 
 ### Debugging & Development
 
 - **Debug Adapter Protocol (DAP)** - Full debugging support with UI for multiple languages
-- **Go.nvim** - Enhanced Go development with `:GoRun`, `:GoTest`, `:GoFillStruct`, and inlay hints
+- **Go.nvim** - Enhanced Go development with `:GoRun`, `:GoTest`, `:GoFillStruct`
 - **File Navigation** - Fast file switching with Harpoon, fuzzy finder with Telescope, file tree with nvim-tree
 
 ### Additional Tools
 
 - **Kubernetes Support** - Cluster interaction (logs, exec, describe, port-forward) with safety features
 - **Markdown Preview** - Live preview with Mermaid diagram support
-- **Terminal Integration** - Integrated terminal toggling (toggleterm)
-- **Task Management** - Orgmode/Neorg support for notes and tasks
+- **Terminal Integration** - Integrated terminal toggling with toggleterm (`<C-\>`)
+- **Task Management** - Orgmode, Neorg, and Telekasten support for notes and tasks
 - **SOPS Support** - Encryption support for sensitive configuration files
-- **Project Management** - Automatic project root detection
+- **Commenting** - Smart commenting with Comment.nvim (`gcc`, `gc`)
 - **Which-Key** - Interactive key mapping discovery
 - **Catppuccin Theme** - Modern, beautiful color scheme
 
@@ -45,12 +46,13 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### System Requirements
 
-- **Neovim** 0.9+ (recommended: latest stable)
+- **Neovim** 0.9+ (recommended: 0.11+ for modern LSP API)
 - **Git**
 - **Node.js** and npm
 - **Python** 3.x
 - **Go** (optional, for Go development)
 - **kubectl** (optional, for Kubernetes development)
+- **claude** CLI (optional, for AI assistance via Sidekick)
 
 ### CLI Tools
 
@@ -62,10 +64,24 @@ The setup script will install these, or you can install manually:
 | `fzf`, `fd` | `brew install fzf fd` | `sudo apt install fzf fd-find` |
 | `ripgrep` | `brew install ripgrep` | `sudo apt install ripgrep` |
 | `gh` | `brew install gh` | Follow [GitHub CLI install](https://cli.github.com/) |
-| `bat`, `exa` | `brew install bat eza` | `sudo apt install bat eza` |
+| `bat`, `eza` | `brew install bat eza` | `sudo apt install bat eza` |
 | `terraform` | `brew install terraform` | `sudo apt install terraform` |
 | `kubectl` | `brew install kubectl` | `sudo apt install kubectl` |
 | `lua-language-server` | `brew install lua-language-server` | `sudo apt install lua-language-server` |
+
+### Formatters (for Conform.nvim)
+
+| Formatter | Install |
+|-----------|---------|
+| `stylua` | `cargo install stylua` or `brew install stylua` |
+| `black` | `pip install black` |
+| `prettier` | `npm install -g prettier` |
+| `shfmt` | `brew install shfmt` |
+| `gofumpt` | `go install mvdan.cc/gofumpt@latest` |
+| `goimports` | `go install golang.org/x/tools/cmd/goimports@latest` |
+| `golines` | `go install github.com/segmentio/golines@latest` |
+| `rubocop` | `gem install rubocop` |
+| `sqlfmt` | `pip install shandy-sqlfmt` |
 
 ### NPM Packages
 
@@ -131,62 +147,110 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 
 ## 🎯 Usage
 
-> **Tip:** Press `<leader>` (Space) and wait to see available key mappings via which-key, or press `<leader>?` to see all mappings.
+> **Tip:** Press `<leader>` (Space) and wait to see available key mappings via which-key.
 
 ### Key Commands
 
-#### Navigation
+#### Core Editor
 
-- `<leader>` - Space (default leader key)
-- `<leader>ff` - Find files with Telescope
-- `<leader>fg` - Search in files (live grep)
-- `<leader>fb` - Browse buffers
-- `<leader>fh` - Find help tags
-- `<leader>a` - Add file to Harpoon
-- `<C-e>` - Toggle Harpoon quick menu
-- `<leader>1-4` - Navigate to Harpoon file 1-4
-- `<leader>gt` - Run Go tests (Go files)
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<leader>` | n | Space (default leader key) |
+| `<Esc>` | n | Clear search highlight |
+| `<leader>w` | n | Save file |
+| `<leader>q` | n | Quit |
+| `<C-h/j/k/l>` | n | Window navigation |
+| `<C-Up/Down/Left/Right>` | n | Resize windows |
+| `<S-h>` / `<S-l>` | n | Previous/Next buffer |
+| `<leader>bd` | n | Delete buffer |
+| `<C-d>` / `<C-u>` | n | Scroll down/up (centered) |
+| `J` / `K` | v | Move lines down/up |
+| `<` / `>` | v | Indent left/right (stays in visual) |
+| `gcc` | n | Toggle line comment |
+| `gc` | v | Toggle comment on selection |
 
-#### Git
+#### File Navigation (Telescope & Harpoon)
 
-- `:Git` or `:Gstatus` - Git status (fugitive)
-- `:Gdiff` - View diffs
-- `:Gblame` - View blame
-- View diffs and blame directly in Neovim
-- Git signs shown in the gutter (gitsigns)
+| Key | Description |
+|-----|-------------|
+| `<leader>ff` | Find files |
+| `<leader>fg` | Live grep (search in files) |
+| `<leader>fb` | Browse buffers |
+| `<leader>fh` | Find help tags |
+| `<leader>a` | Add file to Harpoon |
+| `<C-e>` | Toggle Harpoon quick menu |
+| `<leader>1-4` | Navigate to Harpoon file 1-4 |
 
-#### Code Actions
+#### LSP & Code Actions
 
-- `K` - Hover documentation (or diagnostics if available)
-- `gd` - Go to definition
-- `gr` - Find references
-- `<leader>ca` - Code actions
-- `<leader>rn` - Rename symbol
-- `<leader>oi` - Organize imports
-- `<leader>rr` - Visual refactoring (visual mode)
-- `<leader>o` - Toggle symbol outline (Aerial)
+| Key | Description |
+|-----|-------------|
+| `K` | Show diagnostics (if any) or hover documentation |
+| `gd` | Go to definition |
+| `gD` | Go to declaration |
+| `gi` | Go to implementation |
+| `gr` | Find references |
+| `<leader>ca` | Code actions |
+| `<leader>rn` | Rename symbol |
+| `<leader>oi` | Organize imports |
+| `<leader>rr` | Visual refactoring (visual mode) |
+| `<leader>o` | Toggle symbol outline (Aerial) |
 
-#### Debugging
+#### Debugging (DAP)
 
-- `<F5>` - Continue/Start debugging
-- `<F9>` - Toggle breakpoint
-- `<F10>` - Step over
-- `<F11>` - Step into
-- `<S-F11>` - Step out
-- `<leader>du` - Toggle DAP UI
-- Check `config/dap.lua` and `config/dap-langs.lua` for setup
+| Key | Description |
+|-----|-------------|
+| `<F5>` | Continue/Start debugging |
+| `<F9>` | Toggle breakpoint |
+| `<F10>` | Step over |
+| `<F11>` | Step into |
+| `<S-F11>` | Step out |
+| `<leader>du` | Toggle DAP UI |
+
+#### Terminal
+
+| Key | Description |
+|-----|-------------|
+| `<C-\>` | Toggle terminal (horizontal split) |
+
+#### AI (Sidekick - Claude CLI)
+
+| Key | Mode | Description |
+|-----|------|-------------|
+| `<C-.>` | n/i/v/t | Toggle AI CLI (global) |
+| `<leader>mm` | n | Toggle AI CLI |
+| `<leader>mc` | n | Toggle Claude |
+| `<leader>ms` | n | Select AI tool |
+| `<leader>mt` | n/v | Send context around cursor |
+| `<leader>mf` | n | Send current file |
+| `<leader>mv` | v | Send visual selection |
+| `<leader>mp` | n/v | Prompt picker (explain, fix, tests, etc.) |
 
 #### SOPS (Encrypted Files)
 
-- `<leader>se` - Edit encrypted file
-- `<leader>sv` - VSplit encrypted file
-- `<leader>sy` - Copy decrypted buffer to clipboard
-- `<leader>sp` - Paste from clipboard
+| Key | Description |
+|-----|-------------|
+| `<leader>se` | Edit encrypted file |
+| `<leader>sv` | VSplit encrypted file |
+| `<leader>sy` | Copy decrypted buffer to clipboard |
+| `<leader>sp` | Paste from clipboard |
+
+#### Go Development
+
+| Key | Description |
+|-----|-------------|
+| `<leader>gt` | Run Go tests |
+| `:GoRun` | Run current file |
+| `:GoTest` | Run tests |
+| `:GoFillStruct` | Fill struct fields |
 
 #### Kubernetes
 
-- `:Kubectl` - Open Kubernetes cluster interaction menu
-- **Safety Feature**: `create` and `delete` commands are blocked by default
+| Key/Command | Description |
+|-------------|-------------|
+| `:Kubectl` | Open Kubernetes cluster interaction menu |
+| **Safety** | `create` and `delete` commands are blocked by default |
+
 - View logs, exec into pods, describe resources, port-forward, and more
 - YAML schema validation and hover info for Kubernetes resources
 - Customize blocked commands in `config/kubernetes.lua`
@@ -209,10 +273,24 @@ Customize by editing files in `~/.config/nvim/lua/config/`.
 configs/
 ├── init.lua                 # Entry point
 └── lua/
-    ├── options.lua          # Editor options
+    ├── options.lua          # Editor options & core keymaps
     ├── config/              # Plugin configurations
+    │   ├── lsp.lua          # LSP server configurations
+    │   ├── dap.lua          # Debug adapter setup
+    │   ├── conform.lua      # Formatter configurations
+    │   ├── kubernetes.lua   # Kubernetes safety wrapper
+    │   ├── sidekick.lua     # Claude AI CLI integration
+    │   ├── sops.lua         # SOPS encryption helpers
+    │   └── ...              # Other plugin configs
     └── lazy-plugins/        # Lazy.nvim setup
         └── plugins/         # Plugin declarations
+            ├── lsp.lua      # LSP & Mason plugins
+            ├── ui.lua       # UI plugins (theme, statusline, etc.)
+            ├── tools.lua    # Utility plugins
+            ├── ai.lua       # AI plugins (Copilot, Sidekick)
+            ├── dev.lua      # Development plugins (DAP, cmp)
+            ├── go.lua       # Go-specific plugins
+            └── kubernetes.lua # Kubernetes plugins
 ```
 
 Each language/tool has its own configuration file in `config/` for easy customization.
@@ -231,7 +309,8 @@ The configuration includes full Go support:
   - `:GoRun` - Run current file
   - `:GoTest` - Run tests
   - `:GoFillStruct` - Fill struct fields
-  - Inlay hints enabled
+- **Formatting**: gofumpt, goimports, golines (format-on-save)
+- **Keymap**: `<leader>gt` - Run tests
 
 ### Kubernetes Development
 
@@ -253,13 +332,27 @@ The configuration includes comprehensive Kubernetes support:
 - Open Kubernetes menu: `:Kubectl`
 - Edit blocked commands: `~/.config/nvim/lua/config/kubernetes.lua`
 
+### Helm Development
+
+- **helm_ls** LSP server for Helm charts and Go templates
+- YAML language server integration for values files
+
 ### Other Languages
 
-LSP servers are automatically installed via Mason when you open a file type. Configured languages include:
+LSP servers are automatically installed via Mason. Configured languages include:
 
-- Python, Ruby, JavaScript/TypeScript
-- YAML, JSON, Terraform (HCL)
-- Bash, Lua, and more
+| Language | LSP Server | Formatter |
+|----------|------------|-----------|
+| Python | pyright | black |
+| TypeScript/JavaScript | ts_ls | prettier |
+| Ruby | solargraph | rubocop |
+| YAML | yamlls | prettier |
+| JSON | jsonls | prettier |
+| Terraform/HCL | terraformls | terraform_fmt |
+| Bash | bashls | shfmt |
+| Lua | lua_ls | stylua |
+| SQL | sqlls | sqlfmt |
+| Markdown | - | prettier |
 
 Add new language servers by editing `lua/lazy-plugins/plugins/lsp.lua`.
 
@@ -309,4 +402,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - [Lazy.nvim](https://github.com/folke/lazy.nvim) - Modern plugin manager
 - [Neovim](https://neovim.io/) - Hyperextensible Vim-based text editor
+- [Sidekick.nvim](https://github.com/folke/sidekick.nvim) - AI CLI integration
+- [kubectl.nvim](https://github.com/Ramilito/kubectl.nvim) - Kubernetes cluster interaction
 - All the amazing plugin authors in the Neovim community

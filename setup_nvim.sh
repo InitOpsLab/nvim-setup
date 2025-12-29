@@ -152,6 +152,73 @@ install_lazy_nvim() {
   fi
 }
 
+install_jira_tool() {
+  local jira_tool_tar="$SCRIPT_DIR/jira-tool.tar.gz"
+  
+  if [[ ! -f "$jira_tool_tar" ]]; then
+    log_warn "jira-tool.tar.gz not found, skipping jira-tool installation."
+    return
+  fi
+
+  log_info "Installing jira-tool..."
+
+  # Extract tar.gz to temp directory
+  local temp_dir
+  temp_dir=$(mktemp -d)
+  trap "rm -rf $temp_dir" EXIT
+  
+  tar -xzf "$jira_tool_tar" -C "$temp_dir" || log_error "Failed to extract jira-tool.tar.gz"
+
+  local jira_tool_dir="$temp_dir/jira-tool"
+  if [[ ! -d "$jira_tool_dir" ]]; then
+    log_error "jira-tool directory not found in archive."
+  fi
+
+  # 1. Install CLI binary
+  if [[ -f "$jira_tool_dir/bin/jira" ]]; then
+    mkdir -p ~/.local/bin
+    cp "$jira_tool_dir/bin/jira" ~/.local/bin/jira
+    chmod +x ~/.local/bin/jira
+    log_info "jira CLI installed to ~/.local/bin/jira"
+  else
+    log_warn "jira binary not found in archive."
+  fi
+
+  # 2. Setup jira config directory
+  mkdir -p ~/.jira/templates
+  log_info "jira config directory ready at ~/.jira"
+
+  # 3. Install zsh integration (optional)
+  if [[ -f "$jira_tool_dir/zsh/jira.zsh" ]]; then
+    if [[ -d ~/.zsh/functions ]]; then
+      cp "$jira_tool_dir/zsh/jira.zsh" ~/.zsh/functions/jira.zsh
+      log_info "Zsh integration installed to ~/.zsh/functions/jira.zsh"
+      
+      # Check if already sourced
+      if [[ -f ~/.zsh/functions.zsh ]] && ! grep -q "jira.zsh" ~/.zsh/functions.zsh 2>/dev/null; then
+        log_warn "Add to ~/.zsh/functions.zsh: [[ -f ~/.zsh/functions/jira.zsh ]] && source ~/.zsh/functions/jira.zsh"
+      fi
+    elif [[ -d ~/.zsh ]]; then
+      cp "$jira_tool_dir/zsh/jira.zsh" ~/.zsh/jira.zsh
+      log_info "Zsh integration installed to ~/.zsh/jira.zsh"
+      log_warn "Add to ~/.zshrc: [[ -f ~/.zsh/jira.zsh ]] && source ~/.zsh/jira.zsh"
+    else
+      mkdir -p ~/.zsh/functions
+      cp "$jira_tool_dir/zsh/jira.zsh" ~/.zsh/functions/jira.zsh
+      log_info "Zsh integration installed to ~/.zsh/functions/jira.zsh"
+      log_warn "Add to ~/.zshrc: [[ -f ~/.zsh/functions/jira.zsh ]] && source ~/.zsh/functions/jira.zsh"
+    fi
+  fi
+
+  # 4. Check PATH
+  if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    log_warn "~/.local/bin not in PATH. Add to ~/.zshrc: export PATH=\"\$HOME/.local/bin:\$PATH\""
+  fi
+
+  # Note: Neovim plugin files are already in the repo and will be installed by setup_nvim_config
+  log_info "jira-tool installation complete. Run 'jira setup' to configure credentials."
+}
+
 setup_nvim_config() {
   if [[ ! -d "$CONFIGS_DIR" ]]; then
     log_error "Configs directory ($CONFIGS_DIR) not found. Please run this script from the correct location."
@@ -189,6 +256,7 @@ elif [[ "$OS" == "Ubuntu" ]]; then
 fi
 
 install_lazy_nvim
+install_jira_tool
 setup_nvim_config
 
 log_info "Neovim setup complete"

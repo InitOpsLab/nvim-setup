@@ -10,11 +10,81 @@ RESET="\\033[0m"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIGS_DIR="$SCRIPT_DIR/configs"
 
+# Default flags
+SKIP_DEPS=false
+SKIP_JIRA=false
+SKIP_LAZY=false
+SKIP_SYNC=false
+NO_BACKUP=false
+VERBOSE=false
+
 log_info() { echo -e "${GREEN}[INFO]${RESET} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${RESET} $1"; }
 log_error() {
   echo -e "${RED}[ERROR]${RESET} $1"
   exit 1
+}
+
+show_usage() {
+  cat << EOF
+Usage: $0 [OPTIONS]
+
+Install Neovim configuration with dependencies and plugins.
+
+OPTIONS:
+    --skip-deps       Skip installing system dependencies (brew/apt packages)
+    --skip-jira       Skip jira-tool installation
+    --skip-lazy       Skip lazy.nvim plugin manager installation
+    --skip-sync       Skip Lazy plugin sync after config installation
+    --no-backup       Don't backup existing ~/.config/nvim directory
+    --verbose         Enable verbose output
+    -h, --help        Show this help message
+
+EXAMPLES:
+    $0                          # Full installation
+    $0 --skip-deps              # Skip dependency installation
+    $0 --skip-jira --skip-sync  # Skip jira and plugin sync
+    $0 --no-backup              # Don't backup existing config
+
+EOF
+}
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --skip-deps)
+        SKIP_DEPS=true
+        shift
+        ;;
+      --skip-jira)
+        SKIP_JIRA=true
+        shift
+        ;;
+      --skip-lazy)
+        SKIP_LAZY=true
+        shift
+        ;;
+      --skip-sync)
+        SKIP_SYNC=true
+        shift
+        ;;
+      --no-backup)
+        NO_BACKUP=true
+        shift
+        ;;
+      --verbose)
+        VERBOSE=true
+        shift
+        ;;
+      -h|--help)
+        show_usage
+        exit 0
+        ;;
+      *)
+        log_error "Unknown option: $1\nRun '$0 --help' for usage information."
+        ;;
+    esac
+  done
 }
 
 detect_os() {
@@ -31,6 +101,33 @@ detect_os() {
 
 is_installed() {
   command -v "$1" >/dev/null 2>&1
+}
+
+# Check for required prerequisites
+check_prerequisites() {
+  local missing_tools=()
+  
+  # Common tools needed
+  local required_tools=("git" "tar")
+  
+  if [[ "$OS" == "macOS" ]]; then
+    if ! is_installed "brew"; then
+      log_error "Homebrew is not installed. Please install it from https://brew.sh"
+    fi
+    required_tools+=("curl")
+  elif [[ "$OS" == "Ubuntu" ]]; then
+    required_tools+=("curl" "wget")
+  fi
+  
+  for tool in "${required_tools[@]}"; do
+    if ! is_installed "$tool"; then
+      missing_tools+=("$tool")
+    fi
+  done
+  
+  if [[ ${#missing_tools[@]} -gt 0 ]]; then
+    log_error "Missing required tools: ${missing_tools[*]}. Please install them first."
+  fi
 }
 
 # Map package names to their actual command names
@@ -66,7 +163,12 @@ install_mac() {
   done
 
   # Install npm-based tools
-  npm install -g @mermaid-js/mermaid-cli yaml-language-server vscode-langservers-extracted
+  if is_installed "npm"; then
+    log_info "Installing npm-based tools..."
+    npm install -g @mermaid-js/mermaid-cli yaml-language-server vscode-langservers-extracted || log_warn "Failed to install some npm packages"
+  else
+    log_warn "npm not found, skipping npm package installation"
+  fi
 }
 
 install_ubuntu() {
@@ -117,11 +219,26 @@ install_ubuntu() {
   if ! is_installed "lua-language-server"; then
     log_info "Installing lua-language-server via GitHub release..."
     local lls_version="3.7.4"
+    local arch
+    arch=$(uname -m)
+    local lls_arch="linux-x64"
+    
+    # Detect architecture
+    case "$arch" in
+      x86_64) lls_arch="linux-x64" ;;
+      aarch64|arm64) lls_arch="linux-arm64" ;;
+      *) log_warn "Unsupported architecture $arch for lua-language-server, skipping"; return ;;
+    esac
+    
     local lls_dir="$HOME/.local/share/lua-language-server"
     mkdir -p "$lls_dir"
-    curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${lls_version}/lua-language-server-${lls_version}-linux-x64.tar.gz" | tar xz -C "$lls_dir"
-    mkdir -p ~/.local/bin
-    ln -sf "$lls_dir/bin/lua-language-server" ~/.local/bin/lua-language-server
+    if curl -L "https://github.com/LuaLS/lua-language-server/releases/download/${lls_version}/lua-language-server-${lls_version}-${lls_arch}.tar.gz" | tar xz -C "$lls_dir" 2>/dev/null; then
+      mkdir -p ~/.local/bin
+      ln -sf "$lls_dir/bin/lua-language-server" ~/.local/bin/lua-language-server
+      log_info "lua-language-server installed successfully"
+    else
+      log_warn "Failed to install lua-language-server, skipping"
+    fi
   fi
 
   if ! is_installed "yq"; then
@@ -140,14 +257,24 @@ install_ubuntu() {
   fi
 
   # Install npm-based tools
-  sudo npm install -g @mermaid-js/mermaid-cli yaml-language-server vscode-langservers-extracted
+  if is_installed "npm"; then
+    log_info "Installing npm-based tools..."
+    sudo npm install -g @mermaid-js/mermaid-cli yaml-language-server vscode-langservers-extracted || log_warn "Failed to install some npm packages"
+  else
+    log_warn "npm not found, skipping npm package installation"
+  fi
 }
 
 install_lazy_nvim() {
+  if ! is_installed "git"; then
+    log_error "git is required but not installed. Please install git first."
+  fi
+  
   local lazy_path="$HOME/.local/share/nvim/lazy/lazy.nvim"
   if [[ -d "$lazy_path" ]]; then
     log_info "lazy.nvim is already installed."
   else
+    log_info "Installing lazy.nvim..."
     git clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable "$lazy_path" || log_error "Failed to install lazy.nvim."
   fi
 }
@@ -165,9 +292,21 @@ install_jira_tool() {
   # Extract tar.gz to temp directory
   local temp_dir
   temp_dir=$(mktemp -d)
-  trap "rm -rf $temp_dir" EXIT
   
-  tar -xzf "$jira_tool_tar" -C "$temp_dir" || log_error "Failed to extract jira-tool.tar.gz"
+  # Cleanup function for temp directory
+  local cleanup_temp=1
+  cleanup_jira_temp() {
+    if [[ "$cleanup_temp" -eq 1 ]] && [[ -n "$temp_dir" ]] && [[ -d "$temp_dir" ]]; then
+      rm -rf "$temp_dir" 2>/dev/null || true
+    fi
+  }
+  
+  # Ensure cleanup on exit
+  trap cleanup_jira_temp EXIT INT TERM
+  
+  if ! tar -xzf "$jira_tool_tar" -C "$temp_dir" 2>/dev/null; then
+    log_error "Failed to extract jira-tool.tar.gz"
+  fi
 
   local jira_tool_dir="$temp_dir/jira-tool"
   if [[ ! -d "$jira_tool_dir" ]]; then
@@ -177,9 +316,19 @@ install_jira_tool() {
   # 1. Install CLI binary
   if [[ -f "$jira_tool_dir/bin/jira" ]]; then
     mkdir -p ~/.local/bin
-    cp "$jira_tool_dir/bin/jira" ~/.local/bin/jira
-    chmod +x ~/.local/bin/jira
-    log_info "jira CLI installed to ~/.local/bin/jira"
+    local jira_bin="$HOME/.local/bin/jira"
+    
+    # Check if jira already exists and warn
+    if [[ -f "$jira_bin" ]]; then
+      log_warn "jira binary already exists at $jira_bin, overwriting..."
+    fi
+    
+    if cp "$jira_tool_dir/bin/jira" "$jira_bin" && chmod +x "$jira_bin"; then
+      log_info "jira CLI installed to $jira_bin"
+      cleanup_temp=0  # Success, cleanup will happen via trap
+    else
+      log_error "Failed to install jira CLI binary"
+    fi
   else
     log_warn "jira binary not found in archive."
   fi
@@ -210,11 +359,43 @@ install_jira_tool() {
     fi
   fi
 
-  # 4. Check PATH
-  if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-    log_warn "~/.local/bin not in PATH. Add to ~/.zshrc: export PATH=\"\$HOME/.local/bin:\$PATH\""
+  # 4. Check PATH (check common shell config files)
+  local local_bin="$HOME/.local/bin"
+  local path_in_shell=false
+  
+  # Check if it's in current PATH
+  if [[ ":$PATH:" == *":$local_bin:"* ]]; then
+    path_in_shell=true
+  fi
+  
+  # Check common shell config files
+  local shell_configs=()
+  if [[ -n "${ZSH_VERSION:-}" ]] || [[ -f ~/.zshrc ]]; then
+    shell_configs+=("~/.zshrc")
+  fi
+  if [[ -n "${BASH_VERSION:-}" ]] || [[ -f ~/.bashrc ]]; then
+    shell_configs+=("~/.bashrc")
+  fi
+  
+  if [[ "$path_in_shell" == "false" ]]; then
+    local config_found=false
+    for config in "${shell_configs[@]}"; do
+      local expanded_config="${config/#\~/$HOME}"
+      if [[ -f "$expanded_config" ]] && grep -q "\.local/bin" "$expanded_config" 2>/dev/null; then
+        config_found=true
+        break
+      fi
+    done
+    
+    if [[ "$config_found" == "false" ]]; then
+      log_warn "~/.local/bin not in PATH. Add to your shell config: export PATH=\"\$HOME/.local/bin:\$PATH\""
+    fi
   fi
 
+  # Cleanup temp directory
+  cleanup_jira_temp
+  trap - EXIT INT TERM  # Remove trap since we cleaned up manually
+  
   # Note: Neovim plugin files are already in the repo and will be installed by setup_nvim_config
   log_info "jira-tool installation complete. Run 'jira setup' to configure credentials."
 }
@@ -228,10 +409,15 @@ setup_nvim_config() {
 
   # Backup existing config if present
   if [[ -d ~/.config/nvim ]]; then
-    local backup_dir
-    backup_dir="$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
-    log_warn "Existing Neovim config found. Backing up to $backup_dir"
-    mv ~/.config/nvim "$backup_dir"
+    if [[ "$NO_BACKUP" == "true" ]]; then
+      log_warn "Existing Neovim config found. Removing (--no-backup specified)..."
+      rm -rf ~/.config/nvim
+    else
+      local backup_dir
+      backup_dir="$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
+      log_warn "Existing Neovim config found. Backing up to $backup_dir"
+      mv ~/.config/nvim "$backup_dir"
+    fi
   fi
 
   mkdir -p ~/.config/nvim
@@ -239,24 +425,47 @@ setup_nvim_config() {
   cp -r "$CONFIGS_DIR/lua" ~/.config/nvim/
 
   # Auto-sync plugins
-  log_info "Running Lazy sync..."
-  if ! nvim --headless "+Lazy! sync" +qa 2>&1; then
-    log_warn "Lazy sync encountered issues. You may need to run :Lazy sync manually in Neovim."
+  if [[ "$SKIP_SYNC" == "false" ]]; then
+    log_info "Running Lazy sync..."
+    if ! nvim --headless "+Lazy! sync" +qa 2>&1; then
+      log_warn "Lazy sync encountered issues. You may need to run :Lazy sync manually in Neovim."
+    fi
+  else
+    log_info "Skipping Lazy sync (--skip-sync specified)"
   fi
 }
+
+# === Parse Arguments ===
+parse_args "$@"
 
 # === Run Setup ===
 log_info "Starting Neovim setup..."
 detect_os
 
-if [[ "$OS" == "macOS" ]]; then
-  install_mac
-elif [[ "$OS" == "Ubuntu" ]]; then
-  install_ubuntu
+if [[ "$SKIP_DEPS" == "false" ]]; then
+  check_prerequisites
+  
+  if [[ "$OS" == "macOS" ]]; then
+    install_mac
+  elif [[ "$OS" == "Ubuntu" ]]; then
+    install_ubuntu
+  fi
+else
+  log_info "Skipping dependency installation (--skip-deps specified)"
 fi
 
-install_lazy_nvim
-install_jira_tool
+if [[ "$SKIP_LAZY" == "false" ]]; then
+  install_lazy_nvim
+else
+  log_info "Skipping lazy.nvim installation (--skip-lazy specified)"
+fi
+
+if [[ "$SKIP_JIRA" == "false" ]]; then
+  install_jira_tool
+else
+  log_info "Skipping jira-tool installation (--skip-jira specified)"
+fi
+
 setup_nvim_config
 
 log_info "Neovim setup complete"

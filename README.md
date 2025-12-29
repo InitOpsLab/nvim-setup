@@ -31,6 +31,7 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### Additional Tools
 
+- **Jira Integration** - Create, submit, and manage Jira tickets directly from Neovim (`:Jira new`, `:Jira submit`)
 - **Kubernetes Support** - Cluster interaction (logs, exec, describe, port-forward) with safety features
 - **Markdown Preview** - Live preview with Mermaid diagram support
 - **Terminal Integration** - Integrated terminal toggling with toggleterm (`<C-\>`)
@@ -56,18 +57,21 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### CLI Tools
 
-The setup script will install these, or you can install manually:
+The setup script will install these automatically, or you can install manually:
 
-| Tool | macOS (brew) | Ubuntu (apt) |
-|------|--------------|--------------|
-| `jq`, `yq` | `brew install jq yq` | `sudo apt install jq yq` |
-| `fzf`, `fd` | `brew install fzf fd` | `sudo apt install fzf fd-find` |
-| `ripgrep` | `brew install ripgrep` | `sudo apt install ripgrep` |
-| `gh` | `brew install gh` | Follow [GitHub CLI install](https://cli.github.com/) |
-| `bat`, `eza` | `brew install bat eza` | `sudo apt install bat eza` |
-| `terraform` | `brew install terraform` | `sudo apt install terraform` |
-| `kubectl` | `brew install kubectl` | `sudo apt install kubectl` |
-| `lua-language-server` | `brew install lua-language-server` | `sudo apt install lua-language-server` |
+| Tool | macOS (brew) | Ubuntu (apt) | Notes |
+|------|--------------|--------------|-------|
+| `jq`, `yq` | `brew install jq yq` | `sudo apt install jq yq` | JSON/YAML processors |
+| `fzf`, `fd` | `brew install fzf fd` | `sudo apt install fzf fd-find` | Fuzzy finder and file search |
+| `ripgrep` | `brew install ripgrep` | `sudo apt install ripgrep` | Fast text search |
+| `gh` | `brew install gh` | Follow [GitHub CLI install](https://cli.github.com/) | GitHub CLI |
+| `bat`, `eza` | `brew install bat eza` | `sudo apt install bat eza` | Better cat/ls alternatives |
+| `terraform` | `brew install terraform` | `sudo apt install terraform` | Infrastructure as code |
+| `kubectl` | `brew install kubectl` | `sudo apt install kubectl` | Kubernetes CLI |
+| `lua-language-server` | `brew install lua-language-server` | Auto-installed via GitHub release | Lua LSP server |
+| `jira` | Installed via setup script | Installed via setup script | Jira CLI tool (from jira-tool.tar.gz) |
+
+**Note:** The setup script includes prerequisite checks and will verify required tools (git, tar, curl, wget) are available before proceeding.
 
 ### Formatters (for Conform.nvim)
 
@@ -112,12 +116,52 @@ chmod +x setup_nvim.sh
 The script will:
 
 - Detect your OS (macOS or Ubuntu)
-- Install required dependencies
-- Set up Lazy.nvim plugin manager
-- Copy configuration files to `~/.config/nvim/`
-- Auto-sync plugins
+- Check for required prerequisites (git, brew/apt, curl, etc.)
+- Install required dependencies (unless `--skip-deps` is used)
+- Set up Lazy.nvim plugin manager (unless `--skip-lazy` is used)
+- Install jira-tool CLI and integration (unless `--skip-jira` is used)
+- Copy configuration files to `~/.config/nvim/` (with backup by default)
+- Auto-sync plugins (unless `--skip-sync` is used)
 
-3. Launch Neovim and sync plugins:
+### Setup Script Options
+
+The setup script supports several command-line flags for flexible installation:
+
+```bash
+# Show help
+./setup_nvim.sh --help
+
+# Full installation (default)
+./setup_nvim.sh
+
+# Skip dependency installation (if already installed)
+./setup_nvim.sh --skip-deps
+
+# Skip jira-tool installation
+./setup_nvim.sh --skip-jira
+
+# Skip lazy.nvim installation
+./setup_nvim.sh --skip-lazy
+
+# Skip plugin sync (faster, sync manually later)
+./setup_nvim.sh --skip-sync
+
+# Don't backup existing config (clean install)
+./setup_nvim.sh --no-backup
+
+# Combine multiple flags
+./setup_nvim.sh --skip-deps --skip-jira --skip-sync
+```
+
+**Available Flags:**
+- `--skip-deps` - Skip installing system dependencies (brew/apt packages)
+- `--skip-jira` - Skip jira-tool installation
+- `--skip-lazy` - Skip lazy.nvim plugin manager installation
+- `--skip-sync` - Skip Lazy plugin sync after config installation
+- `--no-backup` - Don't backup existing `~/.config/nvim` directory
+- `-h, --help` - Show usage information
+
+3. Launch Neovim and sync plugins (if skipped during setup):
 
 ```vim
 :Lazy sync
@@ -244,6 +288,33 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 | `:GoTest` | Run tests |
 | `:GoFillStruct` | Fill struct fields |
 
+#### Jira Integration
+
+| Key/Command | Description |
+|-------------|-------------|
+| `<leader>jn` | Create new Jira ticket |
+| `<leader>js` | Submit current buffer to Jira |
+| `<leader>jm` | Show my open issues |
+| `<leader>jv` | View issue under cursor |
+| `<leader>jo` | Open issue in browser |
+| `:Jira new` | Create new ticket template |
+| `:Jira submit` | Submit current buffer to Jira |
+| `:Jira my` | Show my open issues |
+| `:Jira view` | View issue (under cursor or specify key) |
+| `:Jira open` | Open issue in browser |
+| `:Jira setup` | Configure Jira credentials |
+
+**Setup:**
+1. After installation, run `jira setup` to configure credentials
+2. Add your project: `jira projects add DEVOPS`
+3. Create tickets with `:Jira new` or `<leader>jn`
+
+**Zsh Aliases (if zsh integration installed):**
+- `jt` - New ticket (jira new)
+- `js` - Submit ticket
+- `jm` - My issues
+- `jf` - Fuzzy search issues (fzf)
+
 #### Kubernetes
 
 | Key/Command | Description |
@@ -278,6 +349,7 @@ configs/
     │   ├── lsp.lua          # LSP server configurations
     │   ├── dap.lua          # Debug adapter setup
     │   ├── conform.lua      # Formatter configurations
+    │   ├── jira.lua         # Jira integration
     │   ├── kubernetes.lua   # Kubernetes safety wrapper
     │   ├── sidekick.lua     # Claude AI CLI integration
     │   ├── sops.lua         # SOPS encryption helpers
@@ -371,6 +443,13 @@ Add new language servers by editing `lua/lazy-plugins/plugins/lsp.lua`.
 - Ensure language servers are installed: `:Mason`
 - Check `:LspInfo` to see active LSP servers
 - Verify the language server is in your PATH
+
+### Jira integration not working
+
+- Ensure `jira` CLI is installed: `which jira` (should be in `~/.local/bin/jira`)
+- Run `jira setup` to configure credentials
+- Verify `~/.local/bin` is in your PATH: `echo $PATH | grep -q ".local/bin" && echo "OK" || echo "Add to PATH"`
+- Check that jira-tool.tar.gz exists in the repository root
 
 ### Performance issues
 

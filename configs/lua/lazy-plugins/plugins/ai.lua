@@ -1,28 +1,12 @@
 -- ~/.config/nvim/lua/lazy-plugins/plugins/ai.lua
 
-return {
-	-- 🤖 GitHub Copilot core
-	{
-		"zbirenbaum/copilot.lua",
-		cmd = "Copilot",
-		event = "InsertEnter",
-		config = function()
-			require("config.copilot")
-		end,
-	},
+local licensed = require("config.licensed")
 
-	-- 🤝 Copilot + nvim-cmp integration
-	{
-		"zbirenbaum/copilot-cmp",
-		dependencies = { "zbirenbaum/copilot.lua" },
-		config = function()
-			require("copilot_cmp").setup()
-		end,
-	},
-
+local plugins = {
 	-- 🛠️ Visual Refactoring
 	{
 		"ThePrimeagen/refactoring.nvim",
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		config = function()
 			require("refactoring").setup()
@@ -32,17 +16,25 @@ return {
 	-- 📋 Symbol Outline
 	{
 		"stevearc/aerial.nvim",
+		cmd = { "AerialToggle", "AerialOpen" },
+		keys = {
+			{ "<leader>co", "<cmd>AerialToggle<cr>", desc = "Toggle Code Outline" },
+		},
 		config = function()
 			require("aerial").setup()
 		end,
 	},
+}
 
-	-- 🤖 Sidekick (Claude / other AI CLIs)
-	{
+-- 🤖 Sidekick (Claude / other AI CLIs) — requires Anthropic subscription
+if licensed.sidekick then
+	table.insert(plugins, {
 		"folke/sidekick.nvim",
 		event = { "BufReadPost", "BufNewFile" },
 		config = function()
 			require("config.sidekick")
 		end,
-	},
-}
+	})
+end
+
+return plugins

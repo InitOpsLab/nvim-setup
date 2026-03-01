@@ -47,7 +47,7 @@ vim.opt.rtp:prepend(lazypath)
 -- 5. LOAD PLUGINS VIA LAZY.NVIM
 -- ============================================
 require("lazy").setup("lazy-plugins.plugins", {
-	defaults = { lazy = false },
+	defaults = { lazy = true },
 	install = {
 		colorscheme = { "tokyonight", "habamax" },
 	},

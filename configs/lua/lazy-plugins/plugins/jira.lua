@@ -1,15 +1,22 @@
 -- Jira plugin declaration for Lazy.nvim
 -- Place in: ~/.config/nvim/lua/lazy-plugins/plugins/jira.lua
+-- Requires Jira credentials — enable in config/licensed.lua
+
+local licensed = require("config.licensed")
+
+if not licensed.jira then
+  return {}
+end
 
 return {
   {
     name = "jira",
     dir = vim.fn.stdpath("config") .. "/lua/config",
-    
+
     ft = { "jira", "markdown" },
-    
+
     cmd = { "Jira" },
-    
+
     keys = {
       { "<leader>jn", "<cmd>Jira new<cr>", desc = "Jira: New ticket" },
       { "<leader>js", "<cmd>Jira submit<cr>", desc = "Jira: Submit" },
@@ -17,7 +24,7 @@ return {
       { "<leader>jv", "<cmd>Jira view<cr>", desc = "Jira: View issue" },
       { "<leader>jo", "<cmd>Jira open<cr>", desc = "Jira: Open in browser" },
     },
-    
+
     config = function()
       require("config.jira").setup({
         -- Customize options here

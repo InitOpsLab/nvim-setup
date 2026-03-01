@@ -1,10 +1,20 @@
 -- ~/.config/nvim/lua/lazy-plugins/plugins/lsp.lua
 return {
 	--------------------------------------------------------------------------
+	-- 🔔 LSP Progress Notifications
+	--------------------------------------------------------------------------
+	{
+		"j-hui/fidget.nvim",
+		event = "LspAttach",
+		opts = {},
+	},
+
+	--------------------------------------------------------------------------
 	-- 🌳 Treesitter
 	--------------------------------------------------------------------------
 	{
 		"nvim-treesitter/nvim-treesitter",
+		event = { "BufReadPre", "BufNewFile" }, -- Load when opening a file
 		build = ":TSUpdate",
 		config = function()
 			require("config.treesitter")
@@ -79,6 +89,11 @@ return {
 						context = { only = { "source.organizeImports" } },
 					})
 				end, "Organize Imports")
+
+				-- Inlay hints toggle (Neovim 0.10+)
+				map("n", "<leader>ih", function()
+					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+				end, "Toggle Inlay Hints")
 
 				-- Note: Format on save handled by conform.nvim (config/conform.lua)
 			end

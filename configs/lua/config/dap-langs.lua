@@ -23,8 +23,9 @@ end
 
 -- Go (delve)
 dap.adapters.go = function(callback, _)
+	local uv = vim.uv or vim.loop
 	local port = 38697
-	vim.loop.spawn("dlv", { args = { "dap", "-l", "127.0.0.1:" .. port }, detached = true }, function() end)
+	uv.spawn("dlv", { args = { "dap", "-l", "127.0.0.1:" .. port }, detached = true }, function() end)
 	vim.defer_fn(function()
 		callback({ type = "server", host = "127.0.0.1", port = port })
 	end, 100)

@@ -6,6 +6,7 @@ vim.filetype.add({
     mmd = "markdown",
     gotmpl = "gotmpl",
     tmpl = "gotmpl",
+    hujson = "jsonc",
   },
   pattern = {
     -- Helm templates in templates/ directory

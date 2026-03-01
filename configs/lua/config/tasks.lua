@@ -4,7 +4,7 @@
 require("orgmode").setup({
 	org_agenda_files = { "~/notes/**/*" },
 	org_default_notes_file = "~/notes/inbox.org",
-	org_todo_keywords = { "TODO", "WAITING", "BLOCKED", "QUESTION", "|", "DONE", "CANCELLED" },
+	org_todo_keywords = { "TODO", "INPROGRESS", "WAITING", "BLOCKED", "QUESTION", "|", "DONE", "CANCELLED" },
 })
 
 -- Neorg config (modern core modules)

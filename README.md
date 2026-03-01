@@ -14,6 +14,7 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 - **Treesitter** - Advanced syntax highlighting, code folding, and indentation
 - **Intelligent Completion** - Auto-completion via `nvim-cmp` with Copilot and snippets via `LuaSnip`
 - **Code Formatting** - Automatic format-on-save via Conform.nvim
+- **Code Linting** - Async linting via nvim-lint (shellcheck, hadolint, tflint, yamllint, ruff, golangci-lint, rubocop)
 - **Git Integration** - Status signs in gutter with gitsigns
 
 ### AI & Productivity
@@ -31,8 +32,7 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### Additional Tools
 
-- **Jira Integration** - Create, submit, and manage Jira tickets directly from Neovim (`:Jira new`, `:Jira submit`)
-- **Kubernetes Support** - Cluster interaction (logs, exec, describe, port-forward) with safety features
+- **Jira Integration** - Create, submit, and manage Jira tickets directly from Neovim (licensed, requires `jira` CLI)
 - **Markdown Preview** - Live preview with Mermaid diagram support
 - **Terminal Integration** - Integrated terminal toggling with toggleterm (`<C-\>`)
 - **Task Management** - Orgmode, Neorg, and Telekasten support for notes and tasks
@@ -52,7 +52,6 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 - **Node.js** and npm
 - **Python** 3.x
 - **Go** (optional, for Go development)
-- **kubectl** (optional, for Kubernetes development)
 - **claude** CLI (optional, for AI assistance via Sidekick)
 
 ### CLI Tools
@@ -67,11 +66,23 @@ The setup script will install these automatically, or you can install manually:
 | `gh` | `brew install gh` | Follow [GitHub CLI install](https://cli.github.com/) | GitHub CLI |
 | `bat`, `eza` | `brew install bat eza` | `sudo apt install bat eza` | Better cat/ls alternatives |
 | `terraform` | `brew install terraform` | `sudo apt install terraform` | Infrastructure as code |
-| `kubectl` | `brew install kubectl` | `sudo apt install kubectl` | Kubernetes CLI |
 | `lua-language-server` | `brew install lua-language-server` | Auto-installed via GitHub release | Lua LSP server |
-| `jira` | Installed via setup script | Installed via setup script | Jira CLI tool (from jira-tool.tar.gz) |
 
 **Note:** The setup script includes prerequisite checks and will verify required tools (git, tar, curl, wget) are available before proceeding.
+
+### Linters (for nvim-lint)
+
+Linters run automatically on file open, save, and leaving insert mode. Install the ones you need:
+
+| Linter | Filetype | Install |
+|--------|----------|---------|
+| `shellcheck` | bash/sh | `brew install shellcheck` or `sudo apt install shellcheck` |
+| `hadolint` | dockerfile | `brew install hadolint` |
+| `tflint` | terraform/hcl | `brew install tflint` |
+| `yamllint` | yaml | `pip install yamllint` |
+| `ruff` | python | `pip install ruff` |
+| `golangci-lint` | go | `brew install golangci-lint` |
+| `rubocop` | ruby | `gem install rubocop` |
 
 ### Formatters (for Conform.nvim)
 
@@ -92,6 +103,18 @@ The setup script will install these automatically, or you can install manually:
 ```bash
 npm install -g @mermaid-js/mermaid-cli yaml-language-server vscode-langservers-extracted
 ```
+
+### Licensed Plugins (opt-in)
+
+Some plugins require a paid license or subscription and are **disabled by default**. The setup script will prompt you to enable them during installation. You can also toggle them later by editing `~/.config/nvim/lua/config/licensed.lua`:
+
+| Plugin | Requires | Flag |
+|--------|----------|------|
+| **GitHub Copilot** | GitHub Copilot subscription | `copilot = true` |
+| **Sidekick.nvim** | Anthropic subscription (Claude CLI) | `sidekick = true` |
+| **Jira integration** | Jira credentials | `jira = true` |
+
+After changing flags, restart Neovim and run `:Lazy sync`.
 
 ---
 
@@ -119,7 +142,7 @@ The script will:
 - Check for required prerequisites (git, brew/apt, curl, etc.)
 - Install required dependencies (unless `--skip-deps` is used)
 - Set up Lazy.nvim plugin manager (unless `--skip-lazy` is used)
-- Install jira-tool CLI and integration (unless `--skip-jira` is used)
+- Prompt for licensed plugin preferences (Copilot, Sidekick, Jira)
 - Copy configuration files to `~/.config/nvim/` (with backup by default)
 - Auto-sync plugins (unless `--skip-sync` is used)
 
@@ -137,9 +160,6 @@ The setup script supports several command-line flags for flexible installation:
 # Skip dependency installation (if already installed)
 ./setup_nvim.sh --skip-deps
 
-# Skip jira-tool installation
-./setup_nvim.sh --skip-jira
-
 # Skip lazy.nvim installation
 ./setup_nvim.sh --skip-lazy
 
@@ -150,12 +170,11 @@ The setup script supports several command-line flags for flexible installation:
 ./setup_nvim.sh --no-backup
 
 # Combine multiple flags
-./setup_nvim.sh --skip-deps --skip-jira --skip-sync
+./setup_nvim.sh --skip-deps --skip-sync
 ```
 
 **Available Flags:**
 - `--skip-deps` - Skip installing system dependencies (brew/apt packages)
-- `--skip-jira` - Skip jira-tool installation
 - `--skip-lazy` - Skip lazy.nvim plugin manager installation
 - `--skip-sync` - Skip Lazy plugin sync after config installation
 - `--no-backup` - Don't backup existing `~/.config/nvim` directory
@@ -288,44 +307,6 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 | `:GoTest` | Run tests |
 | `:GoFillStruct` | Fill struct fields |
 
-#### Jira Integration
-
-| Key/Command | Description |
-|-------------|-------------|
-| `<leader>jn` | Create new Jira ticket |
-| `<leader>js` | Submit current buffer to Jira |
-| `<leader>jm` | Show my open issues |
-| `<leader>jv` | View issue under cursor |
-| `<leader>jo` | Open issue in browser |
-| `:Jira new` | Create new ticket template |
-| `:Jira submit` | Submit current buffer to Jira |
-| `:Jira my` | Show my open issues |
-| `:Jira view` | View issue (under cursor or specify key) |
-| `:Jira open` | Open issue in browser |
-| `:Jira setup` | Configure Jira credentials |
-
-**Setup:**
-1. After installation, run `jira setup` to configure credentials
-2. Add your project: `jira projects add DEVOPS`
-3. Create tickets with `:Jira new` or `<leader>jn`
-
-**Zsh Aliases (if zsh integration installed):**
-- `jt` - New ticket (jira new)
-- `js` - Submit ticket
-- `jm` - My issues
-- `jf` - Fuzzy search issues (fzf)
-
-#### Kubernetes
-
-| Key/Command | Description |
-|-------------|-------------|
-| `:Kubectl` | Open Kubernetes cluster interaction menu |
-| **Safety** | `create` and `delete` commands are blocked by default |
-
-- View logs, exec into pods, describe resources, port-forward, and more
-- YAML schema validation and hover info for Kubernetes resources
-- Customize blocked commands in `config/kubernetes.lua`
-
 ### Configuration
 
 Configuration files are organized in `~/.config/nvim/lua/`:
@@ -346,12 +327,17 @@ configs/
 └── lua/
     ├── options.lua          # Editor options & core keymaps
     ├── config/              # Plugin configurations
-    │   ├── lsp.lua          # LSP server configurations
-    │   ├── dap.lua          # Debug adapter setup
+    │   ├── licensed.lua     # Licensed plugin toggles (Copilot, Sidekick, Jira)
+    │   ├── lint.lua         # Linter configurations (nvim-lint)
     │   ├── conform.lua      # Formatter configurations
-    │   ├── jira.lua         # Jira integration
-    │   ├── kubernetes.lua   # Kubernetes safety wrapper
-    │   ├── sidekick.lua     # Claude AI CLI integration
+    │   ├── cmp.lua          # Completion setup (nvim-cmp)
+    │   ├── dap.lua          # Debug adapter setup
+    │   ├── gitsigns.lua     # Git gutter signs & keymaps
+    │   ├── neogit.lua       # Git TUI integration
+    │   ├── nvim-tree.lua    # File explorer with content filtering
+    │   ├── copilot.lua      # GitHub Copilot (licensed)
+    │   ├── sidekick.lua     # Claude AI CLI (licensed)
+    │   ├── jira.lua         # Jira integration (licensed)
     │   ├── sops.lua         # SOPS encryption helpers
     │   └── ...              # Other plugin configs
     └── lazy-plugins/        # Lazy.nvim setup
@@ -359,10 +345,12 @@ configs/
             ├── lsp.lua      # LSP & Mason plugins
             ├── ui.lua       # UI plugins (theme, statusline, etc.)
             ├── tools.lua    # Utility plugins
-            ├── ai.lua       # AI plugins (Copilot, Sidekick)
-            ├── dev.lua      # Development plugins (DAP, cmp)
+            ├── ai.lua       # AI plugins (Sidekick, refactoring, aerial)
+            ├── dev.lua      # Development plugins (DAP, cmp, Copilot, lint)
             ├── go.lua       # Go-specific plugins
-            └── kubernetes.lua # Kubernetes plugins
+            ├── jira.lua     # Jira plugin (licensed)
+            ├── tasks.lua    # Orgmode, Neorg, Telekasten
+            └── testing.lua  # Neotest (Go, Python, Jest, RSpec)
 ```
 
 Each language/tool has its own configuration file in `config/` for easy customization.
@@ -383,26 +371,6 @@ The configuration includes full Go support:
   - `:GoFillStruct` - Fill struct fields
 - **Formatting**: gofumpt, goimports, golines (format-on-save)
 - **Keymap**: `<leader>gt` - Run tests
-
-### Kubernetes Development
-
-The configuration includes comprehensive Kubernetes support:
-
-- **kubectl.nvim** - Interactive cluster management:
-  - View pod logs, exec into containers
-  - Describe resources, port-forward services
-  - Resource tree visualization
-  - **Safety**: `create` and `delete` commands are blocked by default
-  - Customize blocked commands in `config/kubernetes.lua`
-- **kubernetes.nvim** - YAML/CRD support:
-  - Schema validation for Kubernetes resources
-  - Hover documentation for resource fields
-  - Auto-completion for resource types
-
-**Usage:**
-
-- Open Kubernetes menu: `:Kubectl`
-- Edit blocked commands: `~/.config/nvim/lua/config/kubernetes.lua`
 
 ### Helm Development
 
@@ -444,13 +412,6 @@ Add new language servers by editing `lua/lazy-plugins/plugins/lsp.lua`.
 - Check `:LspInfo` to see active LSP servers
 - Verify the language server is in your PATH
 
-### Jira integration not working
-
-- Ensure `jira` CLI is installed: `which jira` (should be in `~/.local/bin/jira`)
-- Run `jira setup` to configure credentials
-- Verify `~/.local/bin` is in your PATH: `echo $PATH | grep -q ".local/bin" && echo "OK" || echo "Add to PATH"`
-- Check that jira-tool.tar.gz exists in the repository root
-
 ### Performance issues
 
 - Reduce plugins in `lazy-plugins/plugins/` if not needed
@@ -482,5 +443,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Lazy.nvim](https://github.com/folke/lazy.nvim) - Modern plugin manager
 - [Neovim](https://neovim.io/) - Hyperextensible Vim-based text editor
 - [Sidekick.nvim](https://github.com/folke/sidekick.nvim) - AI CLI integration
-- [kubectl.nvim](https://github.com/Ramilito/kubectl.nvim) - Kubernetes cluster interaction
 - All the amazing plugin authors in the Neovim community

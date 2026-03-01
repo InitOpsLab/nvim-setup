@@ -12,7 +12,6 @@ CONFIGS_DIR="$SCRIPT_DIR/configs"
 
 # Default flags
 SKIP_DEPS=false
-SKIP_JIRA=false
 SKIP_LAZY=false
 SKIP_SYNC=false
 NO_BACKUP=false
@@ -33,7 +32,6 @@ Install Neovim configuration with dependencies and plugins.
 
 OPTIONS:
     --skip-deps       Skip installing system dependencies (brew/apt packages)
-    --skip-jira       Skip jira-tool installation
     --skip-lazy       Skip lazy.nvim plugin manager installation
     --skip-sync       Skip Lazy plugin sync after config installation
     --no-backup       Don't backup existing ~/.config/nvim directory
@@ -43,7 +41,7 @@ OPTIONS:
 EXAMPLES:
     $0                          # Full installation
     $0 --skip-deps              # Skip dependency installation
-    $0 --skip-jira --skip-sync  # Skip jira and plugin sync
+    $0 --skip-deps --skip-sync  # Skip deps and plugin sync
     $0 --no-backup              # Don't backup existing config
 
 EOF
@@ -54,10 +52,6 @@ parse_args() {
     case $1 in
       --skip-deps)
         SKIP_DEPS=true
-        shift
-        ;;
-      --skip-jira)
-        SKIP_JIRA=true
         shift
         ;;
       --skip-lazy)
@@ -279,125 +273,61 @@ install_lazy_nvim() {
   fi
 }
 
-install_jira_tool() {
-  local jira_tool_tar="$SCRIPT_DIR/jira-tool.tar.gz"
-  
-  if [[ ! -f "$jira_tool_tar" ]]; then
-    log_warn "jira-tool.tar.gz not found, skipping jira-tool installation."
-    return
+ask_yes_no() {
+  local prompt="$1"
+  local default="${2:-n}"
+  local yn_hint="[y/N]"
+  [[ "$default" == "y" ]] && yn_hint="[Y/n]"
+
+  while true; do
+    echo -n -e "${GREEN}[?]${RESET} ${prompt} ${yn_hint} "
+    read -r answer
+    answer="${answer:-$default}"
+    case "${answer,,}" in
+      y|yes) return 0 ;;
+      n|no) return 1 ;;
+      *) echo "Please answer y or n." ;;
+    esac
+  done
+}
+
+configure_licensed_plugins() {
+  local licensed_file="$CONFIGS_DIR/lua/config/licensed.lua"
+  local enable_copilot="false"
+  local enable_sidekick="false"
+  local enable_jira="false"
+
+  log_info "Some plugins require a paid license or subscription."
+  echo ""
+
+  if ask_yes_no "Enable GitHub Copilot? (requires GitHub Copilot subscription)"; then
+    enable_copilot="true"
   fi
 
-  log_info "Installing jira-tool..."
-
-  # Extract tar.gz to temp directory
-  local temp_dir
-  temp_dir=$(mktemp -d)
-  
-  # Cleanup function for temp directory
-  local cleanup_temp=1
-  cleanup_jira_temp() {
-    if [[ "$cleanup_temp" -eq 1 ]] && [[ -n "$temp_dir" ]] && [[ -d "$temp_dir" ]]; then
-      rm -rf "$temp_dir" 2>/dev/null || true
-    fi
-  }
-  
-  # Ensure cleanup on exit
-  trap cleanup_jira_temp EXIT INT TERM
-  
-  if ! tar -xzf "$jira_tool_tar" -C "$temp_dir" 2>/dev/null; then
-    log_error "Failed to extract jira-tool.tar.gz"
+  if ask_yes_no "Enable Sidekick.nvim / Claude CLI? (requires Anthropic subscription)"; then
+    enable_sidekick="true"
   fi
 
-  local jira_tool_dir="$temp_dir/jira-tool"
-  if [[ ! -d "$jira_tool_dir" ]]; then
-    log_error "jira-tool directory not found in archive."
+  if ask_yes_no "Enable Jira integration? (requires Jira credentials)"; then
+    enable_jira="true"
   fi
 
-  # 1. Install CLI binary
-  if [[ -f "$jira_tool_dir/bin/jira" ]]; then
-    mkdir -p ~/.local/bin
-    local jira_bin="$HOME/.local/bin/jira"
-    
-    # Check if jira already exists and warn
-    if [[ -f "$jira_bin" ]]; then
-      log_warn "jira binary already exists at $jira_bin, overwriting..."
-    fi
-    
-    if cp "$jira_tool_dir/bin/jira" "$jira_bin" && chmod +x "$jira_bin"; then
-      log_info "jira CLI installed to $jira_bin"
-      cleanup_temp=0  # Success, cleanup will happen via trap
-    else
-      log_error "Failed to install jira CLI binary"
-    fi
-  else
-    log_warn "jira binary not found in archive."
-  fi
+  cat > "$licensed_file" << EOF
+-- ~/.config/nvim/lua/config/licensed.lua
+--
+-- Toggle plugins that require a paid license or subscription.
+-- Set to \`true\` to enable, \`false\` to disable.
+--
+-- After changing these values, restart Neovim and run :Lazy sync.
 
-  # 2. Setup jira config directory
-  mkdir -p ~/.jira/templates
-  log_info "jira config directory ready at ~/.jira"
+return {
+	copilot = ${enable_copilot}, -- GitHub Copilot (requires subscription)
+	sidekick = ${enable_sidekick}, -- Sidekick.nvim / Claude CLI (requires Anthropic subscription)
+	jira = ${enable_jira}, -- Jira integration (requires Jira credentials)
+}
+EOF
 
-  # 3. Install zsh integration (optional)
-  if [[ -f "$jira_tool_dir/zsh/jira.zsh" ]]; then
-    if [[ -d ~/.zsh/functions ]]; then
-      cp "$jira_tool_dir/zsh/jira.zsh" ~/.zsh/functions/jira.zsh
-      log_info "Zsh integration installed to ~/.zsh/functions/jira.zsh"
-      
-      # Check if already sourced
-      if [[ -f ~/.zsh/functions.zsh ]] && ! grep -q "jira.zsh" ~/.zsh/functions.zsh 2>/dev/null; then
-        log_warn "Add to ~/.zsh/functions.zsh: [[ -f ~/.zsh/functions/jira.zsh ]] && source ~/.zsh/functions/jira.zsh"
-      fi
-    elif [[ -d ~/.zsh ]]; then
-      cp "$jira_tool_dir/zsh/jira.zsh" ~/.zsh/jira.zsh
-      log_info "Zsh integration installed to ~/.zsh/jira.zsh"
-      log_warn "Add to ~/.zshrc: [[ -f ~/.zsh/jira.zsh ]] && source ~/.zsh/jira.zsh"
-    else
-      mkdir -p ~/.zsh/functions
-      cp "$jira_tool_dir/zsh/jira.zsh" ~/.zsh/functions/jira.zsh
-      log_info "Zsh integration installed to ~/.zsh/functions/jira.zsh"
-      log_warn "Add to ~/.zshrc: [[ -f ~/.zsh/functions/jira.zsh ]] && source ~/.zsh/functions/jira.zsh"
-    fi
-  fi
-
-  # 4. Check PATH (check common shell config files)
-  local local_bin="$HOME/.local/bin"
-  local path_in_shell=false
-  
-  # Check if it's in current PATH
-  if [[ ":$PATH:" == *":$local_bin:"* ]]; then
-    path_in_shell=true
-  fi
-  
-  # Check common shell config files
-  local shell_configs=()
-  if [[ -n "${ZSH_VERSION:-}" ]] || [[ -f ~/.zshrc ]]; then
-    shell_configs+=("~/.zshrc")
-  fi
-  if [[ -n "${BASH_VERSION:-}" ]] || [[ -f ~/.bashrc ]]; then
-    shell_configs+=("~/.bashrc")
-  fi
-  
-  if [[ "$path_in_shell" == "false" ]]; then
-    local config_found=false
-    for config in "${shell_configs[@]}"; do
-      local expanded_config="${config/#\~/$HOME}"
-      if [[ -f "$expanded_config" ]] && grep -q "\.local/bin" "$expanded_config" 2>/dev/null; then
-        config_found=true
-        break
-      fi
-    done
-    
-    if [[ "$config_found" == "false" ]]; then
-      log_warn "~/.local/bin not in PATH. Add to your shell config: export PATH=\"\$HOME/.local/bin:\$PATH\""
-    fi
-  fi
-
-  # Cleanup temp directory
-  cleanup_jira_temp
-  trap - EXIT INT TERM  # Remove trap since we cleaned up manually
-  
-  # Note: Neovim plugin files are already in the repo and will be installed by setup_nvim_config
-  log_info "jira-tool installation complete. Run 'jira setup' to configure credentials."
+  log_info "Licensed plugins configured (edit ~/.config/nvim/lua/config/licensed.lua to change later)"
 }
 
 setup_nvim_config() {
@@ -406,6 +336,9 @@ setup_nvim_config() {
   fi
 
   log_info "Setting up Neovim configuration..."
+
+  # Configure licensed plugins before copying
+  configure_licensed_plugins
 
   # Backup existing config if present
   if [[ -d ~/.config/nvim ]]; then
@@ -458,12 +391,6 @@ if [[ "$SKIP_LAZY" == "false" ]]; then
   install_lazy_nvim
 else
   log_info "Skipping lazy.nvim installation (--skip-lazy specified)"
-fi
-
-if [[ "$SKIP_JIRA" == "false" ]]; then
-  install_jira_tool
-else
-  log_info "Skipping jira-tool installation (--skip-jira specified)"
 fi
 
 setup_nvim_config

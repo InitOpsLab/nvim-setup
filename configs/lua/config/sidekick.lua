@@ -7,28 +7,16 @@ if not ok then
 end
 
 sidekick.setup({
-	-- NES = Next Edit Suggestions (Copilot LSP). Disabled for now.
-	nes = {
-		enabled = false,
-	},
-
 	cli = {
 		-- Reload buffers when the AI CLI edits files on disk
 		watch = true,
 
-		-- ❗ IMPORTANT: disable tmux/zellij mux to avoid "unknown backend: tmux"
+		-- Use Neovim's built-in terminal for splits (no tmux/zellij needed)
 		mux = {
-			enabled = false,
-			backend = "tmux", -- value is ignored while enabled = false
+			enabled = true,
+			backend = "terminal",
 			create = "terminal",
 		},
-
-		-- Claude is built-in as "claude" (expects a `claude` CLI in $PATH)
-		-- tools = {
-		--   claude = {
-		--     command = { "claude" },
-		--   },
-		-- },
 	},
 })
 

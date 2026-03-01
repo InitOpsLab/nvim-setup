@@ -4,18 +4,7 @@ local dap = require("dap")
 vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DiagnosticSignError" })
 vim.fn.sign_define("DapStopped", { text = "", texthl = "DiagnosticSignHint" })
 
--- Auto-load .vscode/launch.json
-local ok_vscode, vscode = pcall(require, "dap.ext.vscode")
-if ok_vscode then
-	vscode.load_launchjs(nil, {
-		["pwa-node"] = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
-		["python"] = { "python" },
-		["codelldb"] = { "c", "cpp", "rust" },
-		["delve"] = { "go" },
-		["bashdb"] = { "sh", "bash" },
-		["osv"] = { "lua" },
-	})
-end
+-- .vscode/launch.json is read automatically on-demand (no manual load needed)
 
 -- UI auto open/close
 local ok_dapui, dapui = pcall(require, "dapui")

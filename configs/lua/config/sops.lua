@@ -15,7 +15,8 @@ local function check_file_exists(path)
 end
 
 local function decrypt_to_tmp(original)
-  local hash = vim.fn.sha256(original .. os.time() .. vim.loop.os_getpid())
+  local uv = vim.uv or vim.loop
+  local hash = vim.fn.sha256(original .. os.time() .. uv.os_getpid())
   local tmp = "/tmp/sops-" .. hash:sub(1, 12) .. "-" .. vim.fn.fnamemodify(original, ":t")
   os.execute(string.format("sops -d '%s' > '%s'", original, tmp))
   return tmp

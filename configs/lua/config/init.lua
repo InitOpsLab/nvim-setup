@@ -20,6 +20,7 @@ for _, file in ipairs(files) do
 		init = true,
 		licensed = true,
 		lint = true,
+		conform = true,
 		go = true,
 		sidekick = true,
 		copilot = true,

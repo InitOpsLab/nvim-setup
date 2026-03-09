@@ -34,7 +34,13 @@ return {
 		end,
 	},
 	{ "zbirenbaum/copilot-cmp", lazy = true, enabled = licensed.copilot },
-	{ "stevearc/conform.nvim", event = { "BufReadPre", "BufNewFile" } },
+	{
+		"stevearc/conform.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			require("config.conform")
+		end,
+	},
 	{
 		"mfussenegger/nvim-lint",
 		event = { "BufReadPre", "BufNewFile" },

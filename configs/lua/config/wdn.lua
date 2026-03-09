@@ -88,23 +88,19 @@ local function create_workspace(projects)
 	return ws_path, ws_name
 end
 
--- Change directory to warp point (creates workspace for consistency)
+-- Change directory to warp point (cd directly to real path, no workspace)
 local function goto_warp(name)
 	local warp_points = parse_warprc()
 	local path = warp_points[name]
 	if path and vim.fn.isdirectory(path) == 1 then
-		-- Create workspace with single project (allows adding more later)
-		local ws_path, _ = create_workspace({ { name = name, path = path } })
-		if ws_path then
-			vim.cmd("cd " .. vim.fn.fnameescape(ws_path))
-			vim.notify("Switched to: " .. name, vim.log.levels.INFO)
+		vim.cmd("cd " .. vim.fn.fnameescape(path))
+		vim.notify("Switched to: " .. name, vim.log.levels.INFO)
 
-			-- Refresh nvim-tree if available
-			pcall(function()
-				require("nvim-tree.api").tree.change_root(ws_path)
-				require("nvim-tree.api").tree.reload()
-			end)
-		end
+		-- Refresh nvim-tree if available
+		pcall(function()
+			require("nvim-tree.api").tree.change_root(path)
+			require("nvim-tree.api").tree.reload()
+		end)
 		return true
 	else
 		vim.notify("wdn: no such warp point or directory: " .. name, vim.log.levels.ERROR)
@@ -137,6 +133,15 @@ local function get_current_workspace()
 		end
 		return { path = ws_path, projects = projects }
 	end
+
+	-- Fallback: check if CWD is a warp point (single project, no workspace dir)
+	local warp_points = parse_warprc()
+	for name, path in pairs(warp_points) do
+		if vim.fn.resolve(cwd) == vim.fn.resolve(path) then
+			return { path = nil, projects = { { name = name, path = path } } }
+		end
+	end
+
 	return nil
 end
 

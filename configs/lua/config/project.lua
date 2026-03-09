@@ -1,16 +1,7 @@
 -- ~/.config/nvim/lua/config/project.lua
 -- Native project root detection using LSP or filesystem patterns
 
-local patterns = {
-	".git",
-	"go.mod",
-	"go.work",
-	"Makefile",
-	"package.json",
-	"pyproject.toml",
-	"main.tf",
-	"terraform.tf",
-}
+local patterns = require("config.roots")
 
 vim.api.nvim_create_autocmd("BufEnter", {
 	desc = "Auto-detect and change to project root (LSP or fs-based)",
@@ -20,6 +11,9 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		if name == "" then
 			return
 		end
+
+		-- Resolve symlinks so git root is found in workspace mode
+		local real_name = vim.fn.resolve(name)
 
 		-- Prefer LSP root if available
 		local clients = vim.lsp.get_clients({ bufnr = buf })
@@ -32,7 +26,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		end
 
 		-- Fallback: find project root by file pattern
-		local found = vim.fs.find(patterns, { upward = true, path = name })[1]
+		local found = vim.fs.find(patterns, { upward = true, path = real_name })[1]
 		if found then
 			local root = vim.fs.dirname(found)
 			if root and vim.fn.getcwd() ~= root then

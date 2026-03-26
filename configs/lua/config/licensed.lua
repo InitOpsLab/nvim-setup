@@ -8,5 +8,4 @@
 return {
 	copilot = false, -- GitHub Copilot (requires subscription)
 	sidekick = false, -- Sidekick.nvim / Claude CLI (requires Anthropic subscription)
-	jira = false, -- Jira integration (requires Jira credentials)
 }

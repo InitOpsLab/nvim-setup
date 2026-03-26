@@ -19,8 +19,6 @@ for _, file in ipairs(files) do
 	local plugin_loaded = {
 		init = true,
 		licensed = true,
-		lint = true,
-		conform = true,
 		go = true,
 		sidekick = true,
 		copilot = true,
@@ -37,9 +35,10 @@ for _, file in ipairs(files) do
 		lualine = true,
 		["nvim-tree"] = true,
 		tasks = true,
-		jira = true,
 		cmp = true,
 		neotest = true,
+		lint = true,
+		conform = true,
 	}
 	if not plugin_loaded[name] then
 		safe_require("config." .. name)

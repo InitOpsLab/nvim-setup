@@ -283,7 +283,7 @@ ask_yes_no() {
     echo -n -e "${GREEN}[?]${RESET} ${prompt} ${yn_hint} "
     read -r answer
     answer="${answer:-$default}"
-    case "${answer,,}" in
+    case "$(echo "$answer" | tr '[:upper:]' '[:lower:]')" in
       y|yes) return 0 ;;
       n|no) return 1 ;;
       *) echo "Please answer y or n." ;;
@@ -295,9 +295,8 @@ configure_licensed_plugins() {
   local licensed_file="$CONFIGS_DIR/lua/config/licensed.lua"
   local enable_copilot="false"
   local enable_sidekick="false"
-  local enable_jira="false"
 
-  log_info "Some plugins require a paid license or subscription."
+  log_info "Subscription plugins are off by default. Enable them if you have the required subscription."
   echo ""
 
   if ask_yes_no "Enable GitHub Copilot? (requires GitHub Copilot subscription)"; then
@@ -306,10 +305,6 @@ configure_licensed_plugins() {
 
   if ask_yes_no "Enable Sidekick.nvim / Claude CLI? (requires Anthropic subscription)"; then
     enable_sidekick="true"
-  fi
-
-  if ask_yes_no "Enable Jira integration? (requires Jira credentials)"; then
-    enable_jira="true"
   fi
 
   cat > "$licensed_file" << EOF
@@ -323,7 +318,6 @@ configure_licensed_plugins() {
 return {
 	copilot = ${enable_copilot}, -- GitHub Copilot (requires subscription)
 	sidekick = ${enable_sidekick}, -- Sidekick.nvim / Claude CLI (requires Anthropic subscription)
-	jira = ${enable_jira}, -- Jira integration (requires Jira credentials)
 }
 EOF
 

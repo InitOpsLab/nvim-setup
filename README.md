@@ -32,7 +32,6 @@ A **fast, modular, and developer-friendly terminal setup** optimized for softwar
 
 ### Additional Tools
 
-- **Jira Integration** - Create, submit, and manage Jira tickets directly from Neovim (licensed, requires `jira` CLI)
 - **Markdown Preview** - Live preview with Mermaid diagram support
 - **Terminal Integration** - Integrated terminal toggling with toggleterm (`<C-\>`)
 - **Task Management** - Orgmode, Neorg, and Telekasten support for notes and tasks
@@ -112,7 +111,6 @@ Some plugins require a paid license or subscription and are **disabled by defaul
 |--------|----------|------|
 | **GitHub Copilot** | GitHub Copilot subscription | `copilot = true` |
 | **Sidekick.nvim** | Anthropic subscription (Claude CLI) | `sidekick = true` |
-| **Jira integration** | Jira credentials | `jira = true` |
 
 After changing flags, restart Neovim and run `:Lazy sync`.
 
@@ -142,7 +140,7 @@ The script will:
 - Check for required prerequisites (git, brew/apt, curl, etc.)
 - Install required dependencies (unless `--skip-deps` is used)
 - Set up Lazy.nvim plugin manager (unless `--skip-lazy` is used)
-- Prompt for licensed plugin preferences (Copilot, Sidekick, Jira)
+- Prompt for licensed plugin preferences (Copilot, Sidekick)
 - Copy configuration files to `~/.config/nvim/` (with backup by default)
 - Auto-sync plugins (unless `--skip-sync` is used)
 
@@ -280,13 +278,12 @@ git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
 
 | Key | Mode | Description |
 |-----|------|-------------|
-| `<C-.>` | n/i/v/t | Toggle AI CLI (global) |
-| `<leader>mm` | n | Toggle AI CLI |
-| `<leader>mc` | n | Toggle Claude |
+| `<C-.>` | n/i/v/t | Toggle Claude (global) |
+| `<leader>mm` | n | Toggle Claude |
+| `<leader>mc` | n | Restart Claude (fresh project dirs) |
 | `<leader>ms` | n | Select AI tool |
 | `<leader>mt` | n/v | Send context around cursor |
 | `<leader>mf` | n | Send current file |
-| `<leader>mv` | v | Send visual selection |
 | `<leader>mp` | n/v | Prompt picker (explain, fix, tests, etc.) |
 
 #### SOPS (Encrypted Files)
@@ -327,7 +324,8 @@ configs/
 └── lua/
     ├── options.lua          # Editor options & core keymaps
     ├── config/              # Plugin configurations
-    │   ├── licensed.lua     # Licensed plugin toggles (Copilot, Sidekick, Jira)
+    │   ├── licensed.lua     # Licensed plugin toggles (Copilot, Sidekick)
+    │   ├── roots.lua        # Shared project-root marker patterns
     │   ├── lint.lua         # Linter configurations (nvim-lint)
     │   ├── conform.lua      # Formatter configurations
     │   ├── cmp.lua          # Completion setup (nvim-cmp)
@@ -335,9 +333,8 @@ configs/
     │   ├── gitsigns.lua     # Git gutter signs & keymaps
     │   ├── neogit.lua       # Git TUI integration
     │   ├── nvim-tree.lua    # File explorer with content filtering
-    │   ├── copilot.lua      # GitHub Copilot (licensed)
-    │   ├── sidekick.lua     # Claude AI CLI (licensed)
-    │   ├── jira.lua         # Jira integration (licensed)
+    │   ├── copilot.lua      # GitHub Copilot
+    │   ├── sidekick.lua     # Claude AI CLI
     │   ├── sops.lua         # SOPS encryption helpers
     │   └── ...              # Other plugin configs
     └── lazy-plugins/        # Lazy.nvim setup
@@ -348,7 +345,6 @@ configs/
             ├── ai.lua       # AI plugins (Sidekick, refactoring, aerial)
             ├── dev.lua      # Development plugins (DAP, cmp, Copilot, lint)
             ├── go.lua       # Go-specific plugins
-            ├── jira.lua     # Jira plugin (licensed)
             ├── tasks.lua    # Orgmode, Neorg, Telekasten
             └── testing.lua  # Neotest (Go, Python, Jest, RSpec)
 ```
